@@ -1,37 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'api.dart';
+import 'subject_change.dart';
 
-final _subjectId = RegExp(
-    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
 final _archiveRequestKey = RegExp(
     r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$');
-const _maxVersion = 9007199254740991;
 
 bool _matches(RegExp pattern, Object? value) => value is String &&
     pattern.firstMatch(value)?.end == value.length;
 
-Json _snapshot(Object? value) {
-  if (value is! Map ||
-      !_matches(_subjectId, value['id']) ||
-      value['nickname'] is! String ||
-      (value['nickname'] as String).trim().isEmpty ||
-      !const {'UNDER_7', 'AGE_7_12', 'AGE_13_17'}.contains(value['ageBand']) ||
-      value['version'] is! int ||
-      (value['version'] as int) < 0 ||
-      (value['version'] as int) > _maxVersion ||
-      !const {'ACTIVE', 'ARCHIVED'}.contains(value['state'])) {
-    throw const ApiFailure(502, 'INVALID_RESPONSE');
-  }
-  return Map<String, dynamic>.unmodifiable({
-    for (final key in ['id', 'nickname', 'ageBand', 'version', 'state'])
-      key: value[key],
-  });
-}
-
 /// One archive attempt keeps its identity and never replays an uncertain write.
 class SubjectArchiveOperation extends ChangeNotifier {
   final String root, requestKey;
-  final Json subject;
+  late final Json subject;
+  late final SubjectChangeDraft _draft;
   final bool Function() _isCurrent;
   final VoidCallback? onSubmitAttempt;
   late final Json body;
@@ -44,17 +25,13 @@ class SubjectArchiveOperation extends ChangeNotifier {
   SubjectArchiveOperation({required Api api, required this.root,
       required this.requestKey, required Json subject,
       required bool Function() isCurrent, this.onSubmitAttempt})
-      : subject = _snapshot(subject), _isCurrent = isCurrent {
-    if (this.subject['state'] != 'ACTIVE' ||
-        (this.subject['version'] as int) >= _maxVersion ||
-        !_matches(_archiveRequestKey, requestKey)) {
+      : _isCurrent = isCurrent {
+    _draft = SubjectChangeDraft.archive(subject);
+    this.subject = _draft.before!;
+    if (!_matches(_archiveRequestKey, requestKey)) {
       throw const ApiFailure(502, 'INVALID_RESPONSE');
     }
-    body = Map<String, dynamic>.unmodifiable({
-      'operation': 'ARCHIVE',
-      'subjectId': this.subject['id'],
-      'version': this.subject['version'],
-    });
+    body = _draft.body;
     _api = api.scoped(() => current);
   }
 
@@ -66,17 +43,6 @@ class SubjectArchiveOperation extends ChangeNotifier {
 
   bool get canSubmit => current && !busy && !uncertain && !stopped && result == null;
   bool get canQuery => current && !busy && uncertain && !stopped && result == null;
-
-  Json _committed(Object? value) {
-    final snapshot = _snapshot(value);
-    if (snapshot['id'] != subject['id'] || snapshot['state'] != 'ARCHIVED' ||
-        snapshot['version'] != (subject['version'] as int) + 1 ||
-        snapshot['nickname'] != subject['nickname'] ||
-        snapshot['ageBand'] != subject['ageBand']) {
-      throw const ApiFailure(502, 'INVALID_RESPONSE');
-    }
-    return snapshot;
-  }
 
   bool _terminal(Object failure) => failure is ApiFailure &&
       (failure.status == 412 || isUnavailableOperationResult(failure));
@@ -105,7 +71,7 @@ class SubjectArchiveOperation extends ChangeNotifier {
       onSubmitAttempt?.call();
       final value = await _api.send('POST', '$root/subjects/changes',
           key: requestKey, body: body);
-      if (current) result = _committed(value);
+      if (current) result = _draft.committed(value);
     } catch (failure) {
       if (!current) return;
       error = failure;
@@ -123,17 +89,9 @@ class SubjectArchiveOperation extends ChangeNotifier {
       final value = await _api.send('POST',
           '$root/subjects/operation-results/$requestKey/query', body: body);
       if (!current) return;
-      if (value is! Map || value['operation'] != 'ARCHIVE') {
-        throw const ApiFailure(502, 'INVALID_RESPONSE');
-      }
-      final committed = _committed(value['committed']);
-      final latest = _snapshot(value['current']);
-      if (latest['id'] != subject['id'] || latest['state'] != 'ARCHIVED' ||
-          (latest['version'] as int) < (committed['version'] as int)) {
-        throw const ApiFailure(502, 'INVALID_RESPONSE');
-      }
-      result = committed;
-      currentSnapshot = latest;
+      final snapshots = _draft.queryResult(value);
+      result = snapshots.committed;
+      currentSnapshot = snapshots.current;
     } catch (failure) {
       if (!current) return;
       error = failure;

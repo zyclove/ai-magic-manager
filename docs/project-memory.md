@@ -91,7 +91,9 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 [ResourceActionLease](../apps/guardian/lib/ui/resource_action_lease.dart) 由 [ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 每次 action 创建并最终释放；onCreateChanged(lease)、onOpenChanged(row, lease) 返回需核对信号。租约绑定原资源代际、API、路径与宿主捕获，独立于 busy/canInteract/子窗口置顶；退役同步拒绝旧操作、帧后单次通知，完整回调结束才 dispose。页面离开、资源变化、拒绝读取及 owner 失效推进相应有效期/交互代际，旧 finally 不能解新锁；同键重挂不因此新增普通列表读取。领域授权仍独立保留，成员/班级历史与编辑、应用登记/详情、时间计划和策略预览须取租约交集。既有 void 入口保持自身返回与授权语义，需要子流程有效期时使用布尔租约入口。
 
-归档固定正文、请求键、响应验证及未知后只查不重放的状态集中于 [SubjectArchiveOperation](../apps/guardian/lib/core/subject_archive.dart)；[归档窗口](../apps/guardian/lib/ui/subject_archive_dialog.dart) 复用 leasedDialog 持有原父窗口与权限租约。使用既有 subjects/changes 和 operation-results/{key}/query，查询不传写入幂等头；404/认证拒绝不解锁原 POST，412/结果不可恢复则停止。窗口完整结束才释放操作对象，尝试后关闭返回核对信号并退出旧详情；普通取消不刷新。初次明确拒绝的人工重试沿用原键与正文，不另造归档协议或跨窗口持久化副本。
+[SubjectChangeDraft](../apps/guardian/lib/core/subject_change.dart) 统一 CREATE/UPDATE/ARCHIVE 的固定正文、档案快照与回执校验，分开 committed/current；待变更必须活动且版本可递增，同版本内容不得变化，较新编辑/归档作为当前事实核对。创建/编辑复用 EditDialog 查询钩子，使用一次UUID及既有 subjects/changes、operation-results/{key}/query，未知后不重放，后续事实只在原窗口/权限仍有效时提示并核对列表。管理详情读取也绑定原编号，昵称按服务端UTF-16长度就近校验。
+
+[SubjectArchiveOperation](../apps/guardian/lib/core/subject_archive.dart) 仅持有归档状态/请求键与异步生命周期，正文和回执委托共同草稿；[归档窗口](../apps/guardian/lib/ui/subject_archive_dialog.dart) 复用 leasedDialog。查询不传写入幂等头，404/认证拒绝不解锁原 POST，412/结果不可恢复停止；完整窗口结束才释放操作对象，尝试后关闭返回核对信号并退出旧详情，普通取消不刷新。初次明确拒绝的人工重试沿用原键与正文，不另造协议或跨窗口持久化副本。
 
 恢复草稿的中文字段清单统一在[领域化展示模块](../apps/guardian/lib/ui/editor_draft_text.dart)，计划、策略与成员的展示只读取已捕获提交与原目录。名称缺失保留完整对象编号，未知字段也保留；展示层不得读取网络、改写原提交或解除重试保护。
 

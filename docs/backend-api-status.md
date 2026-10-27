@@ -52,6 +52,10 @@ Java 17+、Maven 3.9+，使用 Spring Boot 3.5.16、Spring Modulith 1.4.0、Spri
 | GET /tenants/{tenantId}/subjects/{subjectId} | Subject、ETag | TEACHER 受当前班级/单档案范围限制，CHILD 仅自身；外租户对象拒绝 |
 | PATCH /tenants/{tenantId}/subjects/{subjectId} | nickname、ageBand、If-Match → Subject、ETag | 成人编辑；强版本前提；不自动修改设备规则 |
 | POST /tenants/{tenantId}/subjects/{subjectId}/archive | If-Match → 204 | 成人、近期 MFA；仅归档，不解除管理/删除数据 |
+| GET /tenants/{tenantId}/subjects/management | limit、cursor、includeArchived → 档案快照分页 | OWNER/GUARDIAN/ORG_ADMIN；可含归档状态；禁止缓存 |
+| GET /tenants/{tenantId}/subjects/{subjectId}/management | 当前档案快照 | 成人管理角色；包含 state/version；禁止缓存 |
+| POST /tenants/{tenantId}/subjects/changes | CREATE/UPDATE/ARCHIVE 原正文、UUID Idempotency-Key → 快照 | 创建不传编号/版本；编辑/归档在正文传原版本；家庭日常创建/编辑按成人成员授权，其余沿近期 MFA 要求 |
+| POST /tenants/{tenantId}/subjects/operation-results/{requestId}/query | 原变更正文 → operation、committed、current | 成人管理角色；查询原结果不重放；原回执与当前状态分开；禁止缓存 |
 | POST /tenants/{tenantId}/invitations | recipientEmail、role、subjectId?、classIds? → 邀请及一次性 token | OWNER/ORG_ADMIN、近期 MFA；教师班级/单档案互斥；接受时重新校验范围 |
 | POST /invitations/accept | token → tenantId、role | 已验证收件 email；非 CHILD 需成人资格/近期 MFA；邀请者仍有权 |
 | DELETE /tenants/{tenantId}/invitations/{invitationId} | 204 | OWNER/ORG_ADMIN、近期 MFA；tenant 范围；取消幂等 |

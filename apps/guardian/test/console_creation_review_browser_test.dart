@@ -74,14 +74,37 @@ class _Fixture {
   final unknownCreates = <String>{};
   final created = <String, Json>{};
   final archiveQueryStatuses = <int>[];
+  final subjectQueryStatuses = <int>[];
   final applicationQueryStatuses = <int>[];
   Completer<http.Response>? subjectDetailsResponse;
+  Json Function(Json)? subjectQueryCurrent;
+  Json? _changedSubject;
   bool unknownSubjectEdit = false, unknownArchive = false, closed = false;
   bool subjectArchived = false;
   late final session = _ConsoleSession(handle);
 
-  Json get subject => {..._record('subjects'),
+  Json get subject => _changedSubject ?? {..._record('subjects'),
     if (subjectArchived) ...{'state': 'ARCHIVED', 'version': 8}};
+
+  Json _subjectReceipt(Json body) => switch (body['operation']) {
+    'CREATE' => {'id': _created, 'nickname': body['nickname'],
+      'ageBand': body['ageBand'], 'version': 0, 'state': 'ACTIVE'},
+    'UPDATE' => {'id': body['subjectId'], 'nickname': body['nickname'],
+      'ageBand': body['ageBand'], 'version': (body['version'] as int) + 1, 'state': 'ACTIVE'},
+    'ARCHIVE' => {...subject, 'id': body['subjectId'],
+      'version': (body['version'] as int) + 1, 'state': 'ARCHIVED'},
+    _ => throw StateError('Unexpected synthetic subject operation.'),
+  };
+
+  void _applySubjectCurrent(Json value) {
+    if (value['id'] == _first) {
+      _changedSubject = Map<String, dynamic>.from(value);
+      subjectArchived = value['state'] == 'ARCHIVED';
+    } else {
+      expect(value['id'], _created);
+      created['subjects'] = Map<String, dynamic>.from(value);
+    }
+  }
 
   List<http.Request> listReads(String section) => requests.where((request) =>
       request.method == 'GET' && (request.url.path == '$_root/$section' ||
@@ -99,12 +122,22 @@ class _Fixture {
         if (subjectArchived && !session.canWrite) {
           return _reply({'errorCode': 'ACCESS_DENIED'}, status: 403);
         }
-        final currentSubject = subject;
+        final currentSubject = Map<String, dynamic>.from(subject);
         if (!session.canWrite) currentSubject.remove('state');
         return _reply(currentSubject);
       }
       if (session.canWrite && path == '$_root/subjects/$_archived/management') {
         return _reply(_archivedRecord());
+      }
+      if (path == '$_root/subjects/$_created$subjectSuffix' && created['subjects'] != null) {
+        final currentSubject = Map<String, dynamic>.from(created['subjects']!);
+        if (!session.canWrite) {
+          if (currentSubject['state'] == 'ARCHIVED') {
+            return _reply({'errorCode': 'ACCESS_DENIED'}, status: 403);
+          }
+          currentSubject.remove('state');
+        }
+        return _reply(currentSubject);
       }
       if (path == '$_root/schedule-presets') {
         return _reply({'schemaVersion': 1, 'items': <Json>[]});
@@ -123,27 +156,24 @@ class _Fixture {
           return _reply({'items': [
             if (section != 'subjects') _record(section)
             else if (!subjectArchived || includeArchived) subject,
-            if (created[section] != null) created[section]!,
+            if (created[section] != null && (section != 'subjects' ||
+                includeArchived || created[section]!['state'] != 'ARCHIVED')) created[section]!,
             if (includeArchived) _archivedRecord()],
             'nextCursor': 'next'});
         }
       }
     }
-    for (final section in ['subjects', 'applications']) {
-      if (request.method == 'POST' && path == '$_root/$section') {
-        if (section == 'applications') {
-          expect(request.headers['idempotency-key'], matches(
-              RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
-        }
-        if (unknownCreates.contains(section)) {
-          return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
-        }
-        final record = <String, dynamic>{..._record(section),
-          ...(jsonDecode(request.body) as Json), 'id': _created,
-          if (section == 'applications') 'evidenceStatus': 'ADMIN_DECLARED'};
-        created[section] = record;
-        return _reply(record, status: 201);
+    if (request.method == 'POST' && path == '$_root/applications') {
+      expect(request.headers['idempotency-key'], matches(
+          RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+      if (unknownCreates.contains('applications')) {
+        return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
       }
+      final record = <String, dynamic>{..._record('applications'),
+        ...(jsonDecode(request.body) as Json), 'id': _created,
+        'evidenceStatus': 'ADMIN_DECLARED'};
+      created['applications'] = record;
+      return _reply(record, status: 201);
     }
     if (request.method == 'POST' &&
         path.startsWith('$_root/applications/creation-results/') && path.endsWith('/query')) {
@@ -161,33 +191,49 @@ class _Fixture {
       created['applications'] = record;
       return _reply(record);
     }
-    if (request.method == 'PATCH' && path == '$_root/subjects/$_first') {
-      if (unknownSubjectEdit) return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
-      return _reply({..._record('subjects'), ...(jsonDecode(request.body) as Json)});
-    }
     if (request.method == 'POST' && path == '$_root/subjects/changes') {
-      expect(jsonDecode(request.body), {'operation': 'ARCHIVE', 'subjectId': _first, 'version': 7});
+      final body = jsonDecode(request.body) as Json;
+      final operation = body['operation'];
+      expect(operation, isIn(['CREATE', 'UPDATE', 'ARCHIVE']));
+      if (operation == 'CREATE') {
+        expect(body.keys, unorderedEquals(['operation', 'nickname', 'ageBand']));
+      } else if (operation == 'UPDATE') {
+        expect(body.keys, unorderedEquals(['operation', 'subjectId', 'version', 'nickname', 'ageBand']));
+        expect(body['subjectId'], _first);
+        expect(body['version'], 7);
+      } else {
+        expect(body, {'operation': 'ARCHIVE', 'subjectId': _first, 'version': 7});
+      }
       expect(request.headers['if-match'], isNull);
       expect(request.headers['idempotency-key'], matches(
           RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
-      if (unknownArchive) return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
-      subjectArchived = true;
-      return _reply(subject);
+      if (operation == 'CREATE' && unknownCreates.contains('subjects') ||
+          operation == 'UPDATE' && unknownSubjectEdit || operation == 'ARCHIVE' && unknownArchive) {
+        return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
+      }
+      _applySubjectCurrent(_subjectReceipt(body));
+      return _reply(operation == 'CREATE' ? created['subjects']! : subject);
     }
     if (request.method == 'POST' &&
         path.startsWith('$_root/subjects/operation-results/') && path.endsWith('/query')) {
       final original = requests.firstWhere((sent) =>
-          sent.method == 'POST' && sent.url.path == '$_root/subjects/changes');
+          sent.method == 'POST' && sent.url.path == '$_root/subjects/changes' &&
+          path == '$_root/subjects/operation-results/${sent.headers['idempotency-key']}/query');
       expect(path, '$_root/subjects/operation-results/${original.headers['idempotency-key']}/query');
       expect(request.body, original.body);
       expect(request.headers['idempotency-key'], isNull);
-      final status = archiveQueryStatuses.isEmpty ? 200 : archiveQueryStatuses.removeAt(0);
+      final body = jsonDecode(original.body) as Json;
+      final operation = body['operation'];
+      final statuses = operation == 'ARCHIVE' ? archiveQueryStatuses : subjectQueryStatuses;
+      final status = statuses.isEmpty ? 200 : statuses.removeAt(0);
       if (status != 200) {
         return _reply({'errorCode': status == 404
             ? 'SUBJECT_RESULT_UNAVAILABLE' : 'ACCESS_DENIED'}, status: status);
       }
-      subjectArchived = true;
-      return _reply({'operation': 'ARCHIVE', 'committed': subject, 'current': subject});
+      final committed = _subjectReceipt(body);
+      final current = subjectQueryCurrent?.call(committed) ?? committed;
+      _applySubjectCurrent(current);
+      return _reply({'operation': operation, 'committed': committed, 'current': current});
     }
     throw StateError('Unexpected synthetic console request: ${request.method} $path');
   }
@@ -315,9 +361,15 @@ void main() {
         await _closeUnknownForm(tester);
         await _until(tester, () => fixture.listReads(section).length == 4 && _listReady(tester, section));
         expect(fixture.writes, hasLength(2), reason: 'Closing an unknown creation must not replay POST.');
+        final creationPath = section == 'subjects' ? '$_root/subjects/changes' : '$_root/applications';
         expect(fixture.writes.every((request) => request.method == 'POST' &&
-            request.url.path == '$_root/$section' &&
+            request.url.path == creationPath &&
             request.headers['idempotency-key']?.isNotEmpty == true), isTrue);
+        if (section == 'subjects') {
+          expect(fixture.writes.every((request) =>
+              (jsonDecode(request.body) as Json)['operation'] == 'CREATE' &&
+              request.headers['if-match'] == null), isTrue);
+        }
         expect(fixture.writes[0].headers['idempotency-key'],
             isNot(fixture.writes[1].headers['idempotency-key']));
       }
@@ -408,6 +460,110 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('subject creation and editing recover their frozen receipts while showing later current facts',
+      (tester) async {
+    _wide(tester);
+    for (final operation in ['CREATE', 'UPDATE']) {
+      final creating = operation == 'CREATE';
+      final fixture = _Fixture();
+      if (creating) {
+        fixture.unknownCreates.add('subjects');
+      } else {
+        fixture.unknownSubjectEdit = true;
+      }
+      fixture.subjectQueryStatuses.addAll([404, 200]);
+      final laterName = creating ? '后续归档的创建档案' : '后来重新编辑的儿童档案';
+      fixture.subjectQueryCurrent = (committed) => {...committed,
+        'nickname': laterName, 'ageBand': 'UNDER_7',
+        'version': (committed['version'] as int) + 2,
+        'state': creating ? 'ARCHIVED' : 'ACTIVE'};
+      addTearDown(() => fixture.cleanup(tester));
+      List<http.Request> changes() => fixture.requests.where((request) =>
+          request.method == 'POST' && request.url.path == '$_root/subjects/changes').toList();
+      List<http.Request> queries() => fixture.requests.where((request) =>
+          request.method == 'POST' &&
+          request.url.path.startsWith('$_root/subjects/operation-results/')).toList();
+      bool queryReady() {
+        if (find.byType(AlertDialog).evaluate().isEmpty) return false;
+        final query = _dialogButton('查询档案结果');
+        return query.evaluate().length == 1 &&
+            tester.widget<ButtonStyleButton>(query).onPressed != null;
+      }
+
+      await _mount(tester, fixture, 'subjects');
+      await _until(tester, () => _listReady(tester, 'subjects'));
+      if (creating) {
+        await _tap(tester, _button('添加儿童'));
+        await _until(tester, () => find.byType(EditDialog).evaluate().length == 1);
+        await _fillCreation(tester, 'subjects', '');
+        await _tap(tester, _dialogButton('保存'));
+        await tester.pump();
+        final nickname = find.widgetWithText(TextFormField, '昵称');
+        expect(tester.state<FormFieldState<String>>(nickname).errorText, isNotEmpty);
+        await tester.enterText(nickname, List<String>.filled(31, '😀').join());
+        await _tap(tester, _dialogButton('保存'));
+        await tester.pump();
+        expect(tester.state<FormFieldState<String>>(nickname).errorText, isNotEmpty);
+        expect(tester.widget<TextFormField>(nickname).enabled, isTrue);
+        expect(fixture.writes, isEmpty,
+            reason: 'Empty or more than 60 UTF-16 code units must fail before HTTP.');
+      } else {
+        await _tap(tester, find.text(_name('subjects')));
+        await _until(tester, () => find.byType(AlertDialog).evaluate().isNotEmpty &&
+            _dialogButton('编辑档案').evaluate().length == 1);
+        await _tap(tester, _dialogButton('编辑档案'));
+        await _until(tester, () => find.byType(EditDialog).evaluate().length == 1);
+      }
+      final nickname = find.widgetWithText(TextFormField, '昵称');
+      final submittedName = creating ? '待核对的新档案' : '待核对的档案编辑';
+      await tester.enterText(nickname, submittedName);
+      await _tap(tester, find.widgetWithText(DropdownButtonFormField<String>, '年龄段'));
+      await tester.pumpAndSettle();
+      await _tap(tester, find.text(label('AGE_13_17')).last);
+      await tester.pumpAndSettle();
+      await _tap(tester, _dialogButton('保存'));
+      await _until(tester, () => changes().length == 1 && queryReady());
+      final original = changes().single;
+      expect(jsonDecode(original.body), {
+        'operation': operation,
+        if (!creating) ...{'subjectId': _first, 'version': 7},
+        'nickname': submittedName, 'ageBand': 'AGE_13_17',
+      });
+      expect(tester.widget<TextFormField>(nickname).enabled, isFalse);
+      expect(fixture.listReads('subjects'), hasLength(1));
+      await _tap(tester, _dialogButton('查询档案结果'));
+      await _until(tester, () => queries().length == 1 && queryReady());
+      expect(tester.widget<TextFormField>(nickname).controller!.text, submittedName);
+      expect(tester.widget<TextFormField>(nickname).enabled, isFalse);
+      expect(_dialogButton('保存'), findsNothing);
+      expect(changes(), hasLength(1));
+      expect(fixture.listReads('subjects'), hasLength(1));
+
+      await _tap(tester, _dialogButton('查询档案结果'));
+      await _until(tester, () => queries().length == 2 &&
+          fixture.listReads('subjects').length == 2 && _listReady(tester, 'subjects'));
+      expect(changes(), hasLength(1));
+      expect(queries().every((request) => request.body == original.body &&
+          request.headers['idempotency-key'] == null &&
+          request.url.path == '$_root/subjects/operation-results/${original.headers['idempotency-key']}/query'), isTrue);
+      expect(fixture.writes, hasLength(3));
+      expect(find.text(submittedName), findsNothing);
+      expect(find.textContaining(creating
+          ? '原操作已核对，档案现已归档' : '原操作已核对，档案已有后续更新'), findsOneWidget);
+      if (creating) {
+        expect(find.text(laterName), findsNothing);
+        expect(fixture.created['subjects']?['id'], _created);
+        expect(fixture.created['subjects']?['state'], 'ARCHIVED');
+      } else {
+        expect(find.text(laterName), findsOneWidget);
+        expect(fixture.subject['id'], _first);
+        expect(fixture.subject['version'], 10);
+      }
+      expect(tester.takeException(), isNull);
+      await fixture.cleanup(tester);
+    }
+  });
+
   testWidgets('subject detail cancellation preserves pages and unknown edits and archives only read back',
       (tester) async {
     _wide(tester);
@@ -458,11 +614,12 @@ void main() {
     await _until(tester, () => fixture.listReads('subjects').length == 3 && _listReady(tester, 'subjects'));
     expect(fixture.writes, hasLength(1));
     final edit = fixture.writes.single;
-    expect(edit.method, 'PATCH');
-    expect(edit.url.path, '$_root/subjects/$_first');
-    expect(edit.headers['if-match'], '"7"');
+    expect(edit.method, 'POST');
+    expect(edit.url.path, '$_root/subjects/changes');
+    expect(edit.headers['if-match'], isNull);
     expect(edit.headers['idempotency-key'], isNotEmpty);
-    expect(jsonDecode(edit.body), {'nickname': '待核对的编辑昵称', 'ageBand': 'AGE_7_12'});
+    expect(jsonDecode(edit.body), {'operation': 'UPDATE', 'subjectId': _first,
+      'version': 7, 'nickname': '待核对的编辑昵称', 'ageBand': 'AGE_7_12'});
 
     await details();
     await _tap(tester, _dialogButton('归档'));
@@ -502,7 +659,8 @@ void main() {
     expect(_dialogButton('查询归档结果'), findsOneWidget);
     expect(fixture.listReads('subjects'), hasLength(3));
     expect(fixture.requests.where((request) =>
-        request.method == 'POST' && request.url.path == '$_root/subjects/changes'), hasLength(1));
+        request.method == 'POST' && request.url.path == '$_root/subjects/changes' &&
+        (jsonDecode(request.body) as Json)['operation'] == 'ARCHIVE'), hasLength(1));
     expect(fixture.writes, hasLength(2));
     await _tap(tester, _dialogButton('暂时关闭'));
     await tester.pump();

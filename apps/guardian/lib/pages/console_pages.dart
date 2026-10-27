@@ -13,6 +13,7 @@ import '../core/api.dart';
 import '../core/approval_decision.dart';
 import '../core/application_classification.dart';
 import '../core/application_registration.dart';
+import '../core/subject_change.dart';
 import '../core/console_modules.dart';
 import '../core/console_routes.dart';
 import '../core/enrollment_recovery.dart';
@@ -674,28 +675,52 @@ class ConsoleActions {
         hasAccess: () => scope.current);
     try {
       if (!access.permitted()) return null;
-      final key = requestId();
-      final version = existing?['version'];
-      final path = '$root/subjects${existing == null ? '' : '/${existing['id']}'}';
+      final key = const Uuid().v4();
+      final before = existing == null ? null : readSubjectSnapshot(existing);
+      SubjectChangeDraft change(Json values) => before == null
+          ? SubjectChangeDraft.create(values) : SubjectChangeDraft.update(before, values);
+      SubjectChangeResult? queried;
       final api = scope.api.scoped(access.permitted);
-      return await formDialog(owner,
+      final result = await formDialog(owner,
           title: existing == null ? '添加儿童档案' : '编辑儿童档案',
           fields: [
-            const FieldSpec('nickname', '昵称', maxLength: 60),
+            const FieldSpec('nickname', '昵称', maxLength: 60,
+                validator: validateSubjectNickname),
             FieldSpec('ageBand', '年龄段',
                 options: options(['UNDER_7', 'AGE_7_12', 'AGE_13_17']))
           ],
-          initial: existing ?? {},
+          initial: before ?? {},
+          recoverLabel: '查询档案结果',
           accessChanges: access.changes,
           hasAccess: access.permitted,
           reauth: () {
             if (access.permitted()) reauth();
           },
           onSubmit: (values) async {
+            final draft = change(values);
             onSubmitAttempt?.call();
-            return await api.send(existing == null ? 'POST' : 'PATCH', path,
-                body: values, key: key, version: version) as Json;
+            final value = await api.send('POST', '$root/subjects/changes',
+                body: draft.body, key: key);
+            return draft.committed(value);
+          },
+          onRecoverUnknown: (values) async {
+            final draft = change(values);
+            final value = await api.send('POST',
+                '$root/subjects/operation-results/$key/query', body: draft.body);
+            final receipt = draft.queryResult(value);
+            queried = receipt;
+            return receipt.committed;
           });
+      final receipt = queried;
+      if (result != null && receipt != null && access.permitted() && parentRoute.isCurrent) {
+        if (receipt.current['state'] == 'ARCHIVED') {
+          toast(owner, '原操作已核对，档案现已归档；可在“包含已归档”中查看。');
+        } else if ((receipt.current['version'] as int) >
+            (receipt.committed['version'] as int)) {
+          toast(owner, '原操作已核对，档案已有后续更新，请核对当前列表。');
+        }
+      }
+      return result;
     } finally {
       access.dispose();
       scope.dispose();
@@ -736,7 +761,9 @@ class ConsoleActions {
       final api = scope.api.scoped(access.permitted);
       final managed = s.canWrite;
       final path = '$root/subjects/${row['id']}${managed ? '/management' : ''}';
-      final r = await api.send('GET', path) as Json;
+      final value = await api.send('GET', path);
+      final r = managed
+          ? readSubjectSnapshot(value, expectedId: row['id'] as String) : value as Json;
       if (!context.mounted || !onTop() || !access.permitted()) return false;
       final active = !managed || r['state'] == 'ACTIVE';
       final archived = managed && r['state'] == 'ARCHIVED';
