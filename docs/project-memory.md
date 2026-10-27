@@ -49,6 +49,8 @@ FieldSpec.validator 在原必填/数值规则后执行纯领域校验，文本�
 
 策略编辑目录由 [PolicyRuleDirectories](../apps/guardian/lib/core/policy_rule_directories.dart) 按规则／已有引用读取；`null` 初始值表示未读，显式列表（含空）表示已读。缓存和进行中请求只属于捕获的作用域，失败可重试，失权清空并停止分页；界面刷新只重载本窗口用过的目录。不要恢复打开编辑器前的双目录门禁，或把目录失败当成空目录。
 
+[policy_rule_duration.dart](../apps/guardian/lib/core/policy_rule_duration.dart) 只负责策略额度／提醒的分钟、秒与整数秒精确转换及可读摘要；界面复用 FieldSpec 范围校验并检查合计1～86400，不舍入或钳制。固定行为直接写入对应合法值；规则确认只加入／更新本地草稿，不把 `minutes` 发到规则协议，不改变最终保存和未知结果保护。
+
 Flutter 回归优先稳定 Key／语义或类型谓词；`.icon` 按钮工厂可能返回子类，不能用精确运行类型查找代替。 `find.byTooltip` 命中提示包装器，读取按钮属性时须用类型和 tooltip 谓词定位实际按钮。涉及 [OwnedDialogRoute](../apps/guardian/lib/ui/owned_dialog_route.dart) 的旅程应等待路由完成及可观察加载状态；固定少量 pump 不代表异步完成，含进行中进度动画时也不能无限依赖 `pumpAndSettle`。用有界等待保留原业务断言，不靠改产品期限或放宽取证消除测试误报。
 
 Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scripts/verification/README.md)。已证明的同 Job 成员保留只读句柄并持续核验创建身份，禁止在失败后按 PID 重开来补证；固定容量及原期限、分类器、终态标准保持。浏览器驱动须固定源码摘要，历史 NOT_ACCEPTED 不由新工具追认，清理缓存不能删除唯一工具源。

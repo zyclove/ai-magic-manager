@@ -10,6 +10,7 @@ import '../core/bounded_json.dart';
 import '../core/labels.dart';
 import '../core/policy_draft_change.dart';
 import '../core/policy_domain_check.dart';
+import '../core/policy_rule_duration.dart';
 import '../core/policy_rule_directories.dart';
 import '../core/rule_parameter_labels.dart';
 import '../core/schedule_copy.dart';
@@ -1002,6 +1003,32 @@ const ruleEffects = {
   'USAGE_REMINDER': ['REMIND'],
 };
 
+String _policyRulePurpose(String type) => switch (type) {
+      'APP_LAUNCH' => '允许或限制指定应用的启动',
+      'APP_INSTALL' => '设置指定应用的安装规则',
+      'APP_UNINSTALL' => '允许卸载或保护指定应用',
+      'RUNTIME_PERMISSION' => '设置 Android 权限提示或拒绝规则',
+      'SPECIAL_ACCESS' => '设置特殊访问要求，仍需设备端授权',
+      'DAILY_QUOTA' => '设置每天可使用的时长上限',
+      'TIME_WINDOW' => '选择允许使用的日期与时段',
+      'DOMAIN_ACCESS' => '允许或限制一个明确的网站域名',
+      'USAGE_REMINDER' => '设置使用达到指定时长时的提醒',
+      _ => '',
+    };
+
+IconData _policyRuleIcon(String type) => switch (type) {
+      'APP_LAUNCH' => Icons.apps,
+      'APP_INSTALL' => Icons.download_outlined,
+      'APP_UNINSTALL' => Icons.shield_outlined,
+      'RUNTIME_PERMISSION' => Icons.privacy_tip_outlined,
+      'SPECIAL_ACCESS' => Icons.admin_panel_settings_outlined,
+      'DAILY_QUOTA' => Icons.timelapse,
+      'TIME_WINDOW' => Icons.date_range_outlined,
+      'DOMAIN_ACCESS' => Icons.language,
+      'USAGE_REMINDER' => Icons.notifications_outlined,
+      _ => Icons.rule,
+    };
+
 /// True requests a fresh list after a saved or explicitly closed unknown write.
 /// It never means that an unknown write has been confirmed successful.
 Future<bool> policyEditor(BuildContext context, Session session,
@@ -1418,6 +1445,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
 
   Future<void> editRule([int? index]) async {
     if (!interactive || locked) return;
+    if (index == null && rules.length >= 100) return;
     setState(() => ruleOpen = true);
     try {
       await editRuleContents(index);
@@ -1441,8 +1469,19 @@ class _PolicyEditorState extends State<PolicyEditor> {
                       }
                     },
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 14),
-                    child: Text(label(t))))
+                        horizontal: 24, vertical: 12),
+                    child: Row(children: [
+                      ExcludeSemantics(child: Icon(_policyRuleIcon(t), color: navy)),
+                      const SizedBox(width: 14),
+                      Expanded(child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(label(t)),
+                            const SizedBox(height: 4),
+                            Text(_policyRulePurpose(t),
+                                style: Theme.of(ctx).textTheme.bodySmall),
+                          ])),
+                    ])))
                 .toList()),
         barrierDismissible: true);
     if (!mounted) return;
@@ -1519,17 +1558,22 @@ class _PolicyEditorState extends State<PolicyEditor> {
       return;
     }
     final editableEffects = runtimeEffects ?? ruleEffects[type]!;
+    final usesDuration = type == 'DAILY_QUOTA' || type == 'USAGE_REMINDER';
     final fields = [
-      FieldSpec('effect', '规则行为', options: options(editableEffects)),
+      if (editableEffects.length > 1)
+        FieldSpec('effect', '规则行为', options: options(editableEffects)),
       if (hasApp)
         FieldSpec('applicationId', '目标应用',
             required: requiresApp,
             options: {if (!requiresApp) '': '所有适用应用', ...apps}),
       if (type == 'TIME_WINDOW')
         FieldSpec('scheduleId', '时间计划', options: plans),
-      if (type == 'DAILY_QUOTA' || type == 'USAGE_REMINDER')
-        const FieldSpec('seconds', '时长（秒，1–86400）',
-            numeric: true, maxLength: 5),
+      if (usesDuration) ...[
+        const FieldSpec('minutes', '分钟', numeric: true, maxLength: 4,
+            minValue: 0, maxValue: 1440, hint: '例如：30'),
+        const FieldSpec('seconds', '秒', numeric: true, required: false,
+            maxLength: 2, minValue: 0, maxValue: 59, hint: '可留空，按 0 秒计算'),
+      ],
       if (type == 'DOMAIN_ACCESS')
         const FieldSpec('domain', '域名',
             hint: 'example.com（不含协议或路径）', maxLength: 253),
@@ -1543,6 +1587,12 @@ class _PolicyEditorState extends State<PolicyEditor> {
     final initial = index == null
         ? <String, dynamic>{'effect': editableEffects.first, 'required': 'true'}
         : {...rules[index], 'required': rules[index]['required'].toString()};
+    if (hasApp && !requiresApp) initial['applicationId'] ??= '';
+    if (usesDuration) {
+      initial.addAll(original == null
+          ? <String, dynamic>{'minutes': '', 'seconds': 0}
+          : policyRuleDurationInitial(original['seconds']));
+    }
     final guidance = type == 'RUNTIME_PERMISSION'
         ? '可选择系统默认提示或拒绝。自动授予尚未开放；此处仅保存规则草稿，设备预览会说明支持情况，最终仍需提供方和设备回执。'
         : type == 'SPECIAL_ACCESS'
@@ -1551,6 +1601,9 @@ class _PolicyEditorState extends State<PolicyEditor> {
                 ? '支持中文和大小写域名。确认后会显示规范格式，保存草稿前可再次核对；只匹配这个域名，不包含子域。此步骤不保存或执行设备策略。'
                 : null;
     final notices = [
+      if (editableEffects.length == 1)
+        '规则行为：${label(editableEffects.single)}（此类型固定）。',
+      if (usesDuration) '时长精确到秒，合计为 1 秒至 24 小时；不足 1 分钟时，分钟填 0。',
       if (guidance != null) guidance,
       if (missingApp || missingPlan)
         '原应用或计划未在当前目录中找到，已保留原引用。请核对后选择可用项，不会自动替换成其他对象。'
@@ -1560,32 +1613,27 @@ class _PolicyEditorState extends State<PolicyEditor> {
         fields: fields,
         description: notices.isEmpty ? null : notices.join('\n\n'),
         initial: initial,
-        submit: type == 'DOMAIN_ACCESS'
-            ? index == null
-                ? '加入草稿'
-                : '更新规则'
-            : '保存',
+        submit: index == null ? '加入草稿' : '更新规则',
         canCommit: false,
         onSubmit: (data) async {
           if (!current || resultUnknown) {
             throw const ApiFailure(409, 'WORKSPACE_CHANGED');
           }
-          if (data['seconds'] != null &&
-              (data['seconds'] < 1 || data['seconds'] > 86400)) {
-            throw const ApiFailure(400, 'INVALID_DURATION');
-          }
+          final seconds = usesDuration ? policyRuleDurationSeconds(data) : null;
           final r = <String, dynamic>{
             'id': index == null
                 ? 'rule_${requestId().substring(0, 12)}'
                 : rules[index]['id'],
             'kind': selectedType,
-            'effect': data['effect'],
+            'effect': editableEffects.length == 1
+                ? editableEffects.single
+                : data['effect'],
             'required': data['required'] == 'true'
           };
+          if (seconds != null) r['seconds'] = seconds;
           for (final field in [
             'applicationId',
             'scheduleId',
-            'seconds',
             'permission',
             'domain'
           ]) {
@@ -2051,7 +2099,9 @@ String ruleSummary(Json rule, List<Json> apps, List<Json> schedules) {
             .firstOrNull?['name'] ??
         shortId(rule['scheduleId']));
   }
-  if (rule['seconds'] != null) parts.add('${rule['seconds']} 秒');
+  if (rule['seconds'] != null) {
+    parts.add(policyRuleDurationLabel(rule['seconds']));
+  }
   if (rule['domain'] != null) parts.add(rule['domain']);
   if (rule['permission'] != null) parts.add(rule['permission']);
   parts.add(rule['required'] == true ? '必须支持' : '可选');

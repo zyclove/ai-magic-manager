@@ -95,6 +95,8 @@
 
 `seconds` 为 1～86400 的整数。`applicationId` / `scheduleId` 如提供，必须为规范小写 UUID；引用使用完整 ID 匹配，不接受大小写别名。applicationId 缺省的额度/窗口指总范围，仍必须保留恢复应用豁免。runtime permission 接受登记的 Android 危险权限名称；版本、目标 SDK、厂商与受管能力仍由后续原生适配器核验。SYSTEM_ALERT_WINDOW 等不能冒充 runtime permission。special access 的名称为 USAGE_ACCESS/OVERLAY/NOTIFICATION_ACCESS/ACCESSIBILITY/VPN；声明 GRANT 不会自动完成系统用户操作。
 
+Guardian 规则选择保留原类型并补充用途说明。TIME_WINDOW／DAILY_QUOTA／USAGE_REMINDER 的单一行为直接说明，不显示无其他选项的下拉框。额度与提醒使用分钟（0～1440）＋秒（0～59，可留空按0）输入，合计须为1～86400秒；打开已有规则时精确拆分，确认时还原原整数秒，不舍入、不截断、不自动换上限。规则列表及详情用小时／分钟／秒摘要；协议仍只传 `seconds`，不传表单 `minutes`。所有规则的“加入草稿／更新规则”都仅作本地准备，不提前保存或宣称设备执行；最终仍保存整个策略草稿。
+
 domain 只接受小写标准 ASCII/punycode DNS 名，不接受 URL、IP、尾部点或通配符。Unicode 名称需先 IDN 转换。域名规则不读取 HTTPS 页面内容，不提供所有媒体应用内部内容审查。
 
 管理台添加／编辑域名规则时可直接输入中文或大小写域名。确认规则前调用只读规范化入口，再把规范 ASCII 名称加入本地规则列表；管理员可在最终“保存草稿”前核对。新建策略尚无草稿编号也可使用，不因此预先创建空草稿或写入恢复记录。校验超时／失败保留可修改输入；真正保存草稿仍沿用原内容、防重复提交与未知结果恢复。规范化请求绑定原会话、工作空间和规则子窗口，子窗口结束后的迟到身份或响应不能再加入规则。

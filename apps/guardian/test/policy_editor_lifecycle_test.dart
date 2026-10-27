@@ -343,6 +343,85 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('quota minutes and seconds stay local and reminder editing preserves its exact duration',
+      (tester) async {
+    final f = _Fixture();
+    const reminder = <String, dynamic>{
+      'id': 'reminder_rule', 'kind': 'USAGE_REMINDER', 'effect': 'REMIND',
+      'required': true, 'seconds': 3661,
+      'applicationId': null, 'scheduleId': null, 'permission': null, 'domain': null,
+    };
+    await _mount(tester, f, initialDraft: f.draft(rules: [reminder]));
+    Finder confirm(String label) => find.ancestor(of: find.text(label),
+        matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
+    bool draftReady() {
+      final add = _textButton('添加规则');
+      return find.byType(EditDialog).evaluate().isEmpty && add.evaluate().length == 1 &&
+          tester.widget<ButtonStyleButton>(add).onPressed != null;
+    }
+    final minutes = find.widgetWithText(TextFormField, '分钟');
+    final seconds = find.widgetWithText(TextFormField, '秒');
+    final effectChoice = find.descendant(
+        of: find.byWidgetPredicate((widget) => widget is DropdownButtonFormField<String>),
+        matching: find.byWidgetPredicate((widget) => widget is InputDecorator &&
+            widget.decoration.labelText == '规则行为'));
+    await tester.ensureVisible(find.byTooltip('编辑规则'));
+    await tester.tap(find.byTooltip('编辑规则'));
+    await _untilUi(tester, () => find.byType(EditDialog).evaluate().length == 1);
+    expect(tester.widget<TextFormField>(minutes).controller!.text, '61');
+    expect(tester.widget<TextFormField>(seconds).controller!.text, '1');
+    expect(effectChoice, findsNothing);
+    expect(f.writes, isEmpty);
+    await tester.ensureVisible(confirm('更新规则'));
+    await tester.tap(confirm('更新规则'));
+    await _untilUi(tester, draftReady);
+    expect(f.writes, isEmpty, reason: 'Updating a rule changes only the local draft.');
+
+    await _chooseRule(tester, '每日额度');
+    await _untilUi(tester, () => find.byType(EditDialog).evaluate().length == 1);
+    expect(tester.widget<TextFormField>(minutes).controller!.text, isEmpty);
+    expect(tester.widget<TextFormField>(seconds).controller!.text, '0');
+    expect(effectChoice, findsNothing);
+    await tester.ensureVisible(confirm('加入草稿'));
+    await tester.tap(confirm('加入草稿'));
+    await _flush(tester);
+    expect(tester.state<FormFieldState<String>>(minutes).errorText, isNotEmpty);
+    expect(f.writes, isEmpty);
+    await tester.enterText(minutes, '0');
+    await tester.enterText(seconds, '0');
+    await tester.ensureVisible(confirm('加入草稿'));
+    await tester.tap(confirm('加入草稿'));
+    await _flush(tester);
+    expect(find.byType(EditDialog), findsOneWidget);
+    expect(find.textContaining('合计需为 1 秒至 24 小时'), findsOneWidget);
+    expect(tester.widget<TextFormField>(minutes).enabled, isTrue);
+    expect(tester.widget<TextFormField>(seconds).enabled, isTrue);
+    expect(f.writes, isEmpty, reason: 'A zero total must not lock or submit the local rule.');
+
+    await tester.enterText(minutes, '2');
+    await tester.enterText(seconds, '17');
+    await tester.ensureVisible(confirm('加入草稿'));
+    await tester.tap(confirm('加入草稿'));
+    await _untilUi(tester, draftReady);
+    expect(f.writes, isEmpty);
+    _save(tester)();
+    await _untilUi(tester, () => f.changes.length == 1 &&
+        find.byType(PolicyEditor).evaluate().isEmpty);
+    final body = jsonDecode(f.changes.single.body) as Json;
+    final rules = (body['rules'] as List).cast<Json>();
+    final savedReminder = rules.singleWhere((rule) => rule['kind'] == 'USAGE_REMINDER');
+    final savedQuota = rules.singleWhere((rule) => rule['kind'] == 'DAILY_QUOTA');
+    expect(savedReminder['id'], 'reminder_rule');
+    expect(savedReminder['seconds'], 3661);
+    expect(savedReminder['effect'], 'REMIND');
+    expect(savedQuota['seconds'], 137);
+    expect(savedQuota['effect'], 'LIMIT');
+    expect(rules.every((rule) => !rule.containsKey('minutes')), isTrue);
+    expect(f.writes, hasLength(1));
+    expect(f.queries, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
       'application directory failure keeps the draft and reloads only its options',
       (tester) async {
