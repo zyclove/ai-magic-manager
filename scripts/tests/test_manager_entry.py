@@ -74,11 +74,28 @@ class ManagerEntryTest(unittest.TestCase):
         self.assertEqual(runtime["inventory"]["toolset"], "Runtime")
         self.assertEqual(runtime["inventory"]["missingTools"], [])
         self.assertEqual([item["name"] for item in runtime["lookups"]], ["docker"])
+        self.assertIn("status -Active -Plan", runtime["inventory"]["next"])
+        self.assertNotIn("Resolve missing commands", runtime["inventory"]["next"])
+        runtime_missing = self.doctor_with_command_inventory({"Toolset": "Runtime"}, [])
+        self.assertEqual(runtime_missing["inventory"]["missingTools"], ["docker"])
+        self.assertEqual([item["name"] for item in runtime_missing["lookups"]], ["docker"])
+        runtime_next = runtime_missing["inventory"]["next"]
+        self.assertIn("Resolve missing commands", runtime_next)
+        self.assertIn("docker", runtime_next)
+        self.assertIn("doctor", runtime_next)
+        self.assertNotIn("init -Plan", runtime_next)
+        self.assertNotIn("-MavenCommand", runtime_next)
         build = self.doctor_with_command_inventory({}, ["docker"])
         self.assertEqual(build["inventory"]["toolset"], "Build")
         self.assertEqual(build["inventory"]["missingTools"], ["git", "java", "mvn", "flutter"])
         self.assertEqual([item["name"] for item in build["lookups"]],
                          ["docker", "git", "java", "mvn", "flutter"])
+        build_next = build["inventory"]["next"]
+        self.assertIn("Resolve missing commands", build_next)
+        for name in ["git", "java", "mvn", "flutter", "-MavenCommand", "-FlutterCommand", "doctor"]:
+            self.assertIn(name, build_next)
+        self.assertNotIn("-DartCommand", build_next)
+        self.assertNotIn("init -Plan", build_next)
         self.assertIn("not verified", runtime["inventory"]["scope"])
 
     def test_doctor_checks_explicit_build_tools_as_file_commands_without_invocation(self):
@@ -98,6 +115,19 @@ class ManagerEntryTest(unittest.TestCase):
         })
         self.assertEqual([item["name"] for item in result["lookups"]
                           if item["externalScriptAllowed"]], [maven, "configured-flutter", dart])
+        self.assertIn("init -Plan", inventory["next"])
+        missing = self.doctor_with_command_inventory({
+            "Toolset": "Build", "MavenCommand": str(absent / "mvn.ps1"),
+            "FlutterCommand": "configured-flutter", "DartCommand": str(absent / "dart.ps1"),
+        }, ["docker", "git", "java"])
+        self.assertEqual(missing["inventory"]["missingTools"], ["mvn", "flutter", "dart"])
+        next_step = missing["inventory"]["next"]
+        self.assertIn("Resolve missing commands", next_step)
+        for name in ["mvn", "flutter", "dart", "-MavenCommand", "-FlutterCommand", "-DartCommand", "doctor"]:
+            self.assertIn(name, next_step)
+        for private_command in [maven, dart, str(absent), "configured-flutter"]:
+            self.assertNotIn(private_command, next_step)
+        self.assertNotIn("init -Plan", next_step)
 
     def test_each_action_has_the_expected_entry_and_forwarded_parameters(self):
         source = str(ROOT / "input source")
@@ -173,10 +203,10 @@ class ManagerEntryTest(unittest.TestCase):
             ([], "http://localhost:18090", 18090),
             (["-EdgePort", "18120"], "http://localhost:18120", 18120),
             (["-PublicUrl", "http://127.0.0.1:18121"], "http://127.0.0.1:18121", 18121),
+            (["-PublicUrl", "https://localhost:18443"], "https://localhost:18443", 18443),
             (["-PublicUrl", "https://manager.example.com:8443"], "https://manager.example.com:8443", 8443),
             (["-PublicUrl", "https://manager.example.com"], "https://manager.example.com", 443),
             (["-PublicUrl", "http://localhost:18123", "-EdgePort", "18123"], "http://localhost:18123", 18123),
-            (["-PublicUrl", "http://localhost:18123", "-EdgePort", "18124"], "http://localhost:18123", 18124),
             (["-PublicUrl", "https://manager.example.com:8443", "-ExternalTlsProxy:$false"], "https://manager.example.com:8443", 8443),
             (["-PublicUrl", "https://manager.example.com", "-ExternalTlsProxy"], "https://manager.example.com", 18090),
             (["-PublicUrl", "https://manager.example.com", "-ExternalTlsProxy", "-EdgePort", "18124"], "https://manager.example.com", 18124),
@@ -209,19 +239,39 @@ class ManagerEntryTest(unittest.TestCase):
         rows = [
             (["build", "-Tls"], "does not apply"),
             (["build", "-Toolset", "Runtime"], "does not apply"),
-            (["doctor", "-Toolset", "Runtime", "-MavenCommand", "configured-mvn"], "requires doctor -Toolset Build"),
+            (["build", "-PublicUrl", "https://operator:synthetic-private@manager.example.com"], "does not apply"),
+            (["doctor", "-Toolset", "Runtime", "-MavenCommand", "synthetic-private-mvn"], "requires doctor -Toolset Build"),
             (["resume", "-Offline"], "does not apply"),
             (["init-ledger", "-Offline"], "does not apply"),
             (["status", "-Directory", "../outside-manager"], "Deployment directory"),
+            (["init", "-PublicUrl", "http://localhost:18123", "-EdgePort", "18124"], "loopback origin"),
+            (["init", "-PublicUrl", "https://manager.example.com:8443", "-EdgePort", "18124"], "port must match EdgePort"),
+            (["init", "-PublicUrl", "http://manager.example.com:18090"], "HTTP is limited"),
+            (["init", "-PublicUrl", "http://localhost:18090", "-ExternalTlsProxy"], "requires a standard HTTPS public origin"),
+            (["init", "-PublicUrl", "https://manager.example.com:8443", "-ExternalTlsProxy"], "requires a standard HTTPS public origin"),
             (["init", "-PublicUrl", "https://operator:synthetic-private@manager.example.com"], "without credentials"),
+            (["init", "-PublicUrl", "https://operator:synthetic-private@manager.example.com:invalid"], "without credentials"),
             (["init", "-PublicUrl", "https://manager.example.com/private?token=synthetic-private"], "without credentials"),
+            (["init", "-PublicUrl", "https://manager.example.com/#synthetic-private"], "without credentials"),
+            (["init", "-PublicUrl", "https://bad_host.synthetic-private"], "without credentials"),
         ]
         for arguments, message in rows:
             with self.subTest(arguments=arguments):
                 result = self.invoke(*arguments, "-Plan")
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn(message, result.stdout + result.stderr)
-                self.assertNotIn("synthetic-private", result.stdout + result.stderr)
+                output = result.stdout + result.stderr
+                self.assertIn(message, output)
+                self.assertNotIn("synthetic-private", output)
+                if message == "does not apply":
+                    self.assertIn("Allowed parameters for '" + arguments[0] + "'", output)
+                    self.assertIn("-Help", output)
+                    expected_options = {
+                        "build": ["-SourceDirectory", "-MavenCommand", "-Offline"],
+                        "resume": ["-Directory", "-Tls"],
+                        "init-ledger": ["-Directory"],
+                    }
+                    for option in expected_options[arguments[0]]:
+                        self.assertIn(option, output)
 
     def test_dry_run_never_creates_a_workspace_or_requires_native_tools(self):
         relative = ".local/manager-plan-" + uuid.uuid4().hex

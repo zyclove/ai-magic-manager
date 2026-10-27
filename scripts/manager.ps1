@@ -8,6 +8,8 @@
 
 doctor 只盘点所选 Toolset 的命令是否可找到：默认 Build，已有环境可选 Runtime。
 它不执行 SDK，也不证明版本、Compose 插件、服务健康或部署已经可用。
+缺少命令时，先按 missingTools 与 next 补齐对应命令或指定已有工具，再重跑同档位检查。
+init -Plan 与实际初始化共用地址、端口和 TLS 校验；预览不会读取部署凭据或检查服务。
 build -Offline 要求已有完整依赖缓存，缓存缺失时失败；需要联网解析时由维护者明确移除该参数。
 
 首次部署依次完成 init、build、init-ledger、start。init-ledger 仅用于全新账本的一次性初始化，
@@ -91,7 +93,10 @@ $allowed = @{
 $forward = @{}
 foreach ($name in $PSBoundParameters.Keys) {
     if ($name -in @('Action', 'Plan', 'Help', 'Verbose', 'Debug', 'ErrorAction', 'WarningAction', 'InformationAction', 'ProgressAction', 'ErrorVariable', 'WarningVariable', 'InformationVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable')) { continue }
-    if ($name -notin $allowed[$Action]) { throw "Parameter -$name does not apply to action '$Action'." }
+    if ($name -notin $allowed[$Action]) {
+        $actionParameters = @($allowed[$Action] | Sort-Object | ForEach-Object { "-$_" }) -join ', '
+        throw "Parameter -$name does not apply to action '$Action'. Allowed parameters for '$Action': $actionParameters. Use -Plan to preview or -Help for examples."
+    }
     $value = $PSBoundParameters[$name]
     if ($value -is [string] -and [string]::IsNullOrWhiteSpace($value)) { throw "Parameter -$name must not be empty." }
     $forward[$name] = $value
@@ -132,28 +137,28 @@ if ($Action -ne 'doctor' -and -not $Active) {
     if (-not $root.StartsWith($local, $comparison)) { throw 'Deployment directory must be inside this repository .local directory.' }
     $forward.Directory = $root
 }
-if ($PSBoundParameters.ContainsKey('PublicUrl')) {
-    $origin = $null
-    if (-not [Uri]::TryCreate($PublicUrl, [UriKind]::Absolute, [ref]$origin) -or
-        $origin.Scheme -notin @('http', 'https') -or $origin.UserInfo -or $origin.Query -or
-        $origin.Fragment -or $origin.AbsolutePath -ne '/') {
-        throw 'PublicUrl must be an HTTP(S) origin without credentials, path, query, or fragment.'
-    }
-}
 if ($Action -eq 'init') {
     # Resolve defaults once for both the plan and the actual initializer.
-    # Explicit settings are never rewritten; the initializer validates the pair.
+    # Explicit settings are never rewritten; both entry points validate the pair.
     if (-not $forward.ContainsKey('PublicUrl')) {
         $localPort = if ($forward.ContainsKey('EdgePort')) { $forward.EdgePort } else { 18090 }
         $forward.PublicUrl = "http://localhost:$localPort"
     }
     if (-not $forward.ContainsKey('EdgePort')) {
-        $forward.EdgePort = if ($ExternalTlsProxy) { 18090 } else { ([Uri]$forward.PublicUrl).Port }
+        # Read the default port without a cast error echoing a malformed URL.
+        $publicOrigin = $null
+        if (-not [Uri]::TryCreate($forward.PublicUrl, [UriKind]::Absolute, [ref]$publicOrigin) -or
+            $publicOrigin.Scheme -notin @('http', 'https')) {
+            throw 'PublicUrl must be an HTTP(S) origin without credentials, path, query, or fragment.'
+        }
+        $forward.EdgePort = if ($ExternalTlsProxy) { 18090 } else { $publicOrigin.Port }
     }
     if ($forward.EdgePort -lt 1 -or $forward.EdgePort -gt 65535) {
         throw 'Public entry port must be between 1 and 65535.'
     }
     if (-not $forward.ContainsKey('ProjectName')) { $forward.ProjectName = 'ai-manager-repro' }
+    . (Join-Path $PSScriptRoot 'deployment-common.ps1')
+    $null = Get-DeploymentOrigin -PublicUrl $forward.PublicUrl -EdgePort $forward.EdgePort -ExternalTlsProxy:$ExternalTlsProxy
 }
 $entries = @{
     init = 'initialize-deployment.ps1'
@@ -215,13 +220,30 @@ if ($Action -eq 'doctor') {
             purpose = $tool.purpose
         }
     }
+    $missingTools = @($availability | Where-Object { -not $_.available } | ForEach-Object { $_.tool })
+    if ($missingTools.Count -gt 0) {
+        $next = 'Resolve missing commands: ' + ($missingTools -join ', ') + '. Make them available on PATH.'
+        $commandOverrides = @{
+            mvn = '-MavenCommand'
+            flutter = '-FlutterCommand'
+            dart = '-DartCommand'
+        }
+        $overrides = @($missingTools | Where-Object { $commandOverrides.ContainsKey($_) } |
+            ForEach-Object { $commandOverrides[$_] })
+        if ($overrides.Count -gt 0) {
+            $next += ' Existing build tools can instead be selected with ' + ($overrides -join ', ') + '.'
+        }
+        $next += " Run doctor -Toolset $($forward.Toolset) again; see docs/deployment-quickstart.md."
+    } else {
+        $next = if ($forward.Toolset -eq 'Runtime') { 'Use status -Active -Plan to inspect the selected existing environment; see docs/deployment-quickstart.md.' } else { 'Use init -Plan to inspect initialization; see docs/deployment-quickstart.md.' }
+    }
     [ordered]@{
         powershell = $PSVersionTable.PSVersion.ToString()
         toolset = $forward.Toolset
         tools = @($availability)
-        missingTools = @($availability | Where-Object { -not $_.available } | ForEach-Object { $_.tool })
+        missingTools = $missingTools
         scope = 'Command availability only; versions, Compose support, daemon health, and platform compatibility are not verified.'
-        next = if ($forward.Toolset -eq 'Runtime') { 'Use status -Active -Plan to inspect the selected existing environment; see docs/deployment-quickstart.md.' } else { 'Use init -Plan to inspect initialization; see docs/deployment-quickstart.md.' }
+        next = $next
     } | ConvertTo-Json -Depth 5
     return
 }

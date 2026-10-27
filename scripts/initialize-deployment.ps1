@@ -17,6 +17,7 @@ param(
     [switch]$ConsumerIdentity
 )
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'deployment-common.ps1')
 $repository = [IO.Path]::GetFullPath((Split-Path $PSScriptRoot -Parent))
 $localRoot = [IO.Path]::GetFullPath((Join-Path $repository '.local'))
 $destination = [IO.Path]::GetFullPath($Directory, $repository)
@@ -24,22 +25,7 @@ $comparison = if ($IsWindows) { [StringComparison]::OrdinalIgnoreCase } else { [
 if (-not $destination.StartsWith($localRoot + [IO.Path]::DirectorySeparatorChar, $comparison)) {
     throw 'Deployment directory must be inside this repository .local directory.'
 }
-$uri = $null
-if (-not [Uri]::TryCreate($PublicUrl, [UriKind]::Absolute, [ref]$uri) -or
-    $uri.Scheme -notin @('http', 'https') -or $uri.UserInfo -or $uri.Query -or $uri.Fragment -or
-    $uri.AbsolutePath -ne '/' -or $uri.Host -notmatch '^[A-Za-z0-9.:-]+$') {
-    throw 'PublicUrl must be an HTTP(S) origin without user information, path, query or fragment.'
-}
-if ($uri.Scheme -eq 'http' -and ($uri.Host -notin @('localhost', '127.0.0.1', '[::1]') -or $uri.Port -ne $EdgePort)) {
-    throw 'HTTP is limited to a loopback origin whose port matches EdgePort.'
-}
-if ($ExternalTlsProxy) {
-    if ($uri.Scheme -ne 'https' -or $uri.Port -ne 443) {
-        throw 'ExternalTlsProxy requires a standard HTTPS public origin.'
-    }
-} elseif ($uri.Port -ne $EdgePort) {
-    throw 'PublicUrl port must match EdgePort (including HTTPS).'
-}
+$uri = Get-DeploymentOrigin -PublicUrl $PublicUrl -EdgePort $EdgePort -ExternalTlsProxy:$ExternalTlsProxy
 if (Test-Path -LiteralPath $destination) { throw 'Deployment directory already exists; preserve it and use a new directory.' }
 $origin = $uri.GetLeftPart([UriPartial]::Authority)
 $utf8 = [Text.UTF8Encoding]::new($false)

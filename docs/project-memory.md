@@ -101,7 +101,7 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 统一部署入口的显式目录及带目录分隔符的工具路径统一按该仓库根目录解析；裸工具名称保留 PATH 查找，预览与执行共用最终参数，不为预览读取身份配置或启动工具。参数契约见[简明部署入口](deployment-quickstart.md)。
 
-统一部署入口的初始化默认值由同一处解析，预览与执行共用：本机换端口只填 `-EdgePort`，指定公开 URL 时自动采用其端口；外部 TLS 代理保留独立内部端口。显式填写的 URL/端口仍交给初始化器校验，见[简明部署入口](deployment-quickstart.md)。
+统一部署入口的初始化默认值由同一处解析，预览与执行共用：本机换端口只填 `-EdgePort`，指定公开 URL 时自动采用其端口；外部 TLS 代理保留独立内部端口。[Get-DeploymentOrigin](../scripts/deployment-common.ps1) 是初始化器和预览共用的纯地址/端口/TLS校验，冲突在预览即拒绝；端口推导使用 TryCreate，不能让格式转换异常回显含私密内容的 URL。doctor 缺项时先给补齐逻辑命令和对应覆盖参数的建议，不直接引导初始化；仍只盘点、不执行工具或证明部署可用，见[简明部署入口](deployment-quickstart.md)。
 
 ## 已确认的用户约定
 
