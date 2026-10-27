@@ -81,7 +81,7 @@ class _FixtureActions extends ConsoleActions {
   _FixtureActions(super.context, super.s, this.record);
 
   @override
-  Future<bool> subject([Json? existing]) async {
+  Future<bool> subject({Listenable? accessChanges, bool Function()? hasAccess}) async {
     record.starts++;
     final failure = record.failure;
     if (failure != null) throw failure;

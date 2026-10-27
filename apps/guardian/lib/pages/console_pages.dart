@@ -47,6 +47,7 @@ import '../ui/owned_dialog_route.dart';
 import '../ui/access_request_dialog.dart';
 import '../ui/policy_target_picker.dart';
 import 'members_page.dart';
+import 'subjects_page.dart';
 import 'classes_page.dart';
 import 'device_groups_page.dart';
 import 'managed_android_page.dart';
@@ -309,24 +310,14 @@ class ConsolePages extends StatelessWidget {
             key: ValueKey((s, s.profile?['subject'], s.tenant?['id'], s.role,
                 s.scopeGeneration)), session: s);
       case 'subjects':
-        return resource(
-            title: '儿童档案',
-            subtitle: '按年龄段建立档案，为每位孩子配置合适的规则。',
-            path: 'subjects',
-            columns: [
-              ColumnSpec(
-                  '儿童', (r) => _name(r['nickname'], Icons.person_outline)),
-              ColumnSpec('年龄段', (r) => Text(label(r['ageBand']))),
-              ColumnSpec(
-                  '档案编号',
-                  (r) => Text(shortId(r['id']),
-                      style: const TextStyle(color: muted)))
-            ],
-            createChanged: s.canWrite ? () => actions.subject() : null,
-            createLabel: '添加儿童',
-            openChanged: actions.subjectDetails,
-            empty: '还没有儿童档案',
-            description: '只记录昵称和年龄段，不需要完整生日。');
+        return SubjectsPage(
+            key: ValueKey((s, resourceActor, resourceRoot, resourceRole,
+                resourceGeneration)),
+            session: s,
+            onCreate: (changes, current) => actions.subject(
+                accessChanges: changes, hasAccess: current),
+            onOpen: (row, changes, current) => actions.subjectDetails(row,
+                accessChanges: changes, hasAccess: current));
       case 'devices':
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           enrollmentRecoveryNotice(s, actions),
@@ -635,9 +626,10 @@ class ConsoleActions {
     }
   }
 
-  Future<bool> subject([Json? existing]) async {
+  Future<bool> subject({Listenable? accessChanges, bool Function()? hasAccess}) async {
     var attempted = false;
-    final result = await _subjectForm(existing,
+    final result = await _subjectForm(null,
+        accessChanges: accessChanges, hasAccess: hasAccess,
         onSubmitAttempt: () => attempted = true);
     return attempted || result != null;
   }
@@ -725,11 +717,23 @@ class ConsoleActions {
                       ])
                   : AlertDialog(
                       title: const Text('归档儿童档案'),
-                      content: const SizedBox(
+                      scrollable: true,
+                      content: SizedBox(
                           width: 460,
-                          child: Text(
-                              '归档后将不再显示在活动档案中，相关临时访问窗口会失效。此操作不会自动解除设备管理。',
-                              style: TextStyle(height: 1.8))),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('${subject['nickname']}',
+                                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                                const SizedBox(height: 8),
+                                SelectableText('档案编号：${subject['id']}'),
+                                Text('年龄段：${label(subject['ageBand'])}'),
+                                const SizedBox(height: 16),
+                                const Text(
+                                    '归档后将不再显示在活动档案中，相关临时访问窗口会失效。可在“包含已归档”中查看。此操作不会自动解除设备管理。',
+                                    style: TextStyle(height: 1.8))
+                              ])),
                       actions: [
                         TextButton(onPressed: () => close(false), child: const Text('取消')),
                         FilledButton(onPressed: () => close(true), child: const Text('确认归档'))
@@ -745,8 +749,9 @@ class ConsoleActions {
     }
   }
 
-  Future<bool> subjectDetails(Json row) async {
-    if (!context.mounted) return false;
+  Future<bool> subjectDetails(Json row,
+      {Listenable? accessChanges, bool Function()? hasAccess}) async {
+    if (!context.mounted || hasAccess?.call() == false) return false;
     final parent = ModalRoute.of(context);
     bool onTop() => context.mounted && parent?.isCurrent == true &&
         parent?.isActive == true &&
@@ -755,18 +760,28 @@ class ConsoleActions {
     var needsReview = false;
     final scope = DeviceSubflowScope(s,
         permitted: () => context.mounted && s.tenant != null &&
-            s.root == root && s.canOpen('subjects'));
+            s.root == root && s.canOpen('subjects') && hasAccess?.call() != false);
     final access = DialogAccessBinding(context,
-        accessChanges: scope, hasAccess: () => scope.current);
+        accessChanges: Listenable.merge([scope, if (accessChanges != null) accessChanges]),
+        hasAccess: () => scope.current);
     try {
       if (!access.permitted()) return false;
       final api = scope.api.scoped(access.permitted);
-      final r = await api.send('GET', '$root/subjects/${row['id']}') as Json;
+      final managed = s.canWrite;
+      final path = '$root/subjects/${row['id']}${managed ? '/management' : ''}';
+      final r = await api.send('GET', path) as Json;
       if (!context.mounted || !onTop() || !access.permitted()) return false;
+      final active = !managed || r['state'] == 'ACTIVE';
+      final archived = managed && r['state'] == 'ARCHIVED';
       await actionDetails(context, r['nickname'], {
         '昵称': r['nickname'],
         '年龄段': label(r['ageBand']),
         '档案编号': r['id'],
+        '状态': active ? '使用中' : archived ? '已归档' : '状态未知',
+        if (archived)
+          '说明': '此档案已退出活动列表，仅供查看。设备管理不会因归档自动解除。',
+        if (!active && !archived)
+          '说明': '暂时无法确认档案状态，请关闭后重新打开核对。',
         '版本': r['version']
       },
           accessChanges: access.changes,
@@ -774,7 +789,7 @@ class ConsoleActions {
           reauth: () {
             if (access.permitted()) reauth();
           },
-          actions: s.canWrite
+          actions: s.canWrite && active
               ? [
                   DetailAction('编辑档案', (owner) async {
                     if (!owner.mounted || !access.permitted() || !s.canWrite) return;

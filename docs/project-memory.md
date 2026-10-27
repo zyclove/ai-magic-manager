@@ -81,7 +81,9 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 [ClassesPage](../apps/guardian/lib/pages/classes_page.dart) 将表单/转班返回值统一解释为需核对，由独立acting/operation锁编排一次当前班级与名册读取；view捕获generation/id/筛选，不能在宿主重建前由旧ResourcePage再读。取消保留列表，操作错误与读取错误分开。创建可使用 [ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 的 onCreateChanged（与create互斥），false不重读，true只核对当前列表，不代表创建成功。[ClassActionDialog](../apps/guardian/lib/ui/class_action_dialog.dart) 保留不可变原提交/停止草稿与未知关闭确认。
 
-[ConsolePages](../apps/guardian/lib/pages/console_pages.dart) 的资源适配器将儿童/应用/时间/策略创建的布尔核对结果传给 onCreateChanged，档案详情传给 onOpenChanged。私有表单仍返回Json回执，档案另以发送前回调记录尝试，未知关闭返回null也不能漏核对；布尔结果不作成功提示。概览操作只在需核对或曾中断读取/无摘要时补读，普通取消恢复原错误并保留数据/时间，不能因关闭窗口将旧失败抹掉。
+[ConsolePages](../apps/guardian/lib/pages/console_pages.dart) 的资源适配器及档案页将儿童/应用/时间/策略创建的布尔核对结果传给 onCreateChanged，档案详情传给 onOpenChanged。私有表单仍返回Json回执，档案另以发送前回调记录尝试，未知关闭返回null也不能漏核对；布尔结果不作成功提示。概览操作只在需核对或曾中断读取/无摘要时补读，普通取消恢复原错误并保留数据/时间，不能因关闭窗口将旧失败抹掉。
+
+[SubjectsPage](../apps/guardian/lib/pages/subjects_page.dart) 独立编排档案筛选与操作锁，复用 ResourcePage；成人管理员读取 subjects/management 并可包含归档，其余角色沿用获授权的活动列表。管理详情重新读取当前 state，只有 ACTIVE 提供变更入口，ARCHIVED 和未知状态只读；归档确认包含完整档案身份与影响。筛选使用递增视图代次，不能因往返相同值复活旧回调，也不把操作锁混入读取权限捕获。每次操作向 ConsoleActions 传独立 lifetime 与当前捕获检查，页面退役帧后通知，操作路由完全结束才释放通知器；ConsolePages 元素被其他模块复用也不能让旧详情晚到弹出。
 
 恢复草稿的中文字段清单统一在[领域化展示模块](../apps/guardian/lib/ui/editor_draft_text.dart)，计划、策略与成员的展示只读取已捕获提交与原目录。名称缺失保留完整对象编号，未知字段也保留；展示层不得读取网络、改写原提交或解除重试保护。
 

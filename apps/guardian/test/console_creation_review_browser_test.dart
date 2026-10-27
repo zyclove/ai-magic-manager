@@ -21,6 +21,8 @@ const _root = '/api/v1/tenants/$tenantId';
 const _first = 'a1111111-1111-4111-8111-111111111111';
 const _second = 'a2222222-2222-4222-8222-222222222222';
 const _created = 'a3333333-3333-4333-8333-333333333333';
+const _archived = 'a4444444-4444-4444-8444-444444444444';
+const _archivedName = '已归档的测试档案';
 const _createLabels = {
   'subjects': '添加儿童', 'applications': '登记应用',
   'schedules': '创建计划', 'policies': '创建策略',
@@ -34,7 +36,7 @@ Json _record(String section, {bool second = false}) {
   final name = _name(section, second: second);
   return switch (section) {
     'subjects' => {'id': id, 'nickname': name, 'ageBand': 'AGE_7_12',
-      'version': 7, 'archived': false},
+      'version': 7, 'state': 'ACTIVE'},
     'applications' => {'id': id, 'displayName': name,
       'packageName': second ? 'fixture.second.app' : 'fixture.first.app',
       'platform': 'ANDROID', 'profile': 'PRIMARY',
@@ -47,6 +49,9 @@ Json _record(String section, {bool second = false}) {
     _ => throw StateError('Unsupported synthetic console section.'),
   };
 }
+
+Json _archivedRecord() => {..._record('subjects'), 'id': _archived,
+  'nickname': _archivedName, 'state': 'ARCHIVED', 'version': 8};
 
 http.Response _reply(Object body, {int status = 200}) => http.Response(
     jsonEncode(body), status,
@@ -68,11 +73,13 @@ class _Fixture {
   final requests = <http.Request>[];
   final unknownCreates = <String>{};
   final created = <String, Json>{};
+  Completer<http.Response>? subjectDetailsResponse;
   bool unknownSubjectEdit = false, unknownArchive = false, closed = false;
   late final session = _ConsoleSession(handle);
 
   List<http.Request> listReads(String section) => requests.where((request) =>
-      request.method == 'GET' && request.url.path == '$_root/$section').toList();
+      request.method == 'GET' && (request.url.path == '$_root/$section' ||
+          section == 'subjects' && request.url.path == '$_root/subjects/management')).toList();
   List<http.Request> get writes =>
       requests.where((request) => request.method != 'GET').toList();
 
@@ -80,18 +87,32 @@ class _Fixture {
     requests.add(request);
     final path = request.url.path;
     if (request.method == 'GET') {
-      if (path == '$_root/subjects/$_first') return _reply(_record('subjects'));
+      final subjectSuffix = session.canWrite ? '/management' : '';
+      if (path == '$_root/subjects/$_first$subjectSuffix') {
+        if (subjectDetailsResponse case final pending?) return pending.future;
+        final subject = _record('subjects');
+        if (!session.canWrite) subject.remove('state');
+        return _reply(subject);
+      }
+      if (session.canWrite && path == '$_root/subjects/$_archived/management') {
+        return _reply(_archivedRecord());
+      }
       if (path == '$_root/schedule-presets') {
         return _reply({'schemaVersion': 1, 'items': <Json>[]});
       }
       for (final section in _createLabels.keys) {
-        if (path == '$_root/$section') {
+        final listPath = section == 'subjects'
+            ? '$_root/subjects$subjectSuffix' : '$_root/$section';
+        if (path == listPath) {
           final next = request.url.queryParameters['cursor'];
           if (next != null) {
             expect(next, 'next');
             return _reply({'items': [_record(section, second: true)], 'nextCursor': null});
           }
-          return _reply({'items': [_record(section), if (created[section] != null) created[section]!],
+          return _reply({'items': [_record(section),
+            if (created[section] != null) created[section]!,
+            if (section == 'subjects' && session.canWrite &&
+                request.url.queryParameters['includeArchived'] == 'true') _archivedRecord()],
             'nextCursor': 'next'});
         }
       }
@@ -113,7 +134,7 @@ class _Fixture {
     }
     if (request.method == 'POST' && path == '$_root/subjects/$_first/archive') {
       if (unknownArchive) return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
-      return _reply({..._record('subjects'), 'archived': true, 'version': 8});
+      return _reply({..._record('subjects'), 'state': 'ARCHIVED', 'version': 8});
     }
     throw StateError('Unexpected synthetic console request: ${request.method} $path');
   }
@@ -128,12 +149,13 @@ class _Fixture {
   }
 }
 
-Future<void> _mount(WidgetTester tester, _Fixture fixture, String section) async {
+Future<void> _mount(WidgetTester tester, _Fixture fixture, String section,
+    {bool settle = true}) async {
   await tester.pumpWidget(ChangeNotifierProvider<Session>.value(
       value: fixture.session,
       child: MaterialApp(theme: consoleTheme(), home: Scaffold(
           body: SingleChildScrollView(child: ConsolePages(section: section))))));
-  await settleReads(tester);
+  if (settle) await settleReads(tester);
 }
 
 Finder _button(String text) => find.ancestor(of: find.text(text),
@@ -277,6 +299,9 @@ void main() {
     await details();
     await _tap(tester, _dialogButton('归档'));
     await _until(tester, () => find.text('归档儿童档案').evaluate().length == 1);
+    expect(find.descendant(of: _dialog, matching: find.text(_name('subjects'))), findsOneWidget);
+    expect(find.descendant(of: _dialog, matching: find.text('档案编号：$_first')), findsOneWidget);
+    expect(find.descendant(of: _dialog, matching: find.text('年龄段：${label('AGE_7_12')}')), findsOneWidget);
     await _tap(tester, _dialogButton('取消'));
     await _until(tester, () => _dialogButton('编辑档案').evaluate().length == 1);
     await closeDetails();
@@ -322,6 +347,127 @@ void main() {
     expect(fixture.writes, hasLength(2));
     expect(fixture.requests.every((request) => request.method == 'GET' ||
         identical(request, edit) || identical(request, archive)), isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('archived subject review is read only and retired views cannot reopen management',
+      (tester) async {
+    _wide(tester);
+    final fixture = _Fixture();
+    addTearDown(() => fixture.cleanup(tester));
+    await _mount(tester, fixture, 'subjects');
+    await _until(tester, () => _listReady(tester, 'subjects'));
+    expect(fixture.listReads('subjects'), hasLength(1));
+    expect(fixture.listReads('subjects').single.url.path, '$_root/subjects/management');
+    expect(fixture.listReads('subjects').single.url.queryParameters['includeArchived'], isNot('true'));
+    expect(find.text(_archivedName), findsNothing);
+
+    final filter = find.widgetWithText(FilterChip, '包含已归档');
+    final oldFilter = tester.widget<FilterChip>(filter).onSelected!;
+    final oldOpen = tester.widget<ResourcePage>(find.byType(ResourcePage)).onOpenChanged!;
+    await _tap(tester, filter);
+    await _until(tester, () => fixture.listReads('subjects').length == 2 &&
+        _listReady(tester, 'subjects') && find.text(_archivedName).evaluate().length == 1);
+    expect(fixture.listReads('subjects').last.url.queryParameters['includeArchived'], 'true');
+    expect(tester.widget<FilterChip>(filter).selected, isTrue);
+    expect(find.text('已归档'), findsOneWidget);
+    await _tap(tester, find.text(_archivedName));
+    await _until(tester, () => find.byType(AlertDialog).evaluate().length == 1 &&
+        _dialogButton('关闭').evaluate().length == 1);
+    expect(find.descendant(of: _dialog, matching: find.text('已归档')), findsOneWidget);
+    expect(find.descendant(of: _dialog, matching: find.text(_archived)), findsOneWidget);
+    expect(_dialogButton('编辑档案'), findsNothing);
+    expect(_dialogButton('归档'), findsNothing);
+    expect(fixture.requests.where((request) =>
+        request.url.path == '$_root/subjects/$_archived/management'), hasLength(1));
+    await _tap(tester, _dialogButton('关闭'));
+    await _until(tester, () => _listReady(tester, 'subjects'));
+    expect(fixture.listReads('subjects'), hasLength(2));
+    expect(tester.widget<FilterChip>(filter).selected, isTrue);
+    expect(fixture.writes, isEmpty);
+
+    await _tap(tester, filter);
+    await _until(tester, () => fixture.listReads('subjects').length == 3 &&
+        _listReady(tester, 'subjects'));
+    expect(tester.widget<FilterChip>(filter).selected, isFalse);
+    expect(fixture.listReads('subjects').last.url.queryParameters['includeArchived'], isNot('true'));
+    expect(find.text(_archivedName), findsNothing);
+    final beforeStale = fixture.requests.length;
+    oldFilter(true);
+    expect(await oldOpen(_archivedRecord()), isFalse);
+    await tester.pump();
+    expect(fixture.requests, hasLength(beforeStale),
+        reason: 'Returning to the same filter value must not revive an older view.');
+    expect(find.byType(AlertDialog), findsNothing);
+
+    fixture.session.role = 'TEACHER';
+    fixture.session.changed();
+    await _until(tester, () => fixture.listReads('subjects').length == 4 &&
+        find.text(_name('subjects')).evaluate().length == 1 &&
+        find.byType(LinearProgressIndicator).evaluate().isEmpty);
+    expect(fixture.listReads('subjects').last.url.path, '$_root/subjects');
+    expect(filter, findsNothing);
+    expect(_button('添加儿童'), findsNothing);
+    final beforeRoleStale = fixture.requests.length;
+    oldFilter(true);
+    expect(await oldOpen(_archivedRecord()), isFalse);
+    await tester.pump();
+    expect(fixture.requests, hasLength(beforeRoleStale));
+    await _tap(tester, find.text(_name('subjects')));
+    await _until(tester, () => find.byType(AlertDialog).evaluate().length == 1 &&
+        _dialogButton('关闭').evaluate().length == 1);
+    expect(fixture.requests.last.url.path, '$_root/subjects/$_first');
+    expect(_dialogButton('编辑档案'), findsNothing);
+    expect(_dialogButton('归档'), findsNothing);
+    await _tap(tester, _dialogButton('关闭'));
+    await _until(tester, () => find.byType(AlertDialog).evaluate().isEmpty &&
+        find.byType(LinearProgressIndicator).evaluate().isEmpty);
+    expect(fixture.listReads('subjects'), hasLength(4));
+    expect(fixture.writes, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a delayed subject response cannot open details after the console changes section',
+      (tester) async {
+    _wide(tester);
+    final fixture = _Fixture();
+    final pending = Completer<http.Response>();
+    fixture.subjectDetailsResponse = pending;
+    addTearDown(() async {
+      if (!pending.isCompleted) pending.complete(_reply(_record('subjects')));
+      await fixture.cleanup(tester);
+    });
+    await _mount(tester, fixture, 'subjects');
+    await _until(tester, () => _listReady(tester, 'subjects'));
+    final app = tester.element(find.byType(MaterialApp));
+    final provider = tester.element(find.byType(ChangeNotifierProvider<Session>));
+    final console = tester.element(find.byType(ConsolePages));
+    await _tap(tester, find.text(_name('subjects')));
+    await _until(tester, () => fixture.requests.where((request) =>
+        request.url.path == '$_root/subjects/$_first/management').length == 1);
+    expect(pending.isCompleted, isFalse);
+    expect(find.byType(AlertDialog), findsNothing);
+
+    await _mount(tester, fixture, 'applications', settle: false);
+    expect(tester.element(find.byType(MaterialApp)), same(app));
+    expect(tester.element(find.byType(ChangeNotifierProvider<Session>)), same(provider));
+    expect(tester.element(find.byType(ConsolePages)), same(console),
+        reason: 'The host context stays mounted while its subjects child retires.');
+    await _until(tester, () => fixture.listReads('applications').length == 1 &&
+        _listReady(tester, 'applications'));
+    pending.complete(_reply(_record('subjects')));
+    // Drain the streamed response and its UI continuations without settling
+    // indefinitely on any pending loading animation.
+    for (var frame = 0; frame < 6; frame++) {
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text(_name('subjects')), findsNothing);
+    expect(find.text(_name('applications')), findsOneWidget);
+    expect(fixture.listReads('applications'), hasLength(1));
+    expect(fixture.listReads('subjects'), hasLength(1));
+    expect(fixture.writes, isEmpty);
     expect(tester.takeException(), isNull);
   });
 }
