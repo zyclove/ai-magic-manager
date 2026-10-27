@@ -218,10 +218,27 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
     } catch (failure) {
       if (mounted && _active && permitted && generation == requested) {
         setState(() {
-          error = failure;
-          if (more && failure is ApiFailure && failure.code == 'INVALID_CURSOR') {
+          if (failure is ApiFailure &&
+              (failure.code == 'WORKSPACE_CHANGED' ||
+                  failure.status == 403 ||
+                  (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'))) {
+            _revoked = true;
+            generation++;
+            selected.clear();
+            devices = const [];
+            search = '';
+            searchController.clear();
+            onlySelected = false;
             cursor = null;
-            cursorInvalid = true;
+            cursorInvalid = false;
+            loading = false;
+            error = null;
+          } else {
+            error = failure;
+            if (more && failure is ApiFailure && failure.code == 'INVALID_CURSOR') {
+              cursor = null;
+              cursorInvalid = true;
+            }
           }
         });
       }
@@ -270,7 +287,7 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
     }
     final visible = visibleDevices;
     return AlertDialog(
-        title: Text(removing ? '批量移出设备组' : '批量加入设备组'),
+        title: Text(removing ? '批量移出设备组' : '选择加入设备'),
         scrollable: true,
         content: SizedBox(
             width: 600,
@@ -280,7 +297,7 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                 children: [
                   Text(removing
                       ? '可清理停用、旧注册周期及其他成员；单次最多 50 台。移出不撤销设备注册或已有独立策略。'
-                      : '仅可选择已激活的本机构设备；单次最多 50 台。确认时会重新核对每台设备的注册周期。'),
+                      : '可选择 1～50 台已激活的本机构设备。确认时会重新核对每台设备的注册周期。'),
                   const SizedBox(height: 12),
                   TextField(
                       controller: searchController,
@@ -303,6 +320,10 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                       liveRegion: true,
                       child: Text('已选择 ${selected.length} / 50 台 · 当前显示 ${visible.length} 台',
                           style: Theme.of(context).textTheme.titleMedium)),
+                  if (selected.length >= 50) ...[
+                    const SizedBox(height: 8),
+                    const Notice('已达到 50 台上限。请先取消其他设备，再添加设备。'),
+                  ],
                   const SizedBox(height: 8),
                   Wrap(spacing: 8, runSpacing: 4, children: [
                     FilterChip(

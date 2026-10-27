@@ -93,6 +93,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 [MemberEditor](../apps/guardian/lib/ui/member_editor.dart) 在回调前冻结原 Map 与班级 List；已有未知提交后，认证/权限等普通拒绝不清 pending。412 与通用不可恢复结果停止旧请求重试，保留原草稿；未知关闭先就地确认，再返回 refresh/reviewInvitations 核对信号。输入与目录来源绑定当前窗口，换绑或失权不能复活旧窗口。
 
+[DeviceGroupsPage](../apps/guardian/lib/pages/device_groups_page.dart) 以一个加入入口复用 [DeviceGroupBatchPicker](../apps/guardian/lib/ui/device_group_batch_picker.dart)，1～50台均走既有原子 batches；确认保留完整设备／注册编号。详情操作锁在首个等待前建立并保持至子路由完成，返回、筛选及操作捕获原视图代次。选择器明确读取拒绝时锁存失权并清空私有数据，普通网络／近期认证保留选择，满50台有就近提示；不改变设备组的目录性质及当前写入恢复协议。
+
 成员范围的 [MemberScopeDirectories](../apps/guardian/lib/core/member_scope_directories.dart) 按窗口捕获缓存/并发读取，null 未读与不可变空 Map 区分。MemberEditor 按角色和范围加载所需一类目录，现有引用始终保留完整编号占位；目录对象内部补名称不等于换绑，重载不改提交或版本。每窗独立实例在退役时 revoke，阻止晚到页继续读取；直接注入已读 Map 的组件路径仍使用原快照，不能与异步目录形成双重数据来源。
 
 教师班级选择使用 [MemberClassPicker](../apps/guardian/lib/ui/member_class_picker.dart)，只管理本地查找/仅看已选与有界懒列表；唯一选择集合、Form校验和实时权限/写锁仍由MemberEditor持有。options与已选编号取并集，缺项也保留并允许移除；过滤不裁剪范围，不触发请求。目录已读只表示选项可校验，必填和无效引用继续由表单就近提示。

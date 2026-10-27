@@ -33,6 +33,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   bool memberCursorInvalid = false;
   bool loading = false, loadingMore = false, archived = false;
   int generation = 0;
+  Object? activeAction;
+  bool get acting => activeAction != null;
   final dialogs = <OwnedDialogRoute<dynamic>>{};
 
   bool get current => mounted && _active &&
@@ -274,7 +276,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   }
 
   void chooseFilter(String? status) {
-    if (!current || selectedId == null || memberFilter == status) return;
+    if (!current || acting || selectedId == null || memberFilter == status) return;
     memberFilter = status;
     open(selectedId!);
   }
@@ -324,64 +326,6 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     if (current && updated != null) await open(updated['id'] as String);
   }
 
-  Future<Json?> pickDevice(DeviceSubflowScope scope) async {
-    if (!current || !scope.current) return null;
-    final chosen = await present<Json>(scope, (ctx, api, available) => Dialog(
-        child: SizedBox(width: 760, height: 620,
-            child: SingleChildScrollView(padding: const EdgeInsets.all(18),
-                child: ResourcePage(
-                    title: '选择本机构设备',
-                    subtitle: '只可加入已激活设备；按页浏览，不用名称匹配身份。',
-                    path: '$root/devices', api: api,
-                    columns: [
-                      ColumnSpec('设备', (row) => Text('${row['displayName']}')),
-                      ColumnSpec('平台', (row) => Text(label(row['platform']))),
-                      ColumnSpec('状态', (row) => Text(label(row['state'])))
-                    ],
-                    onOpen: (row) async {
-                      if (!ctx.mounted || !available()) return;
-                      final route = ModalRoute.of(ctx);
-                      if (route?.isCurrent != true) return;
-                      if (row['state'] != 'ACTIVE') {
-                        toast(ctx, '此设备尚未激活，不能加入设备组。');
-                        return;
-                      }
-                      if (route is OwnedDialogRoute<Json>) route.finish(row);
-                    })))));
-    if (!current || !scope.current || chosen == null) return null;
-    if (chosen['id'] is! String || chosen['registrationId'] is! String) {
-      throw const ApiFailure(502, 'INVALID_DEVICE_GROUP_RESPONSE');
-    }
-    return chosen;
-  }
-
-  Future<void> addDevice() async {
-    if (!current || detail == null) return;
-    final scope = capture(), group = Map<String, dynamic>.of(detail!);
-    try {
-      final chosen = await pickDevice(scope);
-      if (!current || !scope.current || chosen == null) return;
-      final key = requestId();
-      final result = await confirm(scope: scope,
-          title: '加入设备组',
-          description:
-              '将“${chosen['displayName']}”关联到“${group['name']}”。设备组关联不改变设备当前规则或系统权限。',
-          submit: '确认加入',
-          operation: (api) => api.send(
-              'POST', '$root/device-groups/${group['id']}/devices',
-              body: {'deviceId': chosen['id'],
-                'registrationId': chosen['registrationId']},
-              version: group['version'] as int, key: key));
-      if (current && scope.current && result != null) {
-        await open(group['id'] as String);
-      }
-    } catch (failure) {
-      if (current && scope.current) setState(() => error = failure);
-    } finally {
-      scope.dispose();
-    }
-  }
-
   Future<void> addDevices() async {
     if (!current || detail == null) return;
     final scope = capture(), group = Map<String, dynamic>.of(detail!);
@@ -392,9 +336,9 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
       if (!current || !scope.current || chosen == null || chosen.isEmpty) return;
       final key = requestId();
       final names = chosen.map((row) =>
-          '• ${row['displayName']} · 设备 ${shortId(row['id'])}').join('\n');
+          '• ${row['displayName']}\n  设备 ${row['id']}\n  注册 ${row['registrationId']}').join('\n');
       final result = await confirm(scope: scope,
-          title: '批量加入设备组',
+          title: '加入设备组',
           description:
               '将以下 ${chosen.length} 台设备加入“${group['name']}”。整批会以当前组版本核对，任一设备注册周期或状态变化都不会提交。设备组关联不改变设备规则。\n\n本次设备清单：\n$names',
           submit: '确认加入 ${chosen.length} 台',
@@ -411,6 +355,25 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     }
   }
 
+  /// Lock before opening a child route; a retained old view cannot start work.
+  Future<void> runAction(int view, Future<void> Function() operation) async {
+    if (!current || acting || loading || loadingMore || view != generation) return;
+    final action = Object(), groupId = selectedId;
+    setState(() => activeAction = action);
+    try {
+      await operation();
+    } catch (failure) {
+      if (current && generation == view && selectedId == groupId) {
+        setState(() => error = failure);
+      }
+    } finally {
+      if (identical(activeAction, action)) {
+        activeAction = null;
+        if (mounted && _active) setState(() {});
+      }
+    }
+  }
+
   Future<void> removeDevices() async {
     if (!current || detail == null) return;
     final scope = capture(), group = Map<String, dynamic>.of(detail!);
@@ -422,7 +385,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
       if (!current || !scope.current || chosen == null || chosen.isEmpty) return;
       final key = requestId();
       final names = chosen.map((row) =>
-          '• ${row['displayName']} · 设备 ${shortId(row['deviceId'])}').join('\n');
+          '• ${row['displayName']}\n  设备 ${row['deviceId']}\n  注册 ${row['registrationId']}').join('\n');
       final result = await confirm(scope: scope,
           title: '批量移出设备组',
           description:
@@ -517,12 +480,15 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
 
   Widget healthPanel() {
     final counts = summary!;
+    final view = generation;
     final total = counts.total;
     final usable = counts.current;
     Widget filterChip(String? status, String title, int count) => ChoiceChip(
           label: Text('$title $count'),
           selected: memberFilter == status,
-          onSelected: (_) => chooseFilter(status),
+          onSelected: acting ? null : (_) {
+            if (view == generation) chooseFilter(status);
+          },
         );
     return Panel(
         child:
@@ -555,6 +521,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
       return const Panel(child: EmptyView('机构范围已变化', '请重新打开设备组页面。'));
     }
     if (selectedId == null) {
+      final listView = generation;
       return ResourcePage(
           key: listKey,
           title: '机构设备组',
@@ -581,13 +548,23 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                 '状态', (r) => Text(r['state'] == 'ACTIVE' ? '使用中' : '已归档')),
             ColumnSpec('设备数', (r) => Text('${r['deviceCount']} 台'))
           ],
-          onOpen: (row) => open(row['id'] as String));
+          onOpen: (row) async {
+            if (!current || acting || selectedId != null ||
+                generation != listView) return;
+            await open(row['id'] as String);
+          });
     }
+    final view = generation, groupId = selectedId;
+    bool viewCurrent() => current && generation == view && selectedId == groupId;
+    void refreshDetail() {
+      if (viewCurrent() && !acting && groupId != null) open(groupId);
+    }
+    final canAct = !acting && !loading && !loadingMore;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       PageHeading('设备组详情', '核对设备身份和注册周期后调整分组。',
           action: OutlinedButton.icon(
-              onPressed: () {
-                if (!current) return;
+              onPressed: acting ? null : () {
+                if (!viewCurrent() || acting) return;
                 setState(() {
                   selectedId = null;
                   detail = null;
@@ -606,11 +583,11 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
               label: const Text('返回列表'))),
       const Notice('分组成员不是策略执行回执；归档、移出设备也不会自动撤销其他独立策略。'),
       const SizedBox(height: 16),
-      if (loading) const LinearProgressIndicator(),
+      if (loading || acting) const LinearProgressIndicator(),
       if (error != null)
         Panel(
             child: FailureView(error!,
-                retry: selectedId == null ? null : () => open(selectedId!),
+                retry: acting ? null : refreshDetail,
                 reauth: reauth)),
       if (detail != null) ...[
         Panel(
@@ -626,23 +603,19 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
           if (detail!['state'] == 'ACTIVE')
             Wrap(spacing: 8, runSpacing: 8, children: [
               FilledButton.icon(
-                  onPressed: addDevice,
+                  onPressed: canAct ? () => runAction(view, addDevices) : null,
                   icon: const Icon(Icons.add),
                   label: const Text('加入设备')),
               OutlinedButton.icon(
-                  onPressed: addDevices,
-                  icon: const Icon(Icons.playlist_add_check),
-                  label: const Text('批量加入')),
-              OutlinedButton.icon(
-                  onPressed: removeDevices,
+                  onPressed: canAct ? () => runAction(view, removeDevices) : null,
                   icon: const Icon(Icons.playlist_remove),
                   label: const Text('批量移出')),
               OutlinedButton.icon(
-                  onPressed: rename,
+                  onPressed: canAct ? () => runAction(view, rename) : null,
                   icon: const Icon(Icons.edit_outlined),
                   label: const Text('修改名称')),
               OutlinedButton.icon(
-                  onPressed: archive,
+                  onPressed: canAct ? () => runAction(view, archive) : null,
                   icon: const Icon(Icons.archive_outlined),
                   label: const Text('归档设备组'))
             ])
@@ -674,7 +647,9 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                     trailing: detail!['state'] == 'ACTIVE'
                         ? IconButton(
                             tooltip: '移出 ${member['displayName']}',
-                            onPressed: () => removeDevice(member),
+                            onPressed: canAct
+                                ? () => runAction(view, () => removeDevice(member))
+                                : null,
                             icon: const Icon(Icons.remove_circle_outline))
                         : null),
               if (loadingMore) const LinearProgressIndicator(),
@@ -687,19 +662,21 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                     warning: true),
                 FailureView(memberPageError!, reauth: reauth),
                 TextButton.icon(
-                    onPressed: loading || loadingMore
+                    onPressed: loading || loadingMore || acting
                         ? null
                         : memberCursorInvalid
-                            ? () {
-                                if (current && selectedId != null) open(selectedId!);
-                              }
-                            : moreMembers,
+                            ? refreshDetail
+                            : () {
+                                if (viewCurrent() && !acting) moreMembers();
+                              },
                     icon: const Icon(Icons.refresh),
                     label: Text(memberCursorInvalid ? '刷新设备组' : '重试加载更多')),
               ],
               if (memberPageError == null && nextMemberCursor != null)
                 TextButton.icon(
-                    onPressed: loadingMore ? null : moreMembers,
+                    onPressed: loadingMore || acting ? null : () {
+                      if (viewCurrent() && !acting) moreMembers();
+                    },
                     icon: const Icon(Icons.expand_more),
                     label: const Text('加载更多设备'))
             ]))
