@@ -8,6 +8,7 @@ import 'package:schedule_contracts/schedule_contracts.dart' as schedule_contract
 import '../core/api.dart';
 import '../core/bounded_json.dart';
 import '../core/labels.dart';
+import '../core/policy_draft_change.dart';
 import '../core/policy_domain_check.dart';
 import '../core/policy_rule_directories.dart';
 import '../core/rule_parameter_labels.dart';
@@ -621,15 +622,6 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     });
   }
 
-  Object? freeze(Object? value) {
-    if (value is Map<String, dynamic>) {
-      return Map<String, dynamic>.unmodifiable(
-          value.map((key, item) => MapEntry(key, freeze(item))));
-    }
-    if (value is List) return List<Object?>.unmodifiable(value.map(freeze));
-    return value;
-  }
-
   Future<void> save() async {
     if (!interactive || locked) return;
     if (form.currentState?.validate() != true) return;
@@ -642,7 +634,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       return;
     }
     // Freeze every nested map/list before client acquisition or transport waits.
-    pendingBody = freeze({
+    pendingBody = _freezeEditorValue({
       'name': name.text.trim(),
       'definition': {
         'timeZone': zone.text.trim(),
@@ -1115,9 +1107,10 @@ class PolicyEditor extends StatefulWidget {
 }
 
 class _PolicyEditorState extends State<PolicyEditor> {
-  late final name = TextEditingController(text: widget.draft?['name'] ?? '');
-  late String kind = widget.draft?['kind'] ?? 'POLICY';
-  late List<Json> rules = (widget.draft?['rules'] as List? ?? [])
+  Json? originalDraft;
+  late final name = TextEditingController(text: originalDraft?['name'] ?? '');
+  late String kind = originalDraft?['kind'] ?? 'POLICY';
+  late List<Json> rules = (originalDraft?['rules'] as List? ?? [])
       .map((r) => Map<String, dynamic>.from(r))
       .toList();
   final form = GlobalKey<FormState>();
@@ -1133,7 +1126,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
       disposed = false;
   bool saved = false, exitOpen = false;
   Object? error, recoveryFailure;
-  String? checkNotice;
+  String? checkNotice, savedNotice;
   Json? pendingBody, recoveryBody;
   late final DeviceSubflowScope scope;
   late final bool ownsScope;
@@ -1142,9 +1135,8 @@ class _PolicyEditorState extends State<PolicyEditor> {
   late final Api api;
   final lifetime = _EditorLifetime();
   final ruleRoutes = <OwnedDialogRoute<dynamic>>{};
-  final key = requestId();
-  late final Object? policyId = widget.draft?['id'];
-  late final Object? revision = widget.draft?['revision'];
+  final key = const Uuid().v4();
+  late final Object? policyId;
 
   bool get current =>
       !disposed &&
@@ -1158,14 +1150,17 @@ class _PolicyEditorState extends State<PolicyEditor> {
               (owner is! OwnedDialogRoute<dynamic> ||
                   (owner as OwnedDialogRoute<dynamic>).available)));
   bool get interactive => current && owner?.isCurrent == true;
-  bool get recoveryStopped =>
-      recoveryFailure != null || _stopsEditorReplay(error);
+  bool get recoveryStopped => recoveryFailure != null;
   bool get locked =>
       busy || loadingRule || ruleOpen || resultUnknown || recoveryStopped;
 
   @override
   void initState() {
     super.initState();
+    originalDraft = widget.draft == null
+        ? null
+        : _freezeEditorValue(widget.draft!) as Json;
+    policyId = originalDraft?['id'];
     ownsScope = widget.operationScope == null;
     scope = widget.operationScope ??
         DeviceSubflowScope(widget.session,
@@ -1190,6 +1185,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
       revoked = true;
       name.clear();
       rules = [];
+      originalDraft = null;
     }
     if (rules.any((rule) =>
         rule['applicationId'] != null || rule['scheduleId'] != null)) {
@@ -1273,11 +1269,13 @@ class _PolicyEditorState extends State<PolicyEditor> {
     directories.revoke();
     name.clear();
     rules = [];
+    originalDraft = null;
     pendingBody = null;
     recoveryBody = null;
     recoveryFailure = null;
     error = null;
     checkNotice = null;
+    savedNotice = null;
     directoryError = null;
     loadingNames = false;
     resultUnknown = busy = loadingRule = ruleOpen = false;
@@ -1331,7 +1329,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
                 ? AlertDialog(
                     title: const Text('暂时关闭未确认的提交？'),
                     content: const Text('服务器可能已保存本次内容。关闭后请先核对策略列表，'
-                        '确认结果后再创建或修改，避免重复提交。继续留在这里可按原内容恢复或读取核对。'),
+                        '确认结果后再创建或修改，避免重复提交。继续留在这里可查询原保存结果。'),
                     actions: [
                         TextButton(
                             key: const Key('policy-editor-keep-unknown'),
@@ -1629,35 +1627,49 @@ class _PolicyEditorState extends State<PolicyEditor> {
   Future<void> save() async {
     if (!interactive || locked) return;
     if (form.currentState?.validate() != true) return;
-    // Copy nested rules before any asynchronous wait.
-    // Every recovery uses this body, revision and request key unchanged.
-    pendingBody = jsonDecode(jsonEncode({
+    // Keep the original values and revision unchanged for a read-only query.
+    pendingBody = _freezeEditorValue({
       'name': name.text.trim(),
-      if (widget.draft == null) 'kind': kind,
+      if (originalDraft == null) 'kind': kind,
       'rules': rules,
-    })) as Json;
-    await submitOriginal();
+    }) as Json;
+    await resolveOriginal(query: false);
   }
 
-  Future<void> retryOriginal() async {
-    if (!interactive || busy || !resultUnknown || pendingBody == null) return;
-    await submitOriginal();
+  Future<void> queryOriginal() async {
+    if (!interactive || busy || exitOpen || !resultUnknown || pendingBody == null) {
+      return;
+    }
+    await resolveOriginal(query: true);
   }
 
-  Future<void> submitOriginal() async {
-    if (!current || busy || pendingBody == null) return;
+  Future<void> resolveOriginal({required bool query}) async {
+    if (!current || busy || exitOpen || pendingBody == null || recoveryStopped ||
+        (query ? !resultUnknown : resultUnknown)) return;
+    final values = pendingBody!;
     setState(() {
       busy = true;
       error = null;
       checkNotice = null;
     });
     try {
-      final value = await api.send(policyId == null ? 'POST' : 'PUT',
-          '${widget.root}/policies${policyId == null ? '' : '/$policyId'}',
-          version: revision as int?, key: key, body: pendingBody);
+      final before = originalDraft;
+      final change = before == null
+          ? PolicyDraftChange.create(values)
+          : PolicyDraftChange.update(before, values);
+      final value = await api.send('POST', query
+          ? '${widget.root}/policy-draft-operation-results/$key/query'
+          : '${widget.root}/policy-draft-changes',
+          key: query ? null : key, body: change.body);
       if (!current) return;
-      if (!matchesPendingDraft(value)) {
-        throw const ApiFailure(502, 'INVALID_POLICY_DRAFT_RESPONSE');
+      if (query) {
+        final result = change.queryResult(value);
+        if (result.current['revision'] > result.committed['revision']) {
+          savedNotice = '原保存已核对，草稿已有后续修改，请核对当前列表。';
+          if (interactive) toast(context, savedNotice!);
+        }
+      } else {
+        change.committed(value);
       }
       pendingBody = null;
       resultUnknown = false;
@@ -1678,6 +1690,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
           resultUnknown = resultUnknown ||
               failure is! ApiFailure ||
               failure.status == 0 ||
+              failure.status == 408 ||
               failure.status >= 500 ||
               failure.code == 'PENDING_OPERATION_UNCHANGED';
           if (!resultUnknown) pendingBody = null;
@@ -1702,15 +1715,11 @@ class _PolicyEditorState extends State<PolicyEditor> {
     try {
       final value = await api.send('GET', '${widget.root}/policies/$policyId');
       if (!current) return;
-      if (matchesPendingDraft(value)) {
-        pendingBody = null;
-        recoveryBody = null;
-        recoveryFailure = null;
-        resultUnknown = false;
-        finishOwnRoute();
-      } else {
-        setState(() => checkNotice = '读取到的草稿尚不能确认本次保存结果。请保留原内容恢复，或稍后再核对。');
-      }
+      final draft = readPolicyDraftSnapshot(value, expectedId: policyId as String);
+      final version = '当前版本 v${draft['revision']}。';
+      setState(() => checkNotice = matchesCurrentContents(draft)
+          ? '${version}当前草稿与原输入一致，但不能证明原保存请求已执行。原提交与停止状态已保留。'
+          : '${version}当前草稿与原输入不同。原提交与停止状态已保留，请核对当前列表。');
     } catch (failure) {
       if (!current || privateFailure(failure)) {
         revoke();
@@ -1722,21 +1731,13 @@ class _PolicyEditorState extends State<PolicyEditor> {
     }
   }
 
-  bool matchesPendingDraft(Object? value) {
+  bool matchesCurrentContents(Json value) {
     final body = pendingBody ?? recoveryBody;
     if (body == null ||
-        value is! Json ||
-        value['id'] is! String ||
-        (value['id'] as String).isEmpty ||
-        value['revision'] is! int ||
-        value['revision'] < 0 ||
         value['name'] != body['name'] ||
         value['kind'] != (policyId == null ? body['kind'] : kind) ||
         !_samePolicyRules(value['rules'], body['rules'])) return false;
-    if (policyId == null) return value['revision'] == 0;
-    return value['id'] == policyId &&
-        revision is int &&
-        (value['revision'] as int) > (revision as int);
+    return true;
   }
 
   void deleteRule(Object? id) {
@@ -1749,9 +1750,13 @@ class _PolicyEditorState extends State<PolicyEditor> {
   Widget build(BuildContext context) {
     if (!current) {
       return AlertDialog(
-          title: Text(closing ? (saved ? '草稿已保存' : '正在返回原页面') : '工作空间或权限已变化'),
+          title: Text(closing
+              ? (saved
+                  ? (savedNotice == null ? '草稿已保存' : '原保存已核对')
+                  : '正在返回原页面')
+              : '工作空间或权限已变化'),
           content: Text(closing
-              ? (saved ? '当前草稿已保存。' : '正在关闭当前编辑窗口。')
+              ? (saved ? (savedNotice ?? '本次草稿保存已确认。') : '正在关闭当前编辑窗口。')
               : '原策略和规则内容已隐藏。请关闭窗口，在当前工作空间重新打开。'),
           actions: [
             TextButton(
@@ -1776,7 +1781,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
               : FilledButton(
                   key: const Key('policy-editor-check-result'),
                   onPressed: busy ? null : checkResult,
-                  child: Text(busy ? '核对中…' : '读取并核对')));
+                  child: Text(busy ? '读取中…' : '查看当前内容')));
     }
     return PopScope(
         canPop: !busy && !resultUnknown,
@@ -1892,11 +1897,13 @@ class _PolicyEditorState extends State<PolicyEditor> {
                               if (resultUnknown) ...[
                                 const Notice(
                                     '尚不能确认保存结果。已保留本次提交的原内容；'
-                                    '请主动恢复原提交或读取核对，确认前暂不能编辑。',
+                                    '请查询原保存结果，确认前暂不能编辑。',
                                     warning: true),
                                 if (error != null) ...[
                                   const SizedBox(height: 8),
-                                  const Notice('最近一次恢复或核对未完成。原提交仍保留，请稍后再试。',
+                                  Notice(error is ApiFailure
+                                      ? (error as ApiFailure).message
+                                      : '最近一次查询或核对未完成。原提交仍保留，请稍后再试。',
                                       warning: true),
                                 ],
                                 if (checkNotice != null) ...[
@@ -1934,17 +1941,28 @@ class _PolicyEditorState extends State<PolicyEditor> {
                   TextButton(
                       key: const Key('policy-editor-check-result'),
                       onPressed: busy ? null : checkResult,
-                      child: const Text('读取核对')),
+                      child: const Text('查看当前内容')),
                 OutlinedButton(
-                    key: const Key('policy-editor-retry-original'),
-                    onPressed: busy ? null : retryOriginal,
-                    child: const Text('按原内容恢复')),
+                    key: const Key('policy-editor-query-original'),
+                    onPressed: busy ? null : queryOriginal,
+                    child: const Text('查询原保存结果')),
               ] else
                 FilledButton(
                     onPressed: locked ? null : save,
                     child: Text(busy ? '保存中…' : '保存草稿'))
             ]));
   }
+}
+
+Object? _freezeEditorValue(Object? value) {
+  if (value is Map<String, dynamic>) {
+    return Map<String, dynamic>.unmodifiable(
+        value.map((key, item) => MapEntry(key, _freezeEditorValue(item))));
+  }
+  if (value is List) {
+    return List<Object?>.unmodifiable(value.map(_freezeEditorValue));
+  }
+  return value;
 }
 
 bool _samePolicyRules(Object? left, Object? right) {

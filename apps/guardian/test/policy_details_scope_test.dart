@@ -93,11 +93,19 @@ class _Fixture {
         });
       }
       if (fromList &&
-          request.method == 'PUT' &&
-          request.url.path.endsWith('/policies/$_policy')) {
-        currentName = (jsonDecode(request.body) as Json)['name'] as String;
+          request.method == 'POST' &&
+          request.url.path.endsWith('/policy-draft-changes')) {
+        final body = jsonDecode(request.body) as Json;
+        expect(body['operation'], 'UPDATE');
+        expect(body['policyId'], _policy);
+        expect(body['revision'], revision);
+        expect(body.keys, unorderedEquals(['operation', 'policyId', 'revision', 'name', 'rules']));
+        expect(request.headers['If-Match'], isNull);
+        expect(request.headers['Idempotency-Key'], matches(
+            RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+        currentName = body['name'] as String;
         revision++;
-        return reply(draft());
+        return reply({...draft(), 'rules': body['rules']});
       }
       if (fromList &&
           request.method == 'POST' &&
@@ -453,12 +461,16 @@ void main() {
     expect(find.text('v8'), findsOneWidget);
     expect(fixture.writes, hasLength(1));
     final sent = fixture.writes.single;
-    expect(sent.method, 'PUT');
-    expect(sent.url.path, '/api/v1/tenants/tenant-a/policies/$_policy');
-    expect(sent.headers['If-Match'], '"7"');
-    expect(sent.headers['Idempotency-Key'], isNotEmpty);
+    expect(sent.method, 'POST');
+    expect(sent.url.path, '/api/v1/tenants/tenant-a/policy-draft-changes');
+    expect(sent.headers['If-Match'], isNull);
+    expect(sent.headers['Idempotency-Key'], matches(
+        RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
     final body = jsonDecode(sent.body) as Json;
-    expect(body.keys, unorderedEquals(['name', 'rules']));
+    expect(body.keys, unorderedEquals(['operation', 'policyId', 'revision', 'name', 'rules']));
+    expect(body['operation'], 'UPDATE');
+    expect(body['policyId'], _policy);
+    expect(body['revision'], 7);
     expect(body['name'], '调整后的私有策略');
     expect(body['rules'], isNotEmpty);
     expect(fixture.listReads, hasLength(2));
@@ -680,8 +692,8 @@ void main() {
       410: 'IDEMPOTENCY_RESPONSE_ERASED',
     }.entries) {
       final fixture = _Fixture();
-      fixture.respond = (request) async => request.method == 'PUT' &&
-              request.url.path.endsWith('/policies/$_policy')
+      fixture.respond = (request) async => request.method == 'POST' &&
+              request.url.path.endsWith('/policy-draft-changes')
           ? reply({'errorCode': rejection.value}, rejection.key)
           : null;
       final details = await _openFromList(tester, fixture);
@@ -699,13 +711,21 @@ void main() {
               .evaluate()
               .isNotEmpty);
       expect(fixture.writes, hasLength(1));
-      expect(fixture.writes.single.method, 'PUT');
-      expect((jsonDecode(fixture.writes.single.body) as Json)['name'],
-          stoppedName);
+      final original = fixture.writes.single;
+      expect(original.method, 'POST');
+      expect(original.url.path, '/api/v1/tenants/tenant-a/policy-draft-changes');
+      expect(original.headers['If-Match'], isNull);
+      expect(original.headers['Idempotency-Key'], matches(
+          RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+      final body = jsonDecode(original.body) as Json;
+      expect(body['operation'], 'UPDATE');
+      expect(body['policyId'], _policy);
+      expect(body['revision'], 7);
+      expect(body['name'], stoppedName);
       expect(find.byType(TextFormField), findsNothing);
       expect(_button('保存草稿'), findsNothing);
       expect(_button('按原内容恢复'), findsNothing);
-      expect(_button('重试原提交'), findsNothing);
+      expect(_button('查询原保存结果'), findsNothing);
       await tester.ensureVisible(find.text('保留的草稿'));
       await tester.tap(find.text('保留的草稿'));
       await _waitUntil(

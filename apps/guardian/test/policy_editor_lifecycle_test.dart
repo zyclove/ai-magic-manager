@@ -19,6 +19,9 @@ import 'package:oauth2/oauth2.dart' as oauth;
 const _tenant = '11111111-1111-4111-8111-111111111111';
 const _otherTenant = '22222222-2222-4222-8222-222222222222';
 const _policy = '33333333-3333-4333-8333-333333333333';
+const _createdPolicy = '55555555-5555-4555-8555-555555555555';
+const _sourceVersion = '66666666-6666-4666-8666-666666666666';
+const _laterSourceVersion = '77777777-7777-4777-8777-777777777777';
 const _root = '/tenants/$_tenant';
 const _name = '原工作空间策略草稿';
 
@@ -75,6 +78,7 @@ class _Fixture {
   final requests = <http.Request>[];
   Future<http.Response> Function(http.Request)? handler;
   Future<http.Client> Function()? lookup;
+  String? sourceVersionId;
   late final transport = MockClient((request) async {
     requests.add(request);
     if (handler != null) return handler!(request);
@@ -84,7 +88,16 @@ class _Fixture {
     if (request.method == 'GET') {
       return _reply({'items': [], 'nextCursor': null});
     }
-    return _reply(draft(revision: 8));
+    if (request.method == 'POST' && request.url.path == '/api/v1$_root/policy-draft-changes') {
+      return _reply(committed(request));
+    }
+    if (request.method == 'POST' &&
+        request.url.path.startsWith('/api/v1$_root/policy-draft-operation-results/')) {
+      final original = changes.firstWhere((sent) => request.url.path ==
+          '/api/v1$_root/policy-draft-operation-results/${sent.headers['Idempotency-Key']}/query');
+      return _reply(queryResult(original));
+    }
+    throw StateError('Unexpected policy boundary: ${request.method} ${request.url.path}');
   });
   late final api = Api(() => lookup?.call() ?? Future.value(transport),
       baseUrl: 'https://policy-fixture.invalid/api/v1');
@@ -92,6 +105,27 @@ class _Fixture {
 
   List<http.Request> get writes =>
       requests.where((request) => request.method != 'GET').toList();
+  List<http.Request> get changes => requests.where((request) =>
+      request.method == 'POST' && request.url.path == '/api/v1$_root/policy-draft-changes').toList();
+  List<http.Request> get queries => requests.where((request) =>
+      request.method == 'POST' &&
+      request.url.path.startsWith('/api/v1$_root/policy-draft-operation-results/')).toList();
+
+  Json committed(http.Request request) {
+    final body = jsonDecode(request.body) as Json;
+    final creating = body['operation'] == 'CREATE';
+    return {
+      'id': creating ? _createdPolicy : body['policyId'],
+      'revision': creating ? 0 : (body['revision'] as int) + 1,
+      'name': body['name'], 'kind': creating ? body['kind'] : 'POLICY',
+      'rules': body['rules'], 'sourceVersionId': creating ? null : sourceVersionId,
+    };
+  }
+
+  Json queryResult(http.Request original, {Json? current}) => {
+    'operation': (jsonDecode(original.body) as Json)['operation'],
+    'committed': committed(original), 'current': current ?? committed(original),
+  };
 
   Json draft({int revision = 7, List<Json> rules = const []}) => {
         'id': _policy,
@@ -99,7 +133,17 @@ class _Fixture {
         'name': _name,
         'kind': 'POLICY',
         'rules': rules,
+        'sourceVersionId': sourceVersionId,
       };
+}
+
+void _expectOriginalQuery(http.Request query, http.Request original) {
+  expect(query.method, 'POST');
+  expect(query.url.path,
+      '/api/v1$_root/policy-draft-operation-results/${original.headers['Idempotency-Key']}/query');
+  expect(query.body, original.body);
+  expect(query.headers['Idempotency-Key'], isNull);
+  expect(query.headers['If-Match'], isNull);
 }
 
 Future<void> _flush(WidgetTester tester) async {
@@ -519,12 +563,12 @@ void main() {
   });
 
   testWidgets(
-      'unknown save preserves body and key until explicit original retry',
+      'unknown save preserves the original command and recovers only through its query',
       (tester) async {
     final f = _Fixture();
     f.handler = (request) async {
-      if (f.writes.length == 1) throw http.ClientException('lost response');
-      return _reply(f.draft(revision: 8));
+      if (f.writes.length == 1) return _reply({'errorCode': 'REQUEST_TIMEOUT'}, status: 408);
+      return _reply(f.queryResult(f.changes.single));
     };
     await _mount(tester, f);
     final queued = _save(tester);
@@ -542,13 +586,12 @@ void main() {
         reason:
             'A retained ordinary save callback cannot replay an unknown write.');
 
-    await _press(tester, 'policy-editor-retry-original');
+    await _press(tester, 'policy-editor-query-original');
 
     expect(f.writes.length, 2);
-    expect(f.writes.last.body, original.body);
-    expect(f.writes.last.headers['Idempotency-Key'],
-        original.headers['Idempotency-Key']);
-    expect(f.writes.last.headers['If-Match'], original.headers['If-Match']);
+    _expectOriginalQuery(f.writes.last, original);
+    expect(f.changes, hasLength(1));
+    expect(f.queries, hasLength(1));
     expect(find.byType(PolicyEditor), findsNothing);
   });
 
@@ -570,11 +613,14 @@ void main() {
     expect(f.requests.last.method, 'GET');
     expect(f.requests.last.url.path, '/api/v1$_root/policies/$_policy');
     expect(
-        find.byKey(const Key('policy-editor-retry-original')), findsOneWidget);
+        find.byKey(const Key('policy-editor-query-original')), findsOneWidget);
     expect(find.text('保存草稿'), findsNothing);
+    expect(find.textContaining('不能证明原保存请求已执行'), findsOneWidget);
+    expect(find.textContaining('当前版本 v7。'), findsOneWidget);
+    expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled, isFalse);
   });
 
-  testWidgets('scope loss also revokes a retained original retry callback',
+  testWidgets('scope loss also revokes a retained original query callback',
       (tester) async {
     final f = _Fixture();
     f.handler = (_) async => throw http.ClientException('lost response');
@@ -582,10 +628,10 @@ void main() {
     _save(tester)();
     await _flush(tester);
     expect(
-        find.byKey(const Key('policy-editor-retry-original')), findsOneWidget);
+        find.byKey(const Key('policy-editor-query-original')), findsOneWidget);
     final retry = tester
-        .widget<OutlinedButton>(
-            find.byKey(const Key('policy-editor-retry-original')))
+        .widget<ButtonStyleButton>(
+            find.byKey(const Key('policy-editor-query-original')))
         .onPressed!;
 
     f.session.change('role');
@@ -708,8 +754,12 @@ void main() {
     await _press(tester, 'policy-editor-check-result');
 
     expect(f.writes.length, 1);
-    expect(find.byType(PolicyEditor), findsNothing,
-        reason: 'Nullable record fields represent the same submitted rules.');
+    expect(find.byType(PolicyEditor), findsOneWidget,
+        reason: 'A matching current projection cannot prove which request saved it.');
+    expect(find.byKey(const Key('policy-editor-query-original')), findsOneWidget);
+    expect(find.text('保存草稿'), findsNothing);
+    expect(find.textContaining('不能证明原保存请求已执行'), findsOneWidget);
+    expect(find.textContaining('当前版本 v8。'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -726,7 +776,7 @@ void main() {
         reason:
             'A successful status without a draft cannot prove a saved result.');
     expect(
-        find.byKey(const Key('policy-editor-retry-original')), findsOneWidget);
+        find.byKey(const Key('policy-editor-query-original')), findsOneWidget);
     queued();
     await _flush(tester);
     expect(f.writes.length, 1);
@@ -734,29 +784,46 @@ void main() {
   });
 
   testWidgets(
-      'revision conflict after original retry still permits a read check',
+      'current draft read cannot clear a stopped original operation',
       (tester) async {
-    final f = _Fixture();
-    f.handler = (request) async {
-      if (request.method == 'GET') return _reply(f.draft(revision: 8));
-      if (f.writes.length == 1) throw http.ClientException('lost response');
-      return _reply({'errorCode': 'REVISION_MISMATCH'}, status: 412);
-    };
-    await _mount(tester, f);
-    _save(tester)();
-    await _flush(tester);
-    final original = f.writes.single;
+    for (final failure in [
+      const ApiFailure(412, 'REVISION_MISMATCH'),
+      const ApiFailure(410, 'IDEMPOTENCY_RESULT_EXPIRED'),
+    ]) {
+      final f = _Fixture();
+      f.handler = (request) async {
+        if (request.method == 'GET') return _reply(f.draft(revision: 8));
+        if (f.writes.length == 1) throw http.ClientException('lost response');
+        return _reply({'errorCode': failure.code}, status: failure.status);
+      };
+      await _mount(tester, f);
+      _save(tester)();
+      await _flush(tester);
+      final original = f.writes.single;
 
-    await _press(tester, 'policy-editor-retry-original');
+      await _press(tester, 'policy-editor-query-original');
 
-    expect(find.text('保存草稿'), findsNothing);
-    expect(find.byKey(const Key('policy-editor-check-result')), findsOneWidget);
-    expect(f.writes.length, 2);
-    expect(f.writes.last.body, original.body);
-    expect(f.writes.last.headers['If-Match'], original.headers['If-Match']);
-    await _press(tester, 'policy-editor-check-result');
-    expect(f.writes.length, 2);
-    expect(find.byType(PolicyEditor), findsNothing);
+      expect(find.text('保存草稿'), findsNothing);
+      expect(find.byKey(const Key('policy-editor-check-result')), findsOneWidget);
+      expect(f.writes.length, 2);
+      _expectOriginalQuery(f.writes.last, original);
+      await _press(tester, 'policy-editor-check-result');
+      expect(f.writes.length, 2);
+      expect(find.byType(PolicyEditor), findsOneWidget);
+      expect(find.byKey(const Key('policy-editor-query-original')), findsNothing);
+      expect(find.text('保存草稿'), findsNothing);
+      expect(find.textContaining('不能证明原保存请求已执行'), findsOneWidget);
+      expect(find.textContaining('当前版本 v8。'), findsOneWidget);
+      await tester.ensureVisible(find.text('保留的草稿'));
+      await tester.tap(find.text('保留的草稿'));
+      await _flush(tester);
+      expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
+          (widget.data ?? '').contains(_name)), findsOneWidget);
+      expect(f.changes, hasLength(1));
+      expect(f.queries, hasLength(1));
+      await tester.pumpWidget(const SizedBox.shrink());
+      await _flush(tester);
+    }
   });
 
   testWidgets('unknown creation recovers only its original body and key',
@@ -764,7 +831,7 @@ void main() {
     final f = _Fixture();
     f.handler = (_) async {
       if (f.writes.length == 1) throw http.ClientException('lost response');
-      return _reply(f.draft(revision: 0));
+      return _reply(f.queryResult(f.changes.single));
     };
     await _mount(tester, f, creating: true);
     final chooseKind = tester
@@ -787,13 +854,95 @@ void main() {
         'POLICY',
         reason: 'A retained type callback must not alter an unknown snapshot.');
 
-    await _press(tester, 'policy-editor-retry-original');
+    await _press(tester, 'policy-editor-query-original');
 
     expect(f.writes.length, 2);
-    expect(f.writes.last.body, original.body);
-    expect(f.writes.last.headers['Idempotency-Key'],
-        original.headers['Idempotency-Key']);
+    _expectOriginalQuery(f.writes.last, original);
+    expect(f.changes, hasLength(1));
+    expect(f.queries, hasLength(1));
     expect(find.byType(PolicyEditor), findsNothing);
+  });
+
+  testWidgets('atomic create and update query exact original receipts while distinguishing later current drafts',
+      (tester) async {
+    const rule = <String, dynamic>{
+      'id': 'domain_rule', 'kind': 'DOMAIN_ACCESS', 'effect': 'DENY',
+      'required': true, 'domain': 'frozen-policy.example',
+      'applicationId': null, 'scheduleId': null, 'seconds': null, 'permission': null,
+    };
+    for (final creating in [true, false]) {
+      final f = _Fixture()..sourceVersionId = creating ? null : _sourceVersion;
+      final laterName = creating ? '创建后又被修改的策略' : '编辑后又被修改的策略';
+      f.handler = (request) async {
+        if (request.url.path == '/api/v1$_root/policy-draft-changes') {
+          return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
+        }
+        if (f.queries.length == 1) {
+          return _reply({'errorCode': 'POLICY_DRAFT_RESULT_UNAVAILABLE'}, status: 404);
+        }
+        final original = f.changes.single;
+        final committed = f.committed(original);
+        return _reply(f.queryResult(original, current: {...committed,
+          'name': laterName, 'revision': (committed['revision'] as int) + 2,
+          'rules': <Json>[],
+          if (!creating) 'sourceVersionId': _laterSourceVersion,
+        }));
+      };
+      final opened = await _mount(tester, f, wrapper: true, creating: creating,
+          initialDraft: creating ? null : f.draft(rules: [rule]));
+      final submittedName = creating ? '待核对的新建策略' : '待核对的策略编辑';
+      final name = find.widgetWithText(TextFormField, '策略名称');
+      await tester.enterText(name, submittedName);
+      final ordinarySave = _save(tester);
+      ordinarySave();
+      final query = find.byKey(const Key('policy-editor-query-original'));
+      bool queryReady() => query.evaluate().length == 1 &&
+          tester.widget<ButtonStyleButton>(query).onPressed != null;
+      await _untilUi(tester, () => f.changes.length == 1 && queryReady());
+      final original = f.changes.single;
+      expect(original.method, 'POST');
+      expect(original.headers['If-Match'], isNull);
+      expect(original.headers['Idempotency-Key'], matches(
+          RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+      expect(jsonDecode(original.body), {
+        'operation': creating ? 'CREATE' : 'UPDATE',
+        if (creating) 'kind': 'POLICY'
+        else ...{'policyId': _policy, 'revision': 7},
+        'name': submittedName, 'rules': creating ? <Json>[] : [rule],
+      });
+      ordinarySave();
+      await _flush(tester);
+      expect(f.writes, hasLength(1));
+      await _press(tester, 'policy-editor-query-original');
+      await _untilUi(tester, () => f.queries.length == 1 && queryReady());
+      expect(tester.widget<TextFormField>(name).controller!.text, submittedName);
+      expect(tester.widget<TextFormField>(name).enabled, isFalse);
+      expect(find.text('保存草稿'), findsNothing);
+      expect(opened.completed, isFalse);
+      expect(f.changes, hasLength(1));
+      _expectOriginalQuery(f.queries.single, original);
+
+      await _press(tester, 'policy-editor-query-original');
+      await _untilUi(tester, () => opened.completed);
+      expect(opened.error, isNull);
+      expect(f.changes, hasLength(1));
+      expect(f.queries, hasLength(2));
+      for (final request in f.queries) {
+        _expectOriginalQuery(request, original);
+      }
+      expect(f.writes, hasLength(3));
+      expect(find.byType(PolicyEditor), findsNothing);
+      expect(find.text('原保存已核对，草稿已有后续修改，请核对当前列表。'), findsOneWidget);
+      final committed = f.committed(original);
+      expect(committed['id'], creating ? _createdPolicy : _policy);
+      expect(committed['revision'], creating ? 0 : 8);
+      expect(committed['sourceVersionId'], creating ? null : _sourceVersion);
+      expect(committed['name'], submittedName);
+      expect(committed['rules'], creating ? <Json>[] : [rule]);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await _flush(tester);
+    }
   });
 
   testWidgets('retained rule type callback cannot pop an independent notice',
@@ -888,7 +1037,7 @@ void main() {
     expect(find.textContaining('核对策略列表'), findsOneWidget);
     await _press(tester, 'policy-editor-keep-unknown');
     expect(
-        find.byKey(const Key('policy-editor-retry-original')), findsOneWidget);
+        find.byKey(const Key('policy-editor-query-original')), findsOneWidget);
     expect(opened.completed, isFalse);
     await _requestTemporaryClose(tester);
     await _press(tester, 'policy-editor-confirm-close-unknown');
@@ -917,7 +1066,7 @@ void main() {
         findsOneWidget);
     await _press(tester, 'policy-editor-keep-unknown');
     expect(
-        find.byKey(const Key('policy-editor-retry-original')), findsOneWidget);
+        find.byKey(const Key('policy-editor-query-original')), findsOneWidget);
     expect(f.writes.length, 1);
     expect(tester.takeException(), isNull);
   });
@@ -978,10 +1127,10 @@ void main() {
       final ordinarySave = _save(tester);
       ordinarySave();
       await _flush(tester);
-      final retryFinder = find.byKey(const Key('policy-editor-retry-original'));
+      final retryFinder = find.byKey(const Key('policy-editor-query-original'));
       expect(retryFinder, findsOneWidget);
-      final retry = tester.widget<OutlinedButton>(retryFinder).onPressed!;
-      await _press(tester, 'policy-editor-retry-original');
+      final retry = tester.widget<ButtonStyleButton>(retryFinder).onPressed!;
+      await _press(tester, 'policy-editor-query-original');
       expect(f.writes.length, 2);
       final redacted = find.byType(TextFormField).evaluate().isEmpty;
       final recoveryRemoved = retryFinder.evaluate().isEmpty;
@@ -1023,13 +1172,13 @@ void main() {
       _save(tester)();
       await _flush(tester);
       final original = f.writes.single;
-      await _press(tester, 'policy-editor-retry-original');
+      await _press(tester, 'policy-editor-query-original');
 
       expect(f.writes.length, 2);
       expect(f.session.validationRequests, isEmpty,
           reason: 'A response must not start authentication on its own.');
       expect(find.byType(TextFormField), findsOneWidget);
-      expect(find.byKey(const Key('policy-editor-retry-original')),
+      expect(find.byKey(const Key('policy-editor-query-original')),
           findsOneWidget);
       final validate = find.widgetWithText(TextButton, '重新安全验证');
       expect(validate, findsOneWidget);
@@ -1040,10 +1189,9 @@ void main() {
       expect(f.session.validationRequests, [true]);
       expect(f.writes.length, 2,
           reason: 'Explicit validation must not replay the pending write.');
-      expect(f.writes.last.body, original.body);
-      expect(f.writes.last.headers['Idempotency-Key'],
-          original.headers['Idempotency-Key']);
-      expect(f.writes.last.headers['If-Match'], original.headers['If-Match']);
+      _expectOriginalQuery(f.writes.last, original);
+      expect(f.changes, hasLength(1));
+      expect(f.queries, hasLength(1));
       expect(tester.takeException(), isNull);
     });
   }

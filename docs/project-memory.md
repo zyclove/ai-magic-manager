@@ -67,6 +67,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 [schedule_creation.dart](../apps/guardian/lib/core/schedule_creation.dart) 复用 ScheduleCopy 完整解析并匹配原保存回执，固定对象键顺序后深比对、保留数组顺序，每层返回不可变值；不另造日程解析器。ScheduleEditor 首次使用UUID创建，未知后仅查询 schedules/creation-results/{key}/query，原正文与键不变且查询不传写入幂等头；404/近期认证不解锁，408视未知，坏回执不确认保存。安全验证不自动写入，仍需原scope与顶层窗口；停止/退出及ResourceActionLease沿既有保护。
 
+[policy_draft_change.dart](../apps/guardian/lib/core/policy_draft_change.dart) 集中草稿／规则解析、CREATE/UPDATE 原正文与完整回执匹配；详情和编辑共用，不以当前 GET 内容推断原操作。PolicyEditor 捕获原草稿与 UUID，通过 policy-draft-changes 保存，未知后只查 policy-draft-operation-results/{key}/query，区分 committed/current；更新回执必须原 revision+1，当前后续修订只作提示。服务端 [PolicyDraftChangeService](../backend/src/main/java/com/aimanager/policy/internal/PolicyDraftChangeService.java) 仅编排既有 PolicyService 与原子幂等日志，不重复编译／授权／建库。当前内容核对不会解锁未知或停止状态，404／近期认证要求仍保留，408未知；失权隐藏、过期／清除终止沿原约定。
+
 工作台的 [OverviewAttention](../apps/guardian/lib/core/overview_attention.dart) 只从既有授权摘要选择求助、申请、连接中的一个优先入口，角色文案不授予操作权；教师/儿童仅跟进本人申请，审计仅只读查看。管理与只读工作台复用 [WorkbenchTaskCard](../apps/guardian/lib/ui/workbench_task_card.dart)，宿主负责原范围复核及导航。刷新或错误时不展示下一步，旧摘要与读取时间仍可明确显示；不新增轮询、目录或计数请求。
 
 [ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 的宽屏表格保留主题最小行高，最大行高按内容增长；不修改全局表格主题。可用稳定的纯 `includeRow` 谓词接收已授权分页中的可展示行，保留原下一页游标；谓词改变按新的列表生命周期隔离，不能代替服务端筛选与授权。默认空态使用中性说明，有创建能力时由现有按钮提供入口；业务页面仍可明确覆盖领域空态文案。 既有读取拒绝分支会清除已读数据/搜索并推进读取与列表两种代次，作废旧事件和自动刷新；新操作须在完整新读取成功后恢复。恢复读取与安全验证仍可用，单次操作的 MFA 不据此撤销只读资料；通用操作错误使用结果待核对文案。

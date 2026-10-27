@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/policy_domain_check.dart';
+import '../core/policy_draft_change.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
@@ -27,138 +28,6 @@ Json _policyObject(Object? value) {
   return value;
 }
 
-/// Parse before rendering or capturing action inputs; callbacks never borrow a
-/// mutable response map that another route may redact or clear.
-Json _readPolicyDraft(Object? value, {String? expectedId}) {
-  final draft = _policyObject(value);
-  if (!_nonemptyText(draft['id']) ||
-      (expectedId != null && draft['id'] != expectedId) ||
-      !_nonemptyText(draft['name']) ||
-      (draft['name'] as String).length > 100 ||
-      !const {'POLICY', 'TEMPLATE'}.contains(draft['kind']) ||
-      !_policyInteger(draft['revision']) ||
-      !_nullableText(draft['sourceVersionId'])) throw _invalidPolicyResponse;
-  return Map<String, dynamic>.unmodifiable({
-    'id': draft['id'],
-    'name': draft['name'],
-    'kind': draft['kind'],
-    'revision': draft['revision'],
-    'rules': _readPolicyRules(draft['rules']),
-    'sourceVersionId': draft['sourceVersionId'],
-  });
-}
-
-List<Json> _readPolicyRules(Object? value) {
-  if (value is! List || value.length > 100) throw _invalidPolicyResponse;
-  final ids = <String>{};
-  final rules = <Json>[];
-  for (final item in value) {
-    final rule = _policyObject(item);
-    final id = rule['id'], kind = rule['kind'], effect = rule['effect'];
-    if (id is! String ||
-        !_policyPattern(id, r'[a-z][a-z0-9_-]{0,49}') ||
-        !ids.add(id) ||
-        rule['required'] is! bool ||
-        !const {
-          'APP_LAUNCH',
-          'APP_INSTALL',
-          'APP_UNINSTALL',
-          'RUNTIME_PERMISSION',
-          'SPECIAL_ACCESS',
-          'DAILY_QUOTA',
-          'TIME_WINDOW',
-          'DOMAIN_ACCESS',
-          'USAGE_REMINDER'
-        }.contains(kind) ||
-        !const {
-          'ALLOW',
-          'DENY',
-          'DEFAULT',
-          'GRANT',
-          'PROTECT',
-          'LIMIT',
-          'REMIND'
-        }.contains(effect)) throw _invalidPolicyResponse;
-    const limits = {
-      'applicationId': 36,
-      'scheduleId': 36,
-      'permission': 150,
-      'domain': 253
-    };
-    for (final entry in limits.entries) {
-      final field = rule[entry.key];
-      if (!_nullableText(field) ||
-          (field is String && field.length > entry.value)) {
-        throw _invalidPolicyResponse;
-      }
-    }
-    final seconds = rule['seconds'];
-    if (seconds != null &&
-        (!_policyInteger(seconds, minimum: 1) || (seconds as int) > 86400)) {
-      throw _invalidPolicyResponse;
-    }
-    final application = rule['applicationId'];
-    final schedule = rule['scheduleId'];
-    final permission = rule['permission'];
-    final domain = rule['domain'];
-    final used = <String>{};
-    Set<String> effects;
-    switch (kind) {
-      case 'APP_LAUNCH':
-      case 'APP_INSTALL':
-        if (application == null) throw _invalidPolicyResponse;
-        used.add('applicationId');
-        effects = {'ALLOW', 'DENY'};
-      case 'APP_UNINSTALL':
-        if (application == null) throw _invalidPolicyResponse;
-        used.add('applicationId');
-        effects = {'ALLOW', 'PROTECT'};
-      case 'RUNTIME_PERMISSION':
-      case 'SPECIAL_ACCESS':
-        if (application == null || permission == null) {
-          throw _invalidPolicyResponse;
-        }
-        used.addAll(['applicationId', 'permission']);
-        effects = {'GRANT', 'DENY', 'DEFAULT'};
-      case 'DAILY_QUOTA':
-      case 'USAGE_REMINDER':
-        if (seconds == null) throw _invalidPolicyResponse;
-        used.addAll(['applicationId', 'seconds']);
-        effects = {kind == 'DAILY_QUOTA' ? 'LIMIT' : 'REMIND'};
-      case 'TIME_WINDOW':
-        if (schedule == null) throw _invalidPolicyResponse;
-        used.addAll(['applicationId', 'scheduleId']);
-        effects = {'ALLOW'};
-      case 'DOMAIN_ACCESS':
-        if (domain == null) throw _invalidPolicyResponse;
-        used.add('domain');
-        effects = {'ALLOW', 'DENY'};
-      default:
-        throw _invalidPolicyResponse;
-    }
-    final fields = {
-      'applicationId': application,
-      'scheduleId': schedule,
-      'permission': permission,
-      'domain': domain,
-      'seconds': seconds
-    };
-    if (!effects.contains(effect) ||
-        fields.entries
-            .any((entry) => entry.value != null && !used.contains(entry.key))) {
-      throw _invalidPolicyResponse;
-    }
-    rules.add(Map<String, dynamic>.unmodifiable({
-      'id': id,
-      'kind': kind,
-      'effect': effect,
-      'required': rule['required'],
-      ...fields
-    }));
-  }
-  return List<Json>.unmodifiable(rules);
-}
-
 Json _readPolicyVersion(Object? value, String policyId) {
   final version = _policyObject(value);
   final hash = version['previewHash'];
@@ -176,7 +45,7 @@ Json _readPolicyVersion(Object? value, String policyId) {
       snapshot['schemaVersion'] is! int ||
       !_nonemptyText(snapshot['name']) ||
       (snapshot['name'] as String).length > 100) throw _invalidPolicyResponse;
-  final sourceRules = _readPolicyRules(snapshot['sourceRules']);
+  final sourceRules = readPolicyDraftRules(snapshot['sourceRules']);
   for (final key in ['applications', 'schedules', 'targets']) {
     final records = snapshot[key];
     if (records is! List || records.any((record) => record is! Json)) {
@@ -344,7 +213,7 @@ Future<bool> openPolicyDetails(BuildContext context, Session session,
         await scope.request((api) => api.send('GET', '$root/policies/$id'));
     scope.requireCurrent();
     if (!context.mounted) return false;
-    final draft = _readPolicyDraft(value, expectedId: id as String);
+    final draft = readPolicyDraftSnapshot(value, expectedId: id as String);
     await actionDetails(
         context,
         readOnly ? '查看当前策略 · ${draft['name']}' : draft['name'],
@@ -426,7 +295,7 @@ Future<void> openPolicyVersions(BuildContext context, Session session,
     {required String root, required Json draft}) async {
   final scope = _PolicyDetailsScope(context, session, root);
   try {
-    await _policyVersions(context, scope, _readPolicyDraft(draft));
+    await _policyVersions(context, scope, readPolicyDraftSnapshot(draft));
   } finally {
     scope.dispose();
   }
@@ -495,7 +364,7 @@ Future<T?> _scopedDialog<T>(BuildContext context, _PolicyDetailsScope scope,
 Future<bool> _copyPolicy(
     BuildContext context, _PolicyDetailsScope scope, Json draft) async {
   scope.requireCurrent(write: true);
-  final original = _readPolicyDraft(draft);
+  final original = readPolicyDraftSnapshot(draft);
   final id = original['id'], revision = original['revision'];
   final key = requestId();
   var mayHaveChanged = false, staleDraft = false;
@@ -522,7 +391,7 @@ Future<bool> _copyPolicy(
                 final value = await api.send(
                     'POST', '${scope.root}/policies/$id/copies',
                     version: revision, key: key, body: body);
-                final copied = _readPolicyDraft(value);
+                final copied = readPolicyDraftSnapshot(value);
                 if (copied['id'] == id ||
                     copied['kind'] != 'POLICY' ||
                     copied['revision'] != 0 ||
@@ -687,7 +556,7 @@ Future<bool> _rollbackPolicy(
                     '${scope.root}/policies/${draft['id']}/versions/${version['id']}/rollback-drafts',
                     version: draft['revision'], key: key, body: body);
                 final restored =
-                    _readPolicyDraft(value, expectedId: draft['id']);
+                    readPolicyDraftSnapshot(value, expectedId: draft['id']);
                 if (restored['kind'] != draft['kind'] ||
                     restored['revision'] != draft['revision'] + 1 ||
                     restored['sourceVersionId'] != version['id'] ||

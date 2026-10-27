@@ -339,12 +339,16 @@ void main() {
           reason: 'The editor must lock before its first asynchronous wait.');
       final request = blocked.requests.single;
       expect(request.method, 'POST');
-      expect(request.url.path, '/api/v1$_root/policies');
+      expect(request.url.path, '/api/v1$_root/policy-draft-changes');
       expect(jsonDecode(request.body), {
+        'operation': 'CREATE',
         'name': '学习日使用规则',
         'kind': 'POLICY',
         'rules': <Json>[],
       });
+      expect(request.headers['Idempotency-Key'], matches(
+          RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+      expect(request.headers['If-Match'], isNull);
       expect(tester.takeException(), isNull);
     } finally {
       await cleanup();

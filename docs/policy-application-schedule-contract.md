@@ -116,6 +116,8 @@ domain 只接受小写标准 ASCII/punycode DNS 名，不接受 URL、IP、尾�
 | 方法与后缀 | 输入/返回 | 前置条件 |
 |---|---|---|
 | POST /policies | name、kind=POLICY/TEMPLATE、rules → PolicyDraft | 成人；可选幂等 |
+| POST /policy-draft-changes | CREATE：operation、name、kind、rules；UPDATE：operation、policyId、revision、name、rules → 原提交 PolicyDraft | 成人；必需小写标准 UUID Idempotency-Key；原子业务／审计／日志；no-store |
+| POST /policy-draft-operation-results/{requestId}/query | 原完整正文 → operation、committed、current | 当前成人写权限；只查同租户／操作者／键／正文的原结果，不重放、不传写入幂等头；no-store |
 | GET /policies | limit、cursor、kind? | 成人/审计员；按 ID 分页 |
 | GET /policies/{policyId} | PolicyDraft、ETag | 成人/审计员 |
 | POST /policy-domain-normalizations | domain → canonicalDomain | 当前策略读取角色；只读、no-store；不需草稿编号、版本、幂等键或近期 MFA，不保存规则 |
@@ -126,9 +128,13 @@ domain 只接受小写标准 ASCII/punycode DNS 名，不接受 URL、IP、尾�
 
 ETag 使用强单值版本，如 `"0"`；缺失 428、旧值 412。模板需先复制成 POLICY 才可预览，复制结果不随模板后续编辑变化。
 
+管理台完整草稿保存使用 `policy-draft-changes`，编辑的非负整数 revision 固定为打开时原修订，必须小于 9007199254740991；不能在结果未知后补读新版本覆盖。CREATE 不含 policyId/revision，UPDATE 不含 kind；保留既有规则编译、引用与角色检查。日志使用 `policy.draft.change`，与实际修改同一事务，查询前重新授权。原结果保留 90 天；缺失返回 `404 POLICY_DRAFT_RESULT_UNAVAILABLE`，原正文不符拒绝，过期／清除沿既有终态。空草稿／模板复制的 creation-results 接口继续服务对应流程，不用作完整编辑的恢复入口。
+
+界面冻结原草稿、正文与键；首次和查询的 committed 都完整匹配名称、类型、来源版本与全部规则，CREATE 必须 revision=0，UPDATE 必须原 revision+1。未知后只提供原保存查询，不重发写入；404／近期认证要求仍锁定，408视未知。查询的 current 必须同草稿且修订不倒退，相同修订须完全一致；更高修订可包含后续回滚形成的来源版本变化。存在后续修改时只确认原操作，提示核对当前列表。查看当前 GET 即使与原输入相同，也不证明原操作执行，不关闭编辑器、不清除原提交或停止原因。
+
 管理台策略详情中的编辑、模板复制和历史查询分别返回明确处理结果。普通取消编辑／复制或关闭只读历史时保留原详情与列表，不重复读取；确认保存、创建副本、回滚草稿后结束旧详情并重读列表，避免继续使用旧修订。回滚确认取消保留历史版本详情；回滚只影响草稿，仍须重新预览并发布。父详情／历史层失效后，其子流程与迟到身份准备不得继续提交，独立覆盖通知不被误关闭。
 
-复制和回滚复用通用写入表单，结果未知时固定原正文、防重复键与版本；重试遇到近期身份验证或其他拒绝不能释放先前不明的提交。明确关闭未知结果需就近确认，再返回列表核对，不当作成功。真实 POST 的 `409 IDEMPOTENCY_KEY_EXPIRED` 及既有不可恢复结果停止旧请求重试并保留只读草稿；保留实际状态码与错误码，不能伪装成结果查询的 `410 IDEMPOTENCY_RESULT_EXPIRED`，也不能由到期推断操作未执行。已有策略仍可只读获取当前草稿并核对本次输入，匹配后才确认保存；读取失败或不匹配不恢复旧请求提交。
+复制和回滚复用通用写入表单，结果未知时固定原正文、防重复键与版本；重试遇到近期身份验证或其他拒绝不能释放先前不明的提交。明确关闭未知结果需就近确认，再返回列表核对，不当作成功。真实 POST 的 `409 IDEMPOTENCY_KEY_EXPIRED` 及既有不可恢复结果停止旧请求重试并保留只读草稿；保留实际状态码与错误码，不能伪装成结果查询的 `410 IDEMPOTENCY_RESULT_EXPIRED`，也不能由到期推断操作未执行。已有策略可只读获取当前草稿供核对，读取失败、匹配或不匹配均不恢复旧请求提交，也不据此确认原保存。
 
 保留输入以可选中复制的中文字段展示全部规则与时间安排，保留完整对象编号及其他设置；名称只使用当前窗口已有目录，缺失名称不隐式读取，也不换成其他对象。
 
