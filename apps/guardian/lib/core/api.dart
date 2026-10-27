@@ -42,6 +42,8 @@ class ApiFailure implements Exception {
         'INVALID_DOMAIN_NORMALIZATION_RESPONSE' =>
           '域名格式校验结果无法确认，未加入规则。请核对输入后重试。',
         'INVALID_RESPONSE' => '服务返回的数据无法读取，暂时不能确认结果。已提交的操作请先核对原记录，避免重复提交。',
+        'SUBJECT_RESULT_UNAVAILABLE' =>
+          '尚未查到原档案操作结果，不能据此判断操作未执行。请稍后再查询，或核对当前档案。',
         'IDEMPOTENCY_KEY_EXPIRED' => '原请求已超过有效期限，不能再次提交。请查看当前记录；请求到期不代表操作未执行。',
         'IDEMPOTENCY_RESULT_EXPIRED' =>
           '原操作结果已超过 90 天保留期限，不能再恢复。请查看当前记录；不要重复提交原操作。',

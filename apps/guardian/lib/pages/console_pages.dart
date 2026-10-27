@@ -43,6 +43,7 @@ import '../ui/workspace_welcome.dart';
 import '../ui/family_finance_page.dart';
 import '../ui/family_identity_page.dart';
 import '../ui/member_editor.dart';
+import '../ui/subject_archive_dialog.dart';
 import '../ui/owned_dialog_route.dart';
 import '../ui/access_request_dialog.dart';
 import '../ui/policy_target_picker.dart';
@@ -690,63 +691,11 @@ class ConsoleActions {
     final parent = ModalRoute.of(owner);
     if (parent is! OwnedDialogRoute<void> ||
         !parent.available || !parent.isCurrent) return false;
-    final access = DialogAccessBinding(owner,
-        accessChanges: accessChanges, hasAccess: hasAccess);
-    try {
-      if (!access.permitted()) return false;
-      final version = subject['version'];
-      final path = '$root/subjects/${subject['id']}/archive';
-      final boundApi = api.scoped(access.permitted);
-      late final OwnedDialogRoute<bool> route;
-      void close(bool confirmed) {
-        if (!route.available || !route.isCurrent) return;
-        if (confirmed && !access.permitted()) return;
-        route.finish(confirmed);
-      }
-
-      route = OwnedDialogRoute<bool>(
-          context: owner,
-          builder: (_) => AnimatedBuilder(
-              animation: access.changes,
-              builder: (_, __) => !access.permitted()
-                  ? AlertDialog(
-                      title: const Text('工作空间或权限已变化'),
-                      content: const Text('已隐藏原归档确认。请关闭窗口后重新打开当前档案。'),
-                      actions: [
-                        TextButton(onPressed: () => close(false), child: const Text('关闭'))
-                      ])
-                  : AlertDialog(
-                      title: const Text('归档儿童档案'),
-                      scrollable: true,
-                      content: SizedBox(
-                          width: 460,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('${subject['nickname']}',
-                                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                                const SizedBox(height: 8),
-                                SelectableText('档案编号：${subject['id']}'),
-                                Text('年龄段：${label(subject['ageBand'])}'),
-                                const SizedBox(height: 16),
-                                const Text(
-                                    '归档后将不再显示在活动档案中，相关临时访问窗口会失效。可在“包含已归档”中查看。此操作不会自动解除设备管理。',
-                                    style: TextStyle(height: 1.8))
-                              ])),
-                      actions: [
-                        TextButton(onPressed: () => close(false), child: const Text('取消')),
-                        FilledButton(onPressed: () => close(true), child: const Text('确认归档'))
-                      ])));
-      final confirmed = await presentOwnedDialog<bool>(owner, route);
-      if (confirmed != true || !access.permitted() ||
-          !parent.available || !parent.isCurrent) return false;
-      onSubmitAttempt?.call();
-      await boundApi.send('POST', path, version: version);
-      return access.permitted();
-    } finally {
-      access.dispose();
-    }
+    return subjectArchiveDialog(owner,
+        api: api, root: root, subject: subject,
+        accessChanges: accessChanges, hasAccess: hasAccess,
+        reauth: () { if (hasAccess()) reauth(); },
+        onSubmitAttempt: onSubmitAttempt);
   }
 
   Future<bool> subjectDetails(Json row,
@@ -816,10 +765,10 @@ class ConsoleActions {
                     final finish = captureDialogCompletion(owner);
                     bool accepted() => access.permitted() && s.canWrite &&
                         route.available && route.isActive;
-                    final saved = await _archiveSubject(owner, r,
+                    final review = await _archiveSubject(owner, r,
                         api: api, accessChanges: access.changes, hasAccess: accepted,
                         onSubmitAttempt: () { if (accepted()) needsReview = true; });
-                    if (saved && accepted()) finish();
+                    if (review && accepted()) finish();
                   }, destructive: true, closeOnSuccess: false)
                 ]
               : []);

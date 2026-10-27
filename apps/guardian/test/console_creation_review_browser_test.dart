@@ -73,9 +73,14 @@ class _Fixture {
   final requests = <http.Request>[];
   final unknownCreates = <String>{};
   final created = <String, Json>{};
+  final archiveQueryStatuses = <int>[];
   Completer<http.Response>? subjectDetailsResponse;
   bool unknownSubjectEdit = false, unknownArchive = false, closed = false;
+  bool subjectArchived = false;
   late final session = _ConsoleSession(handle);
+
+  Json get subject => {..._record('subjects'),
+    if (subjectArchived) ...{'state': 'ARCHIVED', 'version': 8}};
 
   List<http.Request> listReads(String section) => requests.where((request) =>
       request.method == 'GET' && (request.url.path == '$_root/$section' ||
@@ -90,9 +95,12 @@ class _Fixture {
       final subjectSuffix = session.canWrite ? '/management' : '';
       if (path == '$_root/subjects/$_first$subjectSuffix') {
         if (subjectDetailsResponse case final pending?) return pending.future;
-        final subject = _record('subjects');
-        if (!session.canWrite) subject.remove('state');
-        return _reply(subject);
+        if (subjectArchived && !session.canWrite) {
+          return _reply({'errorCode': 'ACCESS_DENIED'}, status: 403);
+        }
+        final currentSubject = subject;
+        if (!session.canWrite) currentSubject.remove('state');
+        return _reply(currentSubject);
       }
       if (session.canWrite && path == '$_root/subjects/$_archived/management') {
         return _reply(_archivedRecord());
@@ -109,10 +117,13 @@ class _Fixture {
             expect(next, 'next');
             return _reply({'items': [_record(section, second: true)], 'nextCursor': null});
           }
-          return _reply({'items': [_record(section),
+          final includeArchived = section == 'subjects' && session.canWrite &&
+              request.url.queryParameters['includeArchived'] == 'true';
+          return _reply({'items': [
+            if (section != 'subjects') _record(section)
+            else if (!subjectArchived || includeArchived) subject,
             if (created[section] != null) created[section]!,
-            if (section == 'subjects' && session.canWrite &&
-                request.url.queryParameters['includeArchived'] == 'true') _archivedRecord()],
+            if (includeArchived) _archivedRecord()],
             'nextCursor': 'next'});
         }
       }
@@ -132,9 +143,29 @@ class _Fixture {
       if (unknownSubjectEdit) return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
       return _reply({..._record('subjects'), ...(jsonDecode(request.body) as Json)});
     }
-    if (request.method == 'POST' && path == '$_root/subjects/$_first/archive') {
+    if (request.method == 'POST' && path == '$_root/subjects/changes') {
+      expect(jsonDecode(request.body), {'operation': 'ARCHIVE', 'subjectId': _first, 'version': 7});
+      expect(request.headers['if-match'], isNull);
+      expect(request.headers['idempotency-key'], matches(
+          RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
       if (unknownArchive) return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
-      return _reply({..._record('subjects'), 'state': 'ARCHIVED', 'version': 8});
+      subjectArchived = true;
+      return _reply(subject);
+    }
+    if (request.method == 'POST' &&
+        path.startsWith('$_root/subjects/operation-results/') && path.endsWith('/query')) {
+      final original = requests.firstWhere((sent) =>
+          sent.method == 'POST' && sent.url.path == '$_root/subjects/changes');
+      expect(path, '$_root/subjects/operation-results/${original.headers['idempotency-key']}/query');
+      expect(request.body, original.body);
+      expect(request.headers['idempotency-key'], isNull);
+      final status = archiveQueryStatuses.isEmpty ? 200 : archiveQueryStatuses.removeAt(0);
+      if (status != 200) {
+        return _reply({'errorCode': status == 404
+            ? 'SUBJECT_RESULT_UNAVAILABLE' : 'ACCESS_DENIED'}, status: status);
+      }
+      subjectArchived = true;
+      return _reply({'operation': 'ARCHIVE', 'committed': subject, 'current': subject});
     }
     throw StateError('Unexpected synthetic console request: ${request.method} $path');
   }
@@ -334,19 +365,121 @@ void main() {
     await _until(tester, () => find.text('归档儿童档案').evaluate().length == 1);
     await _tap(tester, _dialogButton('确认归档'));
     await _until(tester, () => fixture.writes.length == 2 &&
-        _dialogButton('关闭').evaluate().length == 1 &&
-        tester.widget<ButtonStyleButton>(_dialogButton('关闭')).onPressed != null);
+        _dialogButton('暂时关闭').evaluate().length == 1 &&
+        tester.widget<ButtonStyleButton>(_dialogButton('暂时关闭')).onPressed != null);
     expect(fixture.listReads('subjects'), hasLength(3));
     final archive = fixture.writes.last;
     expect(archive.method, 'POST');
-    expect(archive.url.path, '$_root/subjects/$_first/archive');
-    expect(archive.headers['if-match'], '"7"');
-    expect(archive.body, isEmpty);
-    await closeDetails();
+    expect(archive.url.path, '$_root/subjects/changes');
+    expect(archive.headers['if-match'], isNull);
+    expect(archive.headers['idempotency-key'], isNotEmpty);
+    expect(jsonDecode(archive.body), {'operation': 'ARCHIVE', 'subjectId': _first, 'version': 7});
+    expect(_dialogButton('确认归档'), findsNothing);
+    expect(_dialogButton('查询归档结果'), findsOneWidget);
+    await _tap(tester, _dialogButton('暂时关闭'));
+    await tester.pump();
+    expect(_dialogButton('继续核对'), findsOneWidget);
+    final oldConfirmClose = tester.widget<ButtonStyleButton>(
+        _dialogButton('关闭并核对列表')).onPressed!;
+    await _tap(tester, _dialogButton('继续核对'));
+    await _until(tester, () {
+      if (find.byType(AlertDialog).evaluate().isEmpty) return false;
+      final query = _dialogButton('查询归档结果');
+      return query.evaluate().length == 1 &&
+          tester.widget<ButtonStyleButton>(query).onPressed != null;
+    });
+    oldConfirmClose();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await tester.pump();
+    expect(find.text('归档儿童档案'), findsOneWidget);
+    expect(find.byKey(const Key('subject-archive-unknown-close-notice')), findsNothing);
+    expect(_dialogButton('查询归档结果'), findsOneWidget);
+    expect(fixture.listReads('subjects'), hasLength(3));
+    expect(fixture.requests.where((request) =>
+        request.method == 'POST' && request.url.path == '$_root/subjects/changes'), hasLength(1));
+    expect(fixture.writes, hasLength(2));
+    await _tap(tester, _dialogButton('暂时关闭'));
+    await tester.pump();
+    await _tap(tester, _dialogButton('关闭并核对列表'));
+    await _until(tester, () => fixture.listReads('subjects').length == 4 &&
+        _listReady(tester, 'subjects'));
     expect(fixture.listReads('subjects'), hasLength(4));
     expect(fixture.writes, hasLength(2));
     expect(fixture.requests.every((request) => request.method == 'GET' ||
         identical(request, edit) || identical(request, archive)), isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('an unknown archive queries its original result without resubmitting and reviews the current state',
+      (tester) async {
+    _wide(tester);
+    final fixture = _Fixture()..unknownArchive = true;
+    fixture.archiveQueryStatuses.addAll([404, 200]);
+    addTearDown(() => fixture.cleanup(tester));
+    List<http.Request> changes() => fixture.requests.where((request) =>
+        request.method == 'POST' && request.url.path == '$_root/subjects/changes').toList();
+    List<http.Request> queries() => fixture.requests.where((request) =>
+        request.method == 'POST' &&
+        request.url.path.startsWith('$_root/subjects/operation-results/')).toList();
+    bool queryReady() {
+      if (find.byType(AlertDialog).evaluate().isEmpty) return false;
+      final query = _dialogButton('查询归档结果');
+      return query.evaluate().length == 1 &&
+          tester.widget<ButtonStyleButton>(query).onPressed != null;
+    }
+
+    await _mount(tester, fixture, 'subjects');
+    await _until(tester, () => _listReady(tester, 'subjects'));
+    await _tap(tester, find.text(_name('subjects')));
+    await _until(tester, () => find.byType(AlertDialog).evaluate().isNotEmpty &&
+        _dialogButton('归档').evaluate().length == 1);
+    await _tap(tester, _dialogButton('归档'));
+    await _until(tester, () => find.byType(AlertDialog).evaluate().isNotEmpty &&
+        _dialogButton('确认归档').evaluate().length == 1);
+    await _tap(tester, _dialogButton('确认归档'));
+    await _until(tester, () => changes().length == 1 && queryReady());
+    final original = changes().single;
+    expect(jsonDecode(original.body), {'operation': 'ARCHIVE', 'subjectId': _first, 'version': 7});
+    expect(_dialogButton('确认归档'), findsNothing);
+    expect(fixture.listReads('subjects'), hasLength(1));
+    await _tap(tester, _dialogButton('查询归档结果'));
+    await _until(tester, () => queries().length == 1 && queryReady());
+    expect(_dialogButton('确认归档'), findsNothing,
+        reason: 'A missing result does not prove that the original archive failed.');
+    expect(_dialogButton('暂时关闭'), findsOneWidget);
+    expect(changes(), hasLength(1));
+    expect(fixture.subjectArchived, isFalse);
+    expect(fixture.listReads('subjects'), hasLength(1));
+
+    await _tap(tester, _dialogButton('查询归档结果'));
+    await _until(tester, () => queries().length == 2 &&
+        fixture.listReads('subjects').length == 2 && _listReady(tester, 'subjects'));
+    expect(changes(), hasLength(1), reason: 'Recovery must never repeat the archive command.');
+    expect(queries().every((request) => request.body == original.body &&
+        request.headers['idempotency-key'] == null &&
+        request.url.path == '$_root/subjects/operation-results/${original.headers['idempotency-key']}/query'), isTrue);
+    expect(fixture.subjectArchived, isTrue);
+    expect(find.text(_name('subjects')), findsNothing);
+    expect(find.byType(AlertDialog), findsNothing);
+
+    final filter = find.widgetWithText(FilterChip, '包含已归档');
+    await _tap(tester, filter);
+    await _until(tester, () => fixture.listReads('subjects').length == 3 &&
+        _listReady(tester, 'subjects') && find.text(_name('subjects')).evaluate().length == 1);
+    await _tap(tester, find.text(_name('subjects')));
+    await _until(tester, () => find.byType(AlertDialog).evaluate().isNotEmpty &&
+        _dialogButton('关闭').evaluate().length == 1);
+    expect(find.descendant(of: _dialog, matching: find.text('已归档')), findsOneWidget);
+    expect(find.descendant(of: _dialog, matching: find.text('8')), findsOneWidget);
+    expect(_dialogButton('编辑档案'), findsNothing);
+    expect(_dialogButton('归档'), findsNothing);
+    await _tap(tester, _dialogButton('关闭'));
+    await _until(tester, () => _listReady(tester, 'subjects'));
+    expect(fixture.listReads('subjects'), hasLength(3));
+    expect(changes(), hasLength(1));
+    expect(queries(), hasLength(2));
     expect(tester.takeException(), isNull);
   });
 
