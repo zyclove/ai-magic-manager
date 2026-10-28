@@ -516,6 +516,8 @@ class ResourcePageState extends State<ResourcePage> {
                       label: const Text('清除搜索')))
             else if (narrow)
               ...filtered.map((row) => InkWell(
+                  canRequestFocus: false,
+                  excludeFromSemantics: true,
                   onTap: !canOpen || !canAct
                       ? null
                       : () => openRecord(row),
@@ -542,10 +544,13 @@ class ResourcePageState extends State<ResourcePage> {
                                         Expanded(child: c.build(row))
                                       ])),
                             if (canOpen)
-                              const Align(
+                              Align(
                                   alignment: Alignment.centerRight,
-                                  child:
-                                      Icon(Icons.chevron_right, color: muted))
+                                  child: TextButton(
+                                      onPressed: canAct
+                                          ? () => openRecord(row)
+                                          : null,
+                                      child: const Text('查看详情')))
                           ]))))
             else
               LayoutBuilder(

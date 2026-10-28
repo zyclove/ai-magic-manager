@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
 import 'package:guardian/ui/design.dart';
@@ -328,6 +329,7 @@ void main() {
     final key = GlobalKey<ResourcePageState>();
     var width = 500.0;
     var reads = 0, opens = 0;
+    var interactive = true;
     late StateSetter resize;
     final api = apiFor((_) {
       reads++;
@@ -340,6 +342,7 @@ void main() {
             return AlertDialog(scrollable: true, content: SizedBox(
                     width: width,
                     child: ResourcePage(key: key, api: api, path: '/records',
+                        canInteract: () => interactive,
                         title: '记录', subtitle: '查看记录',
                         columns: [ColumnSpec('名称', (row) => Text(
                             row['name'] as String,
@@ -373,8 +376,24 @@ void main() {
     final content = tester.getRect(find.byKey(key));
     expect(field.left, greaterThanOrEqualTo(content.left));
     expect(field.right, lessThanOrEqualTo(content.right));
-    await openCard();
+    final details = find.ancestor(
+        of: find.text('查看详情'),
+        matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
+    expect(details, findsOneWidget);
+    await tester.ensureVisible(details);
+    final label = find.descendant(of: details, matching: find.text('查看详情'));
+    Focus.of(tester.element(label)).requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
     expect(opens, 3);
+    final heldOpen = tester.widget<ButtonStyleButton>(details).onPressed!;
+    resize(() => interactive = false);
+    await tester.pump();
+    expect(tester.widget<ButtonStyleButton>(details).onPressed, isNull);
+    heldOpen();
+    await tester.pump();
+    expect(opens, 3, reason: 'A captured button must honor the current interaction gate.');
     expect(key.currentState, same(state));
     expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, 'alpha');
     expect(find.text('已加载 2 条 · 匹配 1 条'), findsOneWidget);
