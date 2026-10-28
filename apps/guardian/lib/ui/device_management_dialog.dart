@@ -536,9 +536,19 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
     );
   }
 
-  Widget applications() {
+  List<DeviceManagementApplication> matchingApplications() {
+    final query = search.text.trim().toLowerCase();
+    return (c.inventory?.applications ?? const <DeviceManagementApplication>[])
+        .where((app) => app.displayName.toLowerCase().contains(query) ||
+            app.packageName.toLowerCase().contains(query))
+        .toList(growable: false);
+  }
+
+  List<Widget> applicationSlivers(List<DeviceManagementApplication> matches) {
     final value = c.inventory;
-    if (value == null) return const Notice('尚未取得应用清单，请完成读取后核对。');
+    if (value == null) {
+      return const [SliverToBoxAdapter(child: Notice('尚未取得应用清单，请完成读取后核对。'))];
+    }
     final common = commonActions();
     final observation = switch (value.observationStatus) {
       'NOT_AUTHORIZED' => widget.onPrivacy == null
@@ -551,94 +561,88 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
       _ => '应用清单状态暂不可用，请刷新资料后核对。',
     };
     final searchChanged = guard(() => setState(() {}), allowBusy: true);
-    final query = search.text.trim().toLowerCase();
-    final matches = value.applications
-        .where((app) =>
-            app.displayName.toLowerCase().contains(query) ||
-            app.packageName.toLowerCase().contains(query))
-        .toList(growable: false);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('设备自报应用清单', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 12),
-        Notice(observation,
-            key: const Key('device-app-observation-status'),
-            warning: value.observationStatus == 'STALE' ||
-                value.observationStatus == 'REVOKED'),
-        const SizedBox(height: 8),
-        const Text('仅展示设备可见并已上报的应用，不代表完整安装清单；设备自报资料尚未独立验证。',
-            style: TextStyle(color: muted, height: 1.7)),
-        const SizedBox(height: 12),
-        Text('最近上报：${dateLabel(value.receivedAt)}',
-            style: Theme.of(context).textTheme.bodySmall),
-        Text('实际读取：${dateLabel(c.sectionUpdatedAt)}',
-            style: Theme.of(context).textTheme.bodySmall),
-        if (common.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          Wrap(spacing: 10, runSpacing: 10, children: common),
-        ],
-        const SizedBox(height: 16),
-        if (value.applications.isNotEmpty) ...[
-          TextField(
-            key: const Key('device-app-search'),
-            controller: search,
-            onChanged: (_) => searchChanged(),
-            autocorrect: false,
-            enableSuggestions: false,
-            decoration: InputDecoration(
-              labelText: '查找已上报应用',
-              hintText: '应用名称或包名',
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: search.text.isEmpty
-                  ? null
-                  : IconButton(
-                      tooltip: '清除应用查找',
-                      onPressed: guard(() => setState(search.clear), allowBusy: true),
-                      icon: const Icon(Icons.close),
-                    ),
-            ),
-          ),
+    return [
+      SliverToBoxAdapter(child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('设备自报应用清单', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 12),
-        ],
-        if (value.applications.isEmpty &&
-            const {'RECENT', 'STALE'}.contains(value.observationStatus))
-          const Notice('尚无可见应用上报，不能据此判断设备未安装应用。')
-        else if (value.applications.isNotEmpty && matches.isEmpty)
-          const Notice('当前已上报清单没有匹配项。可清除查找条件后重新查看。')
-        else if (matches.isNotEmpty) ...[
-          Text('匹配 ${matches.length} / ${value.applications.length} 项',
-              style: Theme.of(context).textTheme.bodySmall),
+          Notice(observation,
+              key: const Key('device-app-observation-status'),
+              warning: value.observationStatus == 'STALE' ||
+                  value.observationStatus == 'REVOKED'),
           const SizedBox(height: 8),
-          for (final app in matches)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  border: Border.all(color: line),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(app.displayName,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 4),
-                    SelectableText(app.packageName,
-                        style: Theme.of(context).textTheme.bodySmall),
-                    const SizedBox(height: 6),
-                    Text('${label(app.profile)} · 版本 ${app.versionCode} · '
-                        '${app.systemApplication ? '系统应用' : '普通应用'}'),
-                  ],
-                ),
+          const Text('仅展示设备可见并已上报的应用，不代表完整安装清单；设备自报资料尚未独立验证。',
+              style: TextStyle(color: muted, height: 1.7)),
+          const SizedBox(height: 12),
+          Text('最近上报：${dateLabel(value.receivedAt)}',
+              style: Theme.of(context).textTheme.bodySmall),
+          Text('实际读取：${dateLabel(c.sectionUpdatedAt)}',
+              style: Theme.of(context).textTheme.bodySmall),
+          if (common.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Wrap(spacing: 10, runSpacing: 10, children: common),
+          ],
+          const SizedBox(height: 16),
+          if (value.applications.isNotEmpty) ...[
+            TextField(
+              key: const Key('device-app-search'),
+              controller: search,
+              onChanged: (_) => searchChanged(),
+              autocorrect: false,
+              enableSuggestions: false,
+              decoration: InputDecoration(
+                labelText: '查找已上报应用',
+                hintText: '应用名称或包名',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: search.text.isEmpty
+                    ? null
+                    : IconButton(
+                        tooltip: '清除应用查找',
+                        onPressed: guard(() => setState(search.clear), allowBusy: true),
+                        icon: const Icon(Icons.close),
+                      ),
               ),
             ),
+            const SizedBox(height: 12),
+          ],
+          if (value.applications.isEmpty &&
+              const {'RECENT', 'STALE'}.contains(value.observationStatus))
+            const Notice('尚无可见应用上报，不能据此判断设备未安装应用。')
+          else if (value.applications.isNotEmpty && matches.isEmpty)
+            const Notice('当前已上报清单没有匹配项。可清除查找条件后重新查看。')
+          else if (matches.isNotEmpty) ...[
+            Text('匹配 ${matches.length} / ${value.applications.length} 项',
+                style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: 8),
+          ],
         ],
-      ],
-    );
+      )),
+      if (matches.isNotEmpty)
+        SliverList(delegate: SliverChildBuilderDelegate(
+            (context, index) => applicationCard(matches[index]),
+            childCount: matches.length)),
+    ];
   }
+
+  Widget applicationCard(DeviceManagementApplication app) => Padding(
+      key: ValueKey('device-app-item-${app.profile}/${app.packageName}'),
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(border: Border.all(color: line),
+              borderRadius: BorderRadius.circular(10)),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(app.displayName,
+                style: const TextStyle(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 4),
+            SelectableText(app.packageName,
+                style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: 6),
+            Text('${label(app.profile)} · 版本 ${app.versionCode} · '
+                '${app.systemApplication ? '系统应用' : '普通应用'}'),
+          ])));
 
   Widget actionButton(String key, String title, IconData icon,
       Future<void> Function(DeviceManagementRecord) action,
@@ -803,43 +807,44 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
         ],
       );
 
-  Widget contents() {
-    if (!c.hasAccess) return scopeUnavailable();
+  List<Widget> contents(List<DeviceManagementApplication> matches) {
+    if (!c.hasAccess) return [SliverToBoxAdapter(child: scopeUnavailable())];
     final device = c.device;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        navigation(),
-        const SizedBox(height: 16),
-        readInformation(),
-        const SizedBox(height: 12),
-        if (checkingRevoke) ...[
-          resultNotice(),
-          const SizedBox(height: 16),
-        ],
-        readWarning(),
-        if (device == null)
-          if (c.busy)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 32),
-              child: Center(child: CircularProgressIndicator()),
-            )
-          else if (c.error == null)
-            const Notice('尚未取得设备资料，请读取后继续。')
-          else
-            const SizedBox.shrink()
-        else ...[
-          switch (c.section) {
-            DeviceManagementSection.overview => overview(device),
-            DeviceManagementSection.capabilities => capabilities(),
-            DeviceManagementSection.applications => applications(),
-          },
-          actions(device),
-          const SizedBox(height: 16),
-          identifiers(device),
-        ],
+    return [
+      SliverToBoxAdapter(child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            navigation(),
+            const SizedBox(height: 16),
+            readInformation(),
+            const SizedBox(height: 12),
+            if (checkingRevoke) ...[
+              resultNotice(),
+              const SizedBox(height: 16),
+            ],
+            readWarning(),
+            if (device == null)
+              if (c.busy)
+                const Padding(padding: EdgeInsets.symmetric(vertical: 32),
+                    child: Center(child: CircularProgressIndicator()))
+              else if (c.error == null)
+                const Notice('尚未取得设备资料，请读取后继续。'),
+          ])),
+      if (device != null) ...[
+        if (c.section == DeviceManagementSection.applications)
+          ...applicationSlivers(matches)
+        else
+          SliverToBoxAdapter(child: c.section == DeviceManagementSection.overview
+              ? overview(device) : capabilities()),
+        SliverToBoxAdapter(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              actions(device),
+              const SizedBox(height: 16),
+              identifiers(device),
+            ])),
       ],
-    );
+    ];
   }
 
   @override
@@ -851,6 +856,8 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
             .toDouble();
     final compact = availableHeight < 480;
     final onClose = widget.onClose;
+    final matches = c.hasAccess && c.section == DeviceManagementSection.applications
+        ? matchingApplications() : const <DeviceManagementApplication>[];
     final name = c.hasAccess ? c.device?.displayName ?? '设备管理' : '设备管理';
     return PopScope(
       canPop: !c.writeBusy,
@@ -902,10 +909,15 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
                   const SizedBox(height: 12),
                 ],
                 Flexible(
-                  child: SingleChildScrollView(
+                  child: CustomScrollView(
+                    key: const Key('device-management-scroll'),
+                    shrinkWrap: true,
+                    semanticChildCount: c.hasAccess && c.inventory != null &&
+                            c.section == DeviceManagementSection.applications
+                        ? matches.length : null,
                     keyboardDismissBehavior:
                         ScrollViewKeyboardDismissBehavior.onDrag,
-                    child: contents(),
+                    slivers: contents(matches),
                   ),
                 ),
               ],

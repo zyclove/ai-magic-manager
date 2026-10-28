@@ -323,8 +323,27 @@ Future<void> mount(WidgetTester tester, Fixture f, {double scale = 1}) async {
 Future<void> press(WidgetTester tester, String key) async {
   final finder = find.byKey(Key(key));
   await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
   await tester.tap(finder);
   await tester.pumpAndSettle();
+}
+
+Finder get deviceScrollable => find.descendant(
+    of: find.byKey(const Key('device-management-scroll')),
+    matching: find.byType(Scrollable)).first;
+
+/// Lazy rows may not exist until the single device viewport reaches them.
+Future<void> revealDeviceContent(WidgetTester tester, Finder target,
+    {double delta = 200, int maxScrolls = 30}) async {
+  expect(deviceScrollable, findsOneWidget);
+  if (target.evaluate().isEmpty) {
+    await tester.scrollUntilVisible(target, delta,
+        scrollable: deviceScrollable, maxScrolls: maxScrolls);
+  } else {
+    await tester.ensureVisible(target);
+  }
+  await tester.pumpAndSettle();
+  expect(target, findsOneWidget);
 }
 
 DeviceManagementRecord namedDevice(String name) {
@@ -403,21 +422,27 @@ void main() {
     final f = Fixture();
     await mount(tester, f);
     await press(tester, 'device-section-applications');
+    await revealDeviceContent(tester, find.text('学习应用'));
     expect(find.text('学习应用'), findsOneWidget);
+    await revealDeviceContent(tester, find.text('视频应用'));
     expect(find.text('视频应用'), findsOneWidget);
     final selectedCalls = f.controller.sections.length;
     final search = find.byKey(const Key('device-app-search'));
     await tester.enterText(search, '学习');
     await tester.pump();
+    await revealDeviceContent(tester, find.text('学习应用'));
     expect(find.text('学习应用'), findsOneWidget);
     expect(find.text('视频应用'), findsNothing);
     await tester.enterText(search, 'COM.EXAMPLE.VIDEO');
     await tester.pump();
+    await revealDeviceContent(tester, find.text('视频应用'));
     expect(find.text('视频应用'), findsOneWidget);
     expect(find.text('学习应用'), findsNothing);
     await tester.enterText(search, '');
     await tester.pump();
+    await revealDeviceContent(tester, find.text('学习应用'));
     expect(find.text('学习应用'), findsOneWidget);
+    await revealDeviceContent(tester, find.text('视频应用'));
     expect(find.text('视频应用'), findsOneWidget);
     expect(f.controller.sections.length, selectedCalls);
     expect(f.controller.refreshCalls, 0);
@@ -457,11 +482,14 @@ void main() {
       expect(find.textContaining('设备自报资料尚未独立验证'), findsOneWidget);
       final search = find.byKey(const Key('device-app-search'));
       if (scenario.history) {
+        await revealDeviceContent(tester, find.text('学习应用'));
         expect(find.text('学习应用'), findsOneWidget);
+        await revealDeviceContent(tester, find.text('视频应用'));
         expect(find.text('视频应用'), findsOneWidget);
         await tester.ensureVisible(search);
         await tester.enterText(search, 'COM.EXAMPLE.VIDEO');
         await tester.pump();
+        await revealDeviceContent(tester, find.text('视频应用'));
         expect(find.text('视频应用'), findsOneWidget);
         expect(find.text('学习应用'), findsNothing);
         expect(status, findsOneWidget);
@@ -480,7 +508,7 @@ void main() {
     }
   });
 
-  testWidgets('long inventories keep common actions before apps and privacy refreshes once',
+  testWidgets('long inventories render lazily and keep common actions before apps',
       (tester) async {
     final f = Fixture();
     f.controller.inventoryValue = deviceInventory(applications: List.generate(500,
@@ -490,15 +518,36 @@ void main() {
             systemApplication: false)));
     await mount(tester, f);
     await press(tester, 'device-section-applications');
+    final rows = find.byWidgetPredicate((widget) =>
+        widget.key is ValueKey<String> &&
+        (widget.key as ValueKey<String>).value.startsWith('device-app-item-'));
+    expect(rows.evaluate().length, lessThan(50),
+        reason: 'The viewport must not construct the complete 500-app inventory.');
     final firstApp = find.text('清单应用 0');
-    expect(firstApp, findsOneWidget);
+    final lastApp = find.text('清单应用 499');
+    expect(lastApp, findsNothing);
+    await revealDeviceContent(tester, firstApp);
     for (final action in ['privacy', 'diagnostic', 'executions']) {
       final entry = find.byKey(Key('device-management-$action'));
       expect(entry, findsOneWidget, reason: 'Common actions have one original entry.');
       expect(tester.getTopLeft(entry).dy, lessThan(tester.getTopLeft(firstApp).dy),
           reason: 'Long inventories must not bury the common device workflows.');
     }
+    await revealDeviceContent(tester, lastApp, delta: 1400, maxScrolls: 80);
+    expect(find.byKey(const ValueKey<String>(
+        'device-app-item-PRIMARY/com.example.app499')), findsOneWidget);
+    final search = find.byKey(const Key('device-app-search'));
+    await revealDeviceContent(tester, search, delta: -1400, maxScrolls: 80);
+    await tester.enterText(search, 'com.example.app499');
+    await tester.pumpAndSettle();
+    await revealDeviceContent(tester, lastApp);
+    expect(rows, findsOneWidget);
+    expect(tester.widget<CustomScrollView>(find.byKey(
+        const Key('device-management-scroll'))).semanticChildCount, 1);
+    expect(firstApp, findsNothing);
+    expect(f.controller.sections, [DeviceManagementSection.applications]);
     expect(f.controller.refreshCalls, 0);
+    expect(f.controller.actionDispatches, 0);
     await press(tester, 'device-management-privacy');
     expect(find.text('子流程 · privacy'), findsOneWidget);
     expect(f.controller.actionDispatches, 1);
@@ -510,7 +559,9 @@ void main() {
     expect(f.controller.sections, [DeviceManagementSection.applications]);
     expect(f.closeCalls, 0);
     expect(find.byKey(const Key('device-management-privacy')), findsOneWidget);
-    expect(find.text('清单应用 0'), findsOneWidget);
+    expect(tester.widget<TextField>(search).controller!.text, 'com.example.app499');
+    await revealDeviceContent(tester, lastApp);
+    expect(firstApp, findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -886,6 +937,7 @@ void main() {
       expect(find.byType(AlertDialog), findsNothing);
       expect(tester.widget<TextField>(search).controller!.text,
           'com.example.video');
+      await revealDeviceContent(tester, find.text('视频应用'));
       expect(find.text('视频应用'), findsOneWidget);
       expect(find.text('学习应用'), findsNothing);
       expect(tester.takeException(), isNull);
@@ -895,6 +947,7 @@ void main() {
     await tester.tap(clear);
     await tester.pump();
     expect(tester.widget<TextField>(search).controller!.text, isEmpty);
+    await revealDeviceContent(tester, find.text('学习应用'));
     expect(find.text('学习应用'), findsOneWidget);
     await press(tester, 'device-section-capabilities');
     await press(tester, 'device-section-applications');
@@ -1115,6 +1168,7 @@ void main() {
       await tester.ensureVisible(search);
       await tester.enterText(search, '学习');
       await tester.pump();
+      await revealDeviceContent(tester, find.text('学习应用'));
       expect(find.text('学习应用'), findsOneWidget);
       expect(tester.takeException(), isNull);
       final close = find.byKey(const Key('device-management-close'));
@@ -1179,12 +1233,13 @@ void main() {
     await mount(tester, f, scale: 2);
     await press(tester, 'device-section-applications');
     final search = find.byKey(const Key('device-app-search'));
-    await tester.ensureVisible(search);
+    await revealDeviceContent(tester, search);
+    expect(search.hitTestable(), findsOneWidget);
     await tester.tap(search);
     tester.view.viewInsets = const FakeViewPadding(bottom: 420);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    await tester.ensureVisible(search);
+    await revealDeviceContent(tester, search);
     await tester.enterText(search, 'com.example.video');
     await tester.pump();
     final scrollable =
@@ -1195,13 +1250,13 @@ void main() {
     expect(field.bottom, lessThanOrEqualTo(viewport.bottom + 1),
         reason:
             'The keyboard must leave a usable viewport for the search field.');
+    await revealDeviceContent(tester, find.text('视频应用'));
     expect(find.text('视频应用'), findsOneWidget);
     expect(find.text('学习应用'), findsNothing);
-    await tester.ensureVisible(find.text('视频应用'));
-    await tester.pump();
-    await tester.ensureVisible(search);
+    await revealDeviceContent(tester, search);
     await tester.enterText(search, '');
     await tester.pump();
+    await revealDeviceContent(tester, find.text('学习应用'));
     expect(find.text('学习应用'), findsOneWidget);
     expect(f.controller.refreshCalls, 0);
     expect(f.controller.sections, [DeviceManagementSection.applications]);
