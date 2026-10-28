@@ -623,7 +623,7 @@ void main() {
   }, tags: 'policy-history-paging');
 
   testWidgets(
-      'policy history rejects an entire mismatched page and keeps the first page available for review',
+      'policy history rejects mismatched pages and invalid dates while retaining the first page',
       (tester) async {
     const cursor = '11111111-2222-4333-8444-555555555555';
     final fixture = _Fixture();
@@ -640,6 +640,13 @@ void main() {
       'sequence': 98729,
       'createdAt': 1729999998000,
     };
+    final invalidTime = {
+      ...candidate,
+      'id': 'overflow-private-version',
+      'sequence': 98729,
+      'createdAt': 8640000000000001,
+    };
+    var nextPageReads = 0;
     fixture.respond = (request) async {
       if (request.method != 'GET' ||
           !request.url.path.endsWith('/policies/$_policy/versions')) {
@@ -653,7 +660,11 @@ void main() {
         });
       }
       expect(request.url.queryParameters['cursor'], cursor);
-      return reply({'items': [candidate, foreign], 'nextCursor': null});
+      nextPageReads++;
+      return reply({
+        'items': [candidate, nextPageReads == 1 ? foreign : invalidTime],
+        'nextCursor': null,
+      });
     };
     await _mount(tester, fixture);
     final invocation = await _open(tester, fixture);
@@ -678,6 +689,21 @@ void main() {
         findsNothing);
     _expectNoEnabledPolicyActions(tester, labels: ['回滚为草稿']);
 
+    await tester.ensureVisible(_button('重试加载更多'));
+    await tester.tap(_button('重试加载更多'));
+    await _waitUntil(
+        tester,
+        () =>
+            fixture.versionReads.length == 3 && _ready(tester, '重试加载更多'));
+    expect(find.text('版本 98731'), findsOneWidget);
+    expect(find.text('版本 98730', skipOffstage: false), findsNothing,
+        reason: 'A valid row before the invalid timestamp must not be appended.');
+    expect(find.text('版本 98729', skipOffstage: false), findsNothing);
+    expect(find.textContaining('overflow-private-', skipOffstage: false),
+        findsNothing);
+    expect(fixture.writes, isEmpty);
+    expect(tester.takeException(), isNull);
+
     final firstRow = find.descendant(
         of: historyWidget, matching: find.text('版本 98731'));
     await tester.ensureVisible(firstRow);
@@ -695,7 +721,7 @@ void main() {
             history.isCurrent &&
             viewButtons.evaluate().length == 1 &&
             tester.widget<ButtonStyleButton>(viewButtons.first).onPressed != null);
-    expect(fixture.versionReads, hasLength(2));
+    expect(fixture.versionReads, hasLength(3));
     expect(find.text('版本 98731'), findsOneWidget);
     expect(fixture.writes, isEmpty);
     await tester.tap(_topButton('关闭'));
@@ -704,7 +730,7 @@ void main() {
     _capture(tester, '关闭')();
     await _waitUntil(tester, () => invocation.completed);
     expect(invocation.failure, isNull);
-    expect(fixture.versionReads, hasLength(2));
+    expect(fixture.versionReads, hasLength(3));
     expect(fixture.requests.every((request) => request.method == 'GET'), isTrue);
     expect(tester.takeException(), isNull);
   }, tags: 'policy-history-paging');

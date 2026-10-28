@@ -43,6 +43,11 @@ Json _readPolicyVersion(Object? value, String policyId) {
       !const {'CONFIGURE_ONLY', 'ENFORCE'}.contains(version['mode']) ||
       !_nullableText(version['sourceVersionId']) ||
       !_policyInteger(version['createdAt'])) throw _invalidPolicyResponse;
+  try {
+    DateTime.fromMillisecondsSinceEpoch(version['createdAt'] as int);
+  } on ArgumentError {
+    throw _invalidPolicyResponse;
+  }
   final snapshot = _policyObject(version['snapshot']);
   if (snapshot['schemaVersion'] != 1 ||
       snapshot['schemaVersion'] is! int ||
