@@ -295,7 +295,10 @@ class ResourcePageState extends State<ResourcePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => LayoutBuilder(
+      builder: (context, constraints) => _buildContent(context, constraints));
+
+  Widget _buildContent(BuildContext context, BoxConstraints constraints) {
     if (widget.isCurrent?.call() == false) {
       _actionLease?.retire();
       _interactionEpoch++;
@@ -373,7 +376,10 @@ class ResourcePageState extends State<ResourcePage> {
                 : searchText(row).toLowerCase();
             return terms.every((term) => text.contains(term));
           }).toList();
-    final narrow = MediaQuery.sizeOf(context).width < 760;
+    final availableWidth = constraints.hasBoundedWidth
+        ? constraints.maxWidth
+        : MediaQuery.sizeOf(context).width;
+    final narrow = availableWidth < 760;
     final canAct = _canInteract && !readDenied && !loading && !acting;
     final showActionProgress = acting && !loading && _canInteract &&
         (ModalRoute.of(context)?.isCurrent ?? true);
@@ -400,8 +406,9 @@ class ResourcePageState extends State<ResourcePage> {
                     runSpacing: 12,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      SizedBox(
-                          width: narrow ? 240 : 300,
+                      ConstrainedBox(
+                          constraints:
+                              BoxConstraints(maxWidth: narrow ? 240 : 300),
                           child: TextField(
                               key: ValueKey(resourceGeneration),
                               controller: search,

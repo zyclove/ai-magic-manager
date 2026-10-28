@@ -179,8 +179,8 @@ void main() {
         matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
     final originalState = key.currentState;
     final originalCreate = tester.widget<ButtonStyleButton>(createButton()).onPressed!;
-    final originalOpen = tester.widget<TextButton>(
-        find.widgetWithText(TextButton, '查看详情')).onPressed!;
+    final originalOpen = tester.widget<InkWell>(find.ancestor(
+        of: find.text('alpha'), matching: find.byType(InkWell))).onTap!;
     originalCreate();
     await tester.pump();
     expect(creates, 1);
@@ -316,6 +316,70 @@ void main() {
     expect(reads, 3);
     expect(find.text('visible-next'), findsOneWidget);
     expect(find.byType(FailureView), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('embedded list uses its available width and retains search pages and actions',
+      (tester) async {
+    tester.view.physicalSize = const Size(1200, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final key = GlobalKey<ResourcePageState>();
+    var width = 500.0;
+    var reads = 0, opens = 0;
+    late StateSetter resize;
+    final api = apiFor((_) {
+      reads++;
+      return page(['alpha', 'beta'], cursor: 'next');
+    });
+    await tester.pumpWidget(MaterialApp(theme: consoleTheme(),
+        home: Scaffold(body: StatefulBuilder(
+          builder: (context, setState) {
+            resize = setState;
+            return AlertDialog(scrollable: true, content: SizedBox(
+                    width: width,
+                    child: ResourcePage(key: key, api: api, path: '/records',
+                        title: '记录', subtitle: '查看记录',
+                        columns: [ColumnSpec('名称', (row) => Text(
+                            row['name'] as String,
+                            key: ValueKey('record-${row['id']}')))],
+                        refreshAfterOpen: false,
+                        onOpen: (_) async { opens++; })));
+          },
+        ))));
+    await tester.pumpAndSettle();
+    final state = key.currentState;
+    expect(find.byType(DataTable), findsNothing);
+    await tester.enterText(find.byType(TextField), 'alpha');
+    await tester.pump();
+    Future<void> openCard() async {
+      final row = find.byKey(const ValueKey('record-alpha'));
+      await tester.ensureVisible(row);
+      await tester.tap(row);
+      await tester.pumpAndSettle();
+    }
+    await openCard();
+    expect(opens, 1);
+    resize(() => width = 1000);
+    await tester.pumpAndSettle();
+    expect(find.byType(DataTable), findsOneWidget);
+    await tap(tester, '查看详情');
+    expect(opens, 2);
+    resize(() => width = 220);
+    await tester.pumpAndSettle();
+    expect(find.byType(DataTable), findsNothing);
+    final field = tester.getRect(find.byType(TextField));
+    final content = tester.getRect(find.byKey(key));
+    expect(field.left, greaterThanOrEqualTo(content.left));
+    expect(field.right, lessThanOrEqualTo(content.right));
+    await openCard();
+    expect(opens, 3);
+    expect(key.currentState, same(state));
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, 'alpha');
+    expect(find.text('已加载 2 条 · 匹配 1 条'), findsOneWidget);
+    expect(find.text('加载更多'), findsOneWidget);
+    expect(reads, 1);
     expect(tester.takeException(), isNull);
   });
 
