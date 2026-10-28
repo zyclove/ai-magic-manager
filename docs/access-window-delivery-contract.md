@@ -1,6 +1,6 @@
 # 签名审批文档与回执
 
-更新：2026-10-09。现有访问审批的管理员决定、设备文档交付、系统执行分别记录。本协议补充[审批契约](access-request-contract.md)，不改变使用额度账本。
+更新：2026-10-28。现有访问审批的管理员决定、设备文档交付、系统执行分别记录。本协议补充[审批契约](access-request-contract.md)，不改变使用额度账本。
 
 ## 实际支持
 
@@ -16,9 +16,11 @@
 | `GET /device-api/access-requests/{requestId}/document` | 当前审批版本的不可变签名文档，附当前 deliveryAttempt、deliveryState、reasonCode、retryStatus、retryAfter；未批准返回 409，首次签名缺密钥返回 503 |
 | `POST /device-api/access-requests/{requestId}/receipts` | `documentId, deliveryAttempt?, phase, reasonCode?`；记录设备报告，不改变决定或执行状态 |
 | `POST /device-api/access-requests/{requestId}/delivery-retries` | `documentId, failedAttempt`；对临时失败创建一次有界后继尝试，返回 documentId、deliveryAttempt、createdAt、current |
-| `GET /tenants/{tenantId}/access-requests/{requestId}/delivery` | 当前审批版本对应的文档动作、交付阶段、最后回执时间及证据状态 |
+| `GET /tenants/{tenantId}/access-requests/{requestId}/delivery` | 当前审批版本对应的文档动作、交付阶段、最后回执时间及证据状态；管理摘要不要求设备签名文档字段 |
 | `GET /tenants/{tenantId}/access-requests/{requestId}/documents` | limit/UUID cursor 分页，返回签发和回执元数据，并标明当前/历史版本；不返回 JWS 或儿童理由 |
 | `GET /tenants/{tenantId}/access-requests/{requestId}/documents/{documentId}/attempts` | 最多 10 项，按尝试编号倒序返回 items、nextCursor=null；包含阶段、拒收原因、开始/回执时间和 current |
+
+管理delivery摘要先调用当前申请授权与生命周期协调；403表示申请不可读，不表示暂无文档。GET不签发文档、创建尝试或执行管理员决定，但可能协调过期／失效并增版本，因此响应可比刚读的核心申请更新。管理台将摘要作为独立渐进信息，版本与失败核对语义见[审批合同](access-request-contract.md)；摘要与设备回执始终不能证明系统已执行。
 
 设备列表采用资源分页，每轮同步从首页开始完整扫描；它不是增量变化游标。发现未知/更高版本后下载当前文档；尚未成功保存或处于恢复流程的文档，即使审批版本未变，也必须重新读取交付元数据。分页期间的新申请可能落在已读游标之前，下轮完整同步会补齐。低延迟推送、增量游标、整体设备同步速率和保留治理仍待交付。
 

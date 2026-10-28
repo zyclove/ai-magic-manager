@@ -13,6 +13,22 @@ Json _fresh() => {
       'version': 3,
     };
 
+Json _delivery() => {
+      'requestId': 'request-1',
+      'approvalVersion': 3,
+      'approvalState': 'APPROVED_PENDING_DELIVERY',
+      'action': 'UPSERT_ACCESS_WINDOW',
+      'documentId': null,
+      'deliveryState': 'NOT_FETCHED',
+      'receivedAt': null,
+      'executionState': 'NOT_ENFORCED',
+      'evidenceStatus': 'DEVICE_REPORT_UNVERIFIED',
+      'deliveryAttempt': null,
+      'reasonCode': null,
+      'retryStatus': 'NOT_NEEDED',
+      'retryAfter': null,
+    };
+
 Matcher _failure(int status, String code) => throwsA(isA<ApiFailure>()
     .having((error) => error.status, 'status', status)
     .having((error) => error.code, 'code', code)
@@ -94,6 +110,123 @@ void main() {
       expect(() => ApprovalRequestSnapshot.read(invalid, expectedId: 'request-1'),
           _failure(502, 'INVALID_RESPONSE'));
     }
+  });
+
+  test('delivery snapshots preserve empty documents and device report facts', () {
+    final request = ApprovalRequestSnapshot.read(
+        {..._fresh(), 'state': 'APPROVED_PENDING_DELIVERY'},
+        expectedId: 'request-1');
+    final raw = _delivery();
+    final empty = ApprovalDeliverySnapshot.read(raw, request: request);
+    raw.clear();
+    expect(empty.requestId, request.id);
+    expect(empty.approvalVersion, 3);
+    expect(empty.approvalState, request.state);
+    expect(empty.action, 'UPSERT_ACCESS_WINDOW');
+    expect(empty.documentId, isNull);
+    expect(empty.deliveryState, 'NOT_FETCHED');
+    expect(empty.receivedAt, isNull);
+    expect(empty.deliveryAttempt, isNull);
+    expect(empty.reasonCode, isNull);
+    expect(empty.retryStatus, 'NOT_NEEDED');
+    expect(empty.retryAfter, isNull);
+    expect(empty.executionState, 'NOT_ENFORCED');
+    expect(empty.evidenceStatus, 'DEVICE_REPORT_UNVERIFIED');
+
+    final deniedRequest = ApprovalRequestSnapshot.read(
+        {..._fresh(), 'state': 'DENIED'}, expectedId: 'request-1');
+    final notGranted = ApprovalDeliverySnapshot.read({
+      ..._delivery(), 'approvalState': 'DENIED',
+      'action': null, 'deliveryState': 'NOT_GRANTED',
+    }, request: deniedRequest);
+    expect(notGranted.action, isNull);
+    expect(notGranted.documentId, isNull);
+    expect(notGranted.deliveryState, 'NOT_GRANTED');
+    final initial = ApprovalRequestSnapshot.read(
+        {..._fresh(), 'version': 0}, expectedId: 'request-1');
+    expect(ApprovalDeliverySnapshot.read({
+      ..._delivery(), 'approvalVersion': 0, 'approvalState': 'PENDING',
+      'action': null, 'deliveryState': 'NOT_GRANTED',
+    }, request: initial).approvalVersion, 0);
+
+    final stored = ApprovalDeliverySnapshot.read({
+      ..._delivery(), 'documentId': 'document-1', 'deliveryState': 'STORED',
+      'deliveryAttempt': 2, 'receivedAt': 1700000000000,
+    }, request: request);
+    expect(stored.documentId, 'document-1');
+    expect(stored.deliveryAttempt, 2);
+    expect(stored.receivedAt, 1700000000000);
+    expect(stored.executionState, 'NOT_ENFORCED');
+    expect(stored.evidenceStatus, 'DEVICE_REPORT_UNVERIFIED');
+    final rejected = ApprovalDeliverySnapshot.read({
+      ..._delivery(), 'documentId': 'document-1', 'deliveryState': 'REJECTED',
+      'deliveryAttempt': 2, 'receivedAt': 1700000000000,
+      'reasonCode': 'STORAGE_FAILED', 'retryStatus': 'WAITING',
+      'retryAfter': 1700000060000,
+    }, request: request);
+    expect(rejected.reasonCode, 'STORAGE_FAILED');
+    expect(rejected.retryStatus, 'WAITING');
+    expect(rejected.retryAfter, 1700000060000);
+  });
+
+  test('delivery binds its target and exact version without replacing the request', () {
+    final request = ApprovalRequestSnapshot.read(
+        {..._fresh(), 'state': 'APPROVED_PENDING_DELIVERY'},
+        expectedId: 'request-1');
+    final newer = ApprovalDeliverySnapshot.read({
+      ..._delivery(), 'approvalVersion': 4, 'approvalState': 'REVOKED',
+      'action': 'REMOVE_ACCESS_WINDOW',
+    }, request: request);
+    expect(newer.approvalVersion, 4);
+    expect(newer.approvalState, 'REVOKED');
+    expect(newer.action, 'REMOVE_ACCESS_WINDOW');
+    expect(newer.documentId, isNull);
+    expect(newer.deliveryState, 'NOT_FETCHED');
+    expect(request.version, 3);
+    expect(request.state, 'APPROVED_PENDING_DELIVERY');
+    final expired = ApprovalDeliverySnapshot.read({
+      ..._delivery(), 'approvalVersion': 5, 'approvalState': 'EXPIRED',
+      'action': null, 'deliveryState': 'NOT_GRANTED',
+    }, request: ApprovalRequestSnapshot.read(_fresh(), expectedId: 'request-1'));
+    expect(expired.approvalState, 'EXPIRED');
+    expect(expired.action, isNull);
+    for (final changed in <Json>[
+      {'requestId': 'private-other-request'},
+      {'approvalVersion': 2},
+      {'approvalVersion': 3.5},
+      {'approvalVersion': 9007199254740992},
+      {'approvalState': 'REVOKED', 'action': 'REMOVE_ACCESS_WINDOW'},
+    ]) {
+      expect(() => ApprovalDeliverySnapshot.read(
+          {..._delivery(), ...changed}, request: request),
+          _failure(502, 'INVALID_RESPONSE'));
+    }
+  });
+
+  test('delivery rejects fabricated execution and inconsistent transport facts', () {
+    final request = ApprovalRequestSnapshot.read(
+        {..._fresh(), 'state': 'APPROVED_PENDING_DELIVERY'},
+        expectedId: 'request-1');
+    for (final changed in <Json>[
+      {'executionState': 'APPLIED'},
+      {'evidenceStatus': 'VERIFIED_APPLIED'},
+      {'action': 'CONFIGURE_ONLY'},
+      {'deliveryState': 'NOT_ISSUED'},
+      {'deliveryAttempt': 1},
+      {'receivedAt': -1},
+      {'documentId': 'document-1', 'deliveryState': 'STORED',
+        'deliveryAttempt': 1},
+      {'documentId': 'document-1', 'deliveryState': 'REJECTED',
+        'deliveryAttempt': 1, 'receivedAt': 1700000000000,
+        'retryStatus': 'AVAILABLE', 'retryAfter': 1700000030000},
+    ]) {
+      expect(() => ApprovalDeliverySnapshot.read(
+          {..._delivery(), ...changed}, request: request),
+          _failure(502, 'INVALID_RESPONSE'));
+    }
+    final incomplete = _delivery()..remove('evidenceStatus');
+    expect(() => ApprovalDeliverySnapshot.read(incomplete, request: request),
+        _failure(502, 'INVALID_RESPONSE'));
   });
 
   test('approval duration and RPC keep exact seconds and reject excess grants', () {

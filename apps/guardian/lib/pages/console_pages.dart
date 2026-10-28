@@ -49,6 +49,7 @@ import '../ui/member_editor.dart';
 import '../ui/subject_archive_dialog.dart';
 import '../ui/owned_dialog_route.dart';
 import '../ui/access_request_dialog.dart';
+import '../ui/approval_delivery_summary.dart';
 import '../ui/policy_target_picker.dart';
 import 'members_page.dart';
 import 'subjects_page.dart';
@@ -1790,7 +1791,7 @@ class ConsoleActions {
             s.root == workspace && s.canOpen('approvals'));
     final writes = ApiWriteDispatch();
     final readChanges = ValueNotifier<bool>(false);
-    var requestDenied = false, live = true;
+    var requestDenied = false, needsReview = false, live = true;
     final changes = Listenable.merge([scope, access.changes, readChanges]);
     bool sourceCurrent() => scope.current && access.permitted();
     bool current() => !requestDenied && sourceCurrent();
@@ -1823,13 +1824,9 @@ class ConsoleActions {
       final request = ApprovalRequestSnapshot.read(raw,
           expectedId: listContext.requestId, context: listContext);
       final r = raw as Json;
-      Json? delivery;
-      if (request.state != 'PENDING') {
-        delivery = await read(
-            '$workspace/access-requests/${request.id}/delivery') as Json;
-      }
       if (!context.mounted) return false;
       if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+      Api? deliveryApi;
       await actionDetails(
           context,
           '临时访问申请',
@@ -1849,26 +1846,7 @@ class ConsoleActions {
             '申请理由': r['reason'],
             '申请有效期': dateLabel(r['requestExpiresAt']),
             '批准截止': dateLabel(r['absoluteNotAfter']),
-            if (delivery == null)
-              '当前文档': '尚未批准，暂无文档'
-            else ...{
-              '当前文档': label(delivery['action']),
-              '文档交付 / 设备报告': delivery['approvalVersion'] == r['version']
-                  ? label(delivery['deliveryState'])
-                  : '审批状态已更新，请关闭后重新打开',
-              '最近回执': dateLabel(delivery['receivedAt']),
-              '交付尝试': delivery['deliveryAttempt'] == null
-                  ? '尚未开始'
-                  : '第 ${delivery['deliveryAttempt']} 次（最多 10 次）',
-              if (delivery['reasonCode'] != null)
-                '设备拒收原因': accessRejectionLabel(delivery['reasonCode']),
-              if (delivery['deliveryState'] == 'REJECTED') ...{
-                '恢复状态': accessRetryLabel(delivery['retryStatus']),
-                if (delivery['retryAfter'] != null)
-                  '最早可重试': dateLabel(delivery['retryAfter']),
-                '恢复说明': '重试由设备端发起，原文档和批准截止时间保持不变。旧尝试的回执仅保留追溯。'
-              },
-            },
+            if (request.state == 'PENDING') '当前文档': '尚未批准，暂无文档',
             '执行状态': label(r['executionState']),
             '回执说明': '当前尚未接入设备例外执行。接收或保存回执仅表示文档状态；下载与重试不会延长原批准截止时间。'
           },
@@ -1876,6 +1854,22 @@ class ConsoleActions {
           hasAccess: current,
           closeOnAccessLost: true,
           reauth: reauth,
+          extraContent: request.state == 'PENDING' ? null : Builder(builder: (dialog) {
+            final route = ModalRoute.of(dialog);
+            bool available() => current() && dialog.mounted &&
+                route?.isActive == true &&
+                (route is! OwnedDialogRoute<dynamic> || route.available);
+            return ApprovalDeliverySummary(
+                key: ValueKey('approval-delivery-${request.id}-${request.version}'),
+                api: deliveryApi ??= api.scoped(available),
+                path: '$workspace/access-requests/${request.id}/delivery',
+                request: request,
+                accessChanges: changes,
+                isCurrent: available,
+                onReadDenied: rejectRequestRead,
+                onReviewNeeded: () { if (current()) needsReview = true; },
+                reauth: reauth);
+          }),
           actions: [
             if (['TEACHER', 'CHILD'].contains(s.role) && request.state == 'PENDING')
               DetailAction('取消我的申请', (ctx) async {
@@ -1892,7 +1886,7 @@ class ConsoleActions {
                   finish();
                 }
               }, destructive: true, closeOnSuccess: false),
-            if (delivery != null)
+            if (request.state != 'PENDING')
               DetailAction('交付历史', (ctx) => approvalDeliveryHistory(
                   ctx, request.id, scope: scope, api: api,
                   requestChanges: changes, requestCurrent: current,
@@ -1974,9 +1968,9 @@ class ConsoleActions {
                 }
               }, destructive: true, closeOnSuccess: false)
           ]);
-      return (writes.dispatched || requestDenied) && sourceCurrent();
+      return (writes.dispatched || requestDenied || needsReview) && sourceCurrent();
     } catch (_) {
-      if (requestDenied && sourceCurrent()) return true;
+      if ((requestDenied || needsReview) && sourceCurrent()) return true;
       rethrow;
     } finally {
       live = false;
