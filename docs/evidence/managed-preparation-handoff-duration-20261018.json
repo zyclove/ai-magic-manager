@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "observedOn": "2026-10-18",
+  "status": "FUNCTIONAL_PASS_DURATION_GATE_NOT_MET",
+  "eligibleForAcceptance": false,
+  "sourceReceiptSha256": "f18d4900d96283901cf4ae72734bd0c0c6a9e94da9c883ea8791a934dd6c9615",
+  "resultReceiptSha256": "6248964aa71bbd85d3fc7553bcc29786c8cf9edd2e0fe5f9fa1b14b6906bd2bd",
+  "compileReceiptSha256": "707d5aa16f94a59fea3ddb7ac859471e983c59707556b57b69fa82c9485021fe",
+  "reportedStatus": "PASSED",
+  "nativeExitCode": 0,
+  "totals": {
+    "tests": 1194,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "elapsedSeconds": 48890.7,
+  "budgetSeconds": 180,
+  "reportedTimedOut": false,
+  "naturalProcessTreeExit": true,
+  "remainingOwnedProcesses": 0,
+  "longestSuite": {
+    "name": "com.aimanager.ModuleBoundariesTest",
+    "seconds": 48807.824
+  },
+  "cause": "Unconfirmed. Do not infer a host sleep or clock jump from elapsed time alone.",
+  "systemObservation": "One Kernel-General time-change event at 15:56:18 changed UTC by about 0.00093 seconds; this does not explain the 13.6-hour interval.",
+  "correction": "Original receipts are immutable. Future runner must also reject measured elapsed time over 180 seconds even if process.wait did not time out. No automatic SDK retry."
+}

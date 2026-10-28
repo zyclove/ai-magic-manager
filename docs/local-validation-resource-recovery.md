@@ -11,8 +11,8 @@
 目前可读取的记录：
 
 - [资源回收摘要](evidence/local-memory-recovery-20261020.json)仍存在；其中 `RECOVERY_COMPLETED` 表示当时回收结束，`receiptSha256` 是历史原件摘要，不能证明原件仍在或现在内存充足。该摘要不是容器身份清单。
-- [后端当前工作状态](evidence/recovered-backend-20261020/LATEST-STATE.md)记录本轮来源、实际未执行项、分工和后续验证条件；执行前重新读取现场，不能沿用旧 SDK 窗口。
-- [完整源码恢复清单](evidence/recovered-backend-20261020/recovery-manifest-r3-consolidated.json)记录十份按实际会话日志恢复并核对原摘要的源码。恢复范围不包含旧编译产物、完整依赖清单或测试执行回执，不能把源码恢复等同于测试通过。
+- 本机历史后端工作记录 `docs/evidence/recovered-backend-20261020/LATEST-STATE.md`（本地保留，未纳入交付）记录本轮来源、实际未执行项、分工和后续验证条件；执行前重新读取现场，不能沿用旧 SDK 窗口。
+- 本机历史源码恢复清单 `docs/evidence/recovered-backend-20261020/recovery-manifest-r3-consolidated.json`（本地保留，未纳入交付）记录十份按实际会话日志恢复并核对原摘要的源码。恢复范围不包含旧编译产物、完整依赖清单或测试执行回执，不能把源码恢复等同于测试通过。
 
 恢复环境前，维护者须从当前实际环境重新核对容器 ID、Compose 项目、数据挂载及所需服务；原记录缺失时，先补齐身份核对再操作。下表的名称与端口仅用于定位历史环境，不能只按名称或旧 PID 执行停止、启动、重建或清理。当前服务由共同任务统一维护，本次文档修订没有操作服务或数据。
 
