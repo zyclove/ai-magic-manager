@@ -76,7 +76,7 @@ DropdownButton<String> _deviceDropdown(WidgetTester tester, Finder field) =>
             .byWidgetPredicate((widget) => widget is DropdownButton<String>)));
 
 void main() {
-  testWidgets('requires device application rules and bounded minutes',
+  testWidgets('requires device application rules and bounded duration',
       (tester) async {
     int writes = 0;
     await open(tester, (body) async {
@@ -89,10 +89,18 @@ void main() {
     await selectDevice(tester);
     expect(find.text('待确认设备'), findsNothing);
     await selectApp(tester);
-    await tester.enterText(find.byKey(const Key('request-minutes')), '61');
-    await submit(tester);
-    expect(find.text('请输入 1–60 的整数'), findsOneWidget);
-    expect(writes, 0);
+    for (final (minutes, seconds, message) in [
+      ('61', '', '请输入 0–60 的整数'),
+      ('0', '0', '合计需为 1 秒至 60 分钟'),
+      ('60', '1', '合计需为 1 秒至 60 分钟'),
+      ('1', '60', '请输入 0–59 的整数或留空'),
+    ]) {
+      await tester.enterText(find.byKey(const Key('request-minutes')), minutes);
+      await tester.enterText(find.byKey(const Key('request-seconds')), seconds);
+      await submit(tester);
+      expect(find.text(message), findsOneWidget);
+      expect(writes, 0);
+    }
   });
   testWidgets('merges common rules and sends trimmed reason and seconds',
       (tester) async {
@@ -105,6 +113,7 @@ void main() {
     await selectApp(tester);
     expect(find.text('申请放宽的规则（2/20）'), findsOneWidget);
     await tester.enterText(find.byKey(const Key('request-minutes')), '5');
+    await tester.enterText(find.byKey(const Key('request-seconds')), '17');
     await tester.enterText(find.byKey(const Key('request-reason')), '  课堂活动  ');
     await submit(tester);
     expect(sent, {
@@ -113,10 +122,38 @@ void main() {
       'baseVersionId': 'version-1',
       'applicationId': 'app-1',
       'ruleIds': ['lesson_0', 'window'],
-      'requestedWindowSeconds': 300,
+      'requestedWindowSeconds': 317,
       'reason': '课堂活动'
     });
     expect(find.text('申请临时访问'), findsNothing);
+  });
+  testWidgets('accepts subminute maximum and blank second durations',
+      (tester) async {
+    for (final (minutes, seconds, expected) in [
+      ('0', '1', 1),
+      ('60', '0', 3600),
+      ('15', '', 900),
+    ]) {
+      Json? sent;
+      await open(tester, (body) async {
+        sent = body;
+        return body;
+      });
+      final minuteField = find.byKey(const Key('request-minutes'));
+      final secondField = find.byKey(const Key('request-seconds'));
+      expect(tester.widget<TextFormField>(minuteField).controller!.text, '15');
+      expect(tester.widget<TextFormField>(secondField).controller!.text, isEmpty);
+      await selectDevice(tester);
+      await selectApp(tester);
+      await tester.enterText(minuteField, minutes);
+      await tester.enterText(secondField, seconds);
+      await submit(tester);
+      expect(sent?['requestedWindowSeconds'], expected);
+      expect(sent?['requestedWindowSeconds'], isA<int>());
+      expect(sent, isNot(contains('minutes')));
+      expect(sent, isNot(contains('seconds')));
+      expect(find.text('申请临时访问'), findsNothing);
+    }
   });
   testWidgets('empty option page preserves cursor and can load the next page',
       (tester) async {
@@ -331,36 +368,106 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('unknown submission freezes values and retries the original body',
+  testWidgets('unknown retries preserve the immutable body through refusals',
       (tester) async {
-    final writes = <Json>[];
-    await open(tester, (body) async {
-      writes.add(body);
-      if (writes.length == 1) throw const ApiFailure(503, 'TEMPORARY_FAILURE');
-      return body;
-    });
-    await selectDevice(tester);
-    await selectApp(tester);
-    await submit(tester);
-    expect(
-        tester
-            .widget<TextFormField>(find.byKey(const Key('request-minutes')))
-            .enabled,
-        false);
-    expect(
-        tester
-            .widget<TextFormField>(find.byKey(const Key('request-reason')))
-            .enabled,
-        false);
-    expect(
-        tester
-            .widget<DropdownButtonFormField<String>>(
-                find.byKey(const Key('request-device')))
-            .onChanged,
-        isNull);
-    await submit(tester, '重试原提交');
-    expect(writes.length, 2);
-    expect(writes[1], writes[0]);
+    for (final terminal in <ApiFailure?>[
+      null,
+      const ApiFailure(412, 'VERSION_CONFLICT'),
+      const ApiFailure(410, 'IDEMPOTENCY_RESPONSE_ERASED'),
+    ]) {
+      final writes = <Json>[];
+      await open(tester, (body) async {
+        writes.add(body);
+        switch (writes.length) {
+          case 1:
+            throw const ApiFailure(503, 'TEMPORARY_FAILURE');
+          case 2:
+            throw const ApiFailure(401, 'REAUTH_REQUIRED');
+          case 3:
+            throw const ApiFailure(400, 'INVALID_REQUEST');
+          default:
+            if (terminal != null) throw terminal;
+            return body;
+        }
+      });
+      await selectDevice(tester);
+      await selectApp(tester);
+      await submit(tester);
+      final Json originalBody = writes.single;
+      final List<String> originalRules = originalBody['ruleIds'] as List<String>;
+      expect(originalBody['requestedWindowSeconds'], 900);
+      expect(originalRules, ['lesson_0', 'window']);
+      expect(() => originalBody['reason'] = '替换理由', throwsUnsupportedError);
+      expect(() => originalRules.add('replacement'), throwsUnsupportedError);
+
+      void expectLocked() {
+        for (final key in [
+          'request-minutes',
+          'request-seconds',
+          'request-reason',
+        ]) {
+          expect(tester.widget<TextFormField>(find.byKey(Key(key))).enabled,
+              false);
+        }
+        expect(
+            tester
+                .widget<DropdownButtonFormField<String>>(
+                    find.byKey(const Key('request-device')))
+                .onChanged,
+            isNull);
+        expect(
+            tester
+                .widget<DropdownButtonFormField<String>>(
+                    find.byKey(const ValueKey('option-$deviceId')))
+                .onChanged,
+            isNull);
+        for (final rule in tester.widgetList<CheckboxListTile>(
+            find.byType(CheckboxListTile))) {
+          expect(rule.onChanged, isNull);
+        }
+      }
+
+      expectLocked();
+      tester
+          .widget<TextFormField>(find.byKey(const Key('request-minutes')))
+          .controller!
+          .text = 'invalid';
+      tester
+          .widget<TextFormField>(find.byKey(const Key('request-seconds')))
+          .controller!
+          .text = '60';
+      tester
+          .widget<TextFormField>(find.byKey(const Key('request-reason')))
+          .controller!
+          .text = '修改当前控件不能替换原提交';
+      await tester.pump();
+      for (var attempt = 2; attempt <= 4; attempt++) {
+        await submit(tester, '重试原提交');
+        expect(writes.length, attempt);
+        final Json replayedBody = writes.last;
+        expect(identical(replayedBody, originalBody), isTrue);
+        expect(
+            identical(replayedBody['ruleIds'] as List<String>, originalRules),
+            isTrue);
+        expect(replayedBody['requestedWindowSeconds'], 900);
+        expect(replayedBody['reason'], isNull);
+        if (attempt < 4 || terminal != null) expectLocked();
+      }
+      if (terminal == null) {
+        expect(find.text('申请临时访问'), findsNothing);
+      } else {
+        expect(find.text('原提交已停止'), findsOneWidget);
+        final button = find.widgetWithText(FilledButton, '原提交已停止');
+        expect(tester.widget<FilledButton>(button).onPressed, isNull);
+        await tester.ensureVisible(button);
+        await tester.tap(button);
+        await tester.pumpAndSettle();
+        expect(writes.length, 4);
+        await tester.tap(find.widgetWithText(TextButton, '关闭'));
+        await tester.pumpAndSettle();
+      }
+      expect(tester.takeException(), isNull);
+    }
   });
   testWidgets('stale baseline disables resubmit until refreshed and reselected',
       (tester) async {

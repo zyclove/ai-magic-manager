@@ -18,6 +18,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
   final form = GlobalKey<FormState>();
   final scroll = ScrollController();
   final minutes = TextEditingController(text: '15');
+  final seconds = TextEditingController();
   final reason = TextEditingController();
   final devices = <Json>[];
   final options = <String, Json>{};
@@ -27,8 +28,20 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
   bool deviceFailed = false, deviceCursorExpired = false, optionFailed = false;
   Object? error;
   Json? pending;
+  bool stopped = false;
   int generation = 0;
-  bool get locked => busy || pending != null;
+  bool get locked => busy || pending != null || stopped;
+
+  int? get requestedSeconds {
+    final minute = int.tryParse(minutes.text.trim());
+    final second = seconds.text.trim().isEmpty
+        ? 0 : int.tryParse(seconds.text.trim());
+    if (minute == null || minute < 0 || minute > 60 ||
+        second == null || second < 0 || second > 59) return null;
+    final total = minute * 60 + second;
+    return total < 1 || total > 3600 ? null : total;
+  }
+
   Json? get selected => options[option];
   bool get stale =>
       error is ApiFailure &&
@@ -60,6 +73,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
     generation++;
     scroll.dispose();
     minutes.dispose();
+    seconds.dispose();
     reason.dispose();
     super.dispose();
   }
@@ -177,8 +191,9 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
   }
 
   Future<void> send() async {
-    if (busy) return;
-    if (!form.currentState!.validate()) return;
+    if (busy || stopped) return;
+    final retryingUnknown = pending != null;
+    if (!retryingUnknown && !form.currentState!.validate()) return;
     if (pending == null &&
         (selected == null ||
             selectedRules.isEmpty ||
@@ -188,15 +203,15 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
     }
     FocusScope.of(context).unfocus();
     final body = pending ??
-        <String, dynamic>{
+        Map<String, dynamic>.unmodifiable({
           'deviceId': device,
           'policyId': selected!['policyId'],
           'baseVersionId': selected!['baseVersionId'],
           'applicationId': selected!['applicationId'],
-          'ruleIds': selectedRules.toList()..sort(),
-          'requestedWindowSeconds': int.parse(minutes.text.trim()) * 60,
+          'ruleIds': List<String>.unmodifiable(selectedRules.toList()..sort()),
+          'requestedWindowSeconds': requestedSeconds!,
           'reason': reason.text.trim().isEmpty ? null : reason.text.trim(),
-        };
+        });
     setState(() {
       busy = true;
       error = null;
@@ -208,9 +223,18 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
       if (mounted) {
         setState(() {
           error = e;
-          pending = e is ApiFailure && (e.status == 0 || e.status >= 500)
-              ? Map.unmodifiable(body)
-              : null;
+          if (e is ApiFailure &&
+              (e.status == 412 || isUnavailableOperationResult(e))) {
+            stopped = true;
+            pending ??= body;
+          } else if (retryingUnknown || e is! ApiFailure ||
+              e.status == 0 || e.status == 408 || e.status >= 500 ||
+              e.code == 'PENDING_OPERATION_UNCHANGED') {
+            // A later rejection cannot prove that the original write failed.
+            pending ??= body;
+          } else {
+            pending = null;
+          }
         });
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && scroll.hasClients) {
@@ -384,20 +408,46 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                                 style: TextStyle(color: muted)),
                           ],
                           const SizedBox(height: 20),
-                          TextFormField(
-                              key: const Key('request-minutes'),
-                              controller: minutes,
-                              enabled: !locked,
-                              keyboardType: TextInputType.number,
-                              maxLength: 2,
-                              decoration: const InputDecoration(
-                                  labelText: '申请时长（1–60 分钟）'),
-                              validator: (v) {
-                                final n = int.tryParse(v?.trim() ?? '');
-                                return n == null || n < 1 || n > 60
-                                    ? '请输入 1–60 的整数'
-                                    : null;
-                              }),
+                          const Text('申请时长',
+                              style: TextStyle(fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 8),
+                          Wrap(spacing: 12, runSpacing: 8, children: [
+                            SizedBox(width: 230, child: TextFormField(
+                                key: const Key('request-minutes'),
+                                controller: minutes,
+                                enabled: !locked,
+                                keyboardType: TextInputType.number,
+                                maxLength: 2,
+                                decoration: const InputDecoration(
+                                    labelText: '分钟', errorMaxLines: 2),
+                                validator: (v) {
+                                  final minute = int.tryParse(v?.trim() ?? '');
+                                  if (minute == null || minute < 0 || minute > 60) {
+                                    return '请输入 0–60 的整数';
+                                  }
+                                  final second = seconds.text.trim().isEmpty
+                                      ? 0 : int.tryParse(seconds.text.trim());
+                                  return second != null && second >= 0 && second <= 59 &&
+                                          requestedSeconds == null
+                                      ? '合计需为 1 秒至 60 分钟' : null;
+                                })),
+                            SizedBox(width: 180, child: TextFormField(
+                                key: const Key('request-seconds'),
+                                controller: seconds,
+                                enabled: !locked,
+                                keyboardType: TextInputType.number,
+                                maxLength: 2,
+                                decoration: const InputDecoration(
+                                    labelText: '秒（选填）', errorMaxLines: 2),
+                                validator: (v) {
+                                  final text = v?.trim() ?? '';
+                                  final second = text.isEmpty ? 0 : int.tryParse(text);
+                                  return second == null || second < 0 || second > 59
+                                      ? '请输入 0–59 的整数或留空' : null;
+                                })),
+                          ]),
+                          const Text('合计 1 秒至 60 分钟；秒数可留空。',
+                              style: TextStyle(color: muted)),
                           const SizedBox(height: 12),
                           TextFormField(
                               key: const Key('request-reason'),
@@ -413,17 +463,20 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                             Padding(
                                 padding: const EdgeInsets.only(top: 16),
                                 child: FailureView(error!)),
-                          if (stale && device != null)
+                          if (stale && pending == null && !stopped && device != null)
                             TextButton(
                                 onPressed: locked || loadingOptions
                                     ? null
                                     : () => loadOptions(reset: true),
                                 child: const Text('刷新可申请规则')),
                           if (pending != null)
-                            const Padding(
-                                padding: EdgeInsets.only(top: 12),
-                                child: Notice(
-                                    '提交结果尚未确认，原内容已锁定。重试会使用同一次提交，也可关闭后刷新申请列表。')),
+                            Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: Notice(stopped
+                                    ? '原提交已停止，内容只读保留。请关闭后核对申请列表，不能再次提交旧请求。'
+                                    : stale
+                                        ? '原提交内容已锁定，当前范围或配置已变化。请关闭后核对申请列表。'
+                                        : '提交结果尚未确认，原内容已锁定。重试会使用同一次提交，也可关闭后刷新申请列表。')),
                         ]),
                   ))),
           actions: [
@@ -431,14 +484,14 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                 onPressed: busy ? null : finish,
                 child: const Text('关闭')),
             FilledButton(
-                onPressed: busy || loadingOptions || loadingDevices || stale
+                onPressed: busy || stopped || loadingOptions || loadingDevices || stale
                     ? null
                     : send,
                 child: Text(busy
                     ? '提交中…'
-                    : pending != null
-                        ? '重试原提交'
-                        : '提交申请')),
+                    : stopped
+                        ? '原提交已停止'
+                        : pending != null ? '重试原提交' : '提交申请')),
           ],
         ),
       );

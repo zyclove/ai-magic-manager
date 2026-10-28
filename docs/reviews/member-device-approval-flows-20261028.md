@@ -12,10 +12,12 @@
 - `b874b5e` 后将旧回调隔离收敛到设备详情所有用户控件：栏目、刷新、撤销、搜索、验证、关闭与子操作按原控制器、单调窗口代次和所属主路由核对；换绑通知源／设备、离开、关闭均同步退役，A→B→A不能复活旧事件。刷新tearoff原本绑定旧对象，仍需阻止离开后的无效读取；栏目／撤销／关闭不能在调用时借新上下文。
 - 失权和读取中仍可关闭，实际写入中继续禁止关闭；未知撤销允许只读核对，MFA入口保留。搜索仍可读中本地过滤。入口校验与内部等待续程分开，确认／子流程只按原epoch与独立token清理自己的展示状态，旧finally不能解新窗口的显示标识。
 
+- `72f527f` 后补齐访问申请创建的秒级输入：默认15分钟与空秒，合计1～3600秒，就近拒绝0秒／60分1秒等越界，正文只发requestedWindowSeconds。未知提交冻结Map与ruleIds列表，重试跳过当前控件校验／转换；后续普通拒绝不解锁，408及非Api异常保持未知，过期／抹除或412停止旧重试并保留只读。保持原幂等键、目录权限和自有窗口完成回调。
+
 ## 静态核对与待运行范围
 
 已定点核对调用签名、租约／窗口归属、派发标记位置、接口路径和回归源；最终提交前核对差异空白与文件范围。没有运行 SDK、格式化器、分析、测试、构建、资源轮询或服务维护；运行验收为 **NOT_RUN**，静态审查不能证明整体稳定。
 
-资源和排期恢复后，仅先运行受影响的既有文件：`access_requests_page_test.dart`、`devices_page_test.dart`、`members_page_workflow_browser_test.dart`、`approval_help_flow_browser_test.dart`、`device_management_entry_test.dart`、`api_deadline_test.dart`，以及设备注册／管理／退出受影响边界；前五份新增或扩展列表保留、单次核对、过期筛选和覆盖窗口旅程，最后一份覆盖显式未带键观察及认证晚到失权。续改还涉及 `device_management_test.dart` 与 `device_management_dialog_test.dart`：前者保留默认重读并新增只读保留／pending失权边界，后者在既有子流程和控制器替换旅程中核对真实刷新策略与旧按钮隔离。上述均为回归源准备，仍为 NOT_RUN。不重复构建未变更组件；若共享 API 检查发现失败，再依具体影响扩展验证。
+资源和排期恢复后，仅先运行受影响的既有文件：`access_requests_page_test.dart`、`devices_page_test.dart`、`members_page_workflow_browser_test.dart`、`approval_help_flow_browser_test.dart`、`device_management_entry_test.dart`、`api_deadline_test.dart`，以及设备注册／管理／退出受影响边界；前五份新增或扩展列表保留、单次核对、过期筛选和覆盖窗口旅程，最后一份覆盖显式未带键观察及认证晚到失权。续改还涉及 `device_management_test.dart` 与 `device_management_dialog_test.dart`：前者保留默认重读并新增只读保留／pending失权边界，后者在既有子流程和控制器替换旅程中核对真实刷新策略与旧按钮隔离。访问申请创建另更新 `access_request_dialog_test.dart` 的时长边界、余秒／短时／空秒、原正文不可变和拒绝后恢复／停止断言。上述均为回归源准备，仍为 NOT_RUN。不重复构建未变更组件；若共享 API 检查发现失败，再依具体影响扩展验证。
 
 按原门槛等待可用内存及 C/D 盘空间、SDK 空闲窗口，不降低准入条件。临时文件、缓存、源码副本和历史大取证文件不在提交范围。
