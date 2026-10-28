@@ -1,0 +1,7 @@
+Formatted lib/core/policy_draft_change.dart
+Formatted lib/core/policy_draft_branch.dart
+Formatted lib/pages/policy_details_entry.dart
+Formatted test/policy_draft_change_test.dart
+Formatted test/policy_draft_branch_test.dart
+Formatted test/policy_details_scope_test.dart
+Formatted 6 files (6 changed) in 0.48 seconds.

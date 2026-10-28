@@ -1,0 +1,8 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+Analyzing 6 items...                                            
+
+   info - Statements in an if should be enclosed in a block - lib\core\policy_draft_change.dart:159:5 - curly_braces_in_flow_control_structures
+   info - Don't use 'BuildContext's across async gaps - lib\pages\policy_details_entry.dart:395:19 - use_build_context_synchronously
+   info - Statements in an if should be enclosed in a block - test\policy_draft_branch_test.dart:105:5 - curly_braces_in_flow_control_structures
+
+3 issues found. (ran in 3.5s)

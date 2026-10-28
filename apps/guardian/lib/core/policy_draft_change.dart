@@ -155,8 +155,9 @@ bool _hasFields(Json value, Set<String> fields) =>
     value.length == fields.length && fields.every(value.containsKey);
 
 Json _draftInputValues(Json values) {
-  if (!_nonemptyText(values['name']) ||
-      (values['name'] as String).length > 100) throw _invalidPolicyInput;
+  if (!_nonemptyText(values['name']) || (values['name'] as String).length > 100) {
+    throw _invalidPolicyInput;
+  }
   return Map<String, dynamic>.unmodifiable({
     'name': values['name'],
     'rules': readPolicyDraftRules(values['rules']),
@@ -177,11 +178,13 @@ class PolicyDraftChange {
           !const {'POLICY', 'TEMPLATE'}.contains(values['kind'])) {
         throw _invalidPolicyInput;
       }
-      return PolicyDraftChange._(Map<String, dynamic>.unmodifiable({
-        'operation': 'CREATE',
-        'kind': values['kind'],
-        ..._draftInputValues(values),
-      }), null);
+      return PolicyDraftChange._(
+          Map<String, dynamic>.unmodifiable({
+            'operation': 'CREATE',
+            'kind': values['kind'],
+            ..._draftInputValues(values),
+          }),
+          null);
     } on ApiFailure {
       throw _invalidPolicyInput;
     }
@@ -194,12 +197,14 @@ class PolicyDraftChange {
           original['revision'] == _maxSafePolicyInteger) {
         throw _invalidPolicyInput;
       }
-      return PolicyDraftChange._(Map<String, dynamic>.unmodifiable({
-        'operation': 'UPDATE',
-        'policyId': original['id'],
-        'revision': original['revision'],
-        ..._draftInputValues(values),
-      }), original);
+      return PolicyDraftChange._(
+          Map<String, dynamic>.unmodifiable({
+            'operation': 'UPDATE',
+            'policyId': original['id'],
+            'revision': original['revision'],
+            ..._draftInputValues(values),
+          }),
+          original);
     } on ApiFailure {
       throw _invalidPolicyInput;
     }
@@ -207,8 +212,8 @@ class PolicyDraftChange {
 
   Json committed(Object? raw) {
     final before = _before;
-    final result = readPolicyDraftSnapshot(raw,
-        expectedId: before?['id'] as String?);
+    final result =
+        readPolicyDraftSnapshot(raw, expectedId: before?['id'] as String?);
     if (result['name'] != body['name'] ||
         !_samePolicyValue(result['rules'], body['rules']) ||
         result['kind'] != (before?['kind'] ?? body['kind']) ||
@@ -241,8 +246,9 @@ class PolicyDraftChangeResult {
 
 bool _samePolicyValue(Object? left, Object? right) {
   if (left is Map && right is Map) {
-    return left.length == right.length && left.keys.every((key) =>
-        right.containsKey(key) && _samePolicyValue(left[key], right[key]));
+    return left.length == right.length &&
+        left.keys.every((key) =>
+            right.containsKey(key) && _samePolicyValue(left[key], right[key]));
   }
   if (left is List && right is List) {
     if (left.length != right.length) return false;
@@ -253,4 +259,3 @@ bool _samePolicyValue(Object? left, Object? right) {
   }
   return left == right;
 }
-

@@ -346,12 +346,14 @@ Future<T?> _scopedDialog<T>(BuildContext context, _PolicyDetailsScope scope,
 }
 
 Future<bool> _copyPolicy(
-    BuildContext context, _PolicyDetailsScope scope, Json draft) =>
+        BuildContext context, _PolicyDetailsScope scope, Json draft) =>
     _policyBranchDialog(context, scope, draft);
 
 Future<bool> _policyBranchDialog(
     BuildContext context, _PolicyDetailsScope scope, Json draft,
-    {Json? version, Listenable? accessChanges, bool Function()? hasAccess}) async {
+    {Json? version,
+    Listenable? accessChanges,
+    bool Function()? hasAccess}) async {
   scope.requireCurrent(write: true);
   final original = readPolicyDraftSnapshot(draft);
   final rollback = version != null;
@@ -371,63 +373,64 @@ Future<bool> _policyBranchDialog(
       : PolicyDraftBranch.copy(original, values);
   await _scopedDialog<Json>(context, scope,
       accessChanges: accessChanges,
-      hasAccess: hasAccess,
-      builder: (dialog, route, access) {
-        Future<Json> resolve(Json values, {required bool query}) async {
-          final operation = change(values);
-          try {
-            final result = await scope.request(
-                (api) => api.send('POST', query ? queryPath : writePath,
-                    version: revision, key: query ? null : key,
-                    body: operation.body),
-                write: true,
-                hasAccess: () => access.permitted() && route.available);
-            Json committed;
-            if (query) {
-              final receipt = operation.queryResult(result, requestId: key);
-              committed = receipt.committed;
-              if (receipt.current['revision'] > receipt.committed['revision'] &&
-                  scope.current && access.permitted() && route.isCurrent) {
-                toast(dialog, '原操作已核对，草稿已有后续修改，请核对当前列表。');
-              }
-            } else {
-              committed = operation.committed(result);
-            }
-            mayHaveChanged = true;
-            return committed;
-          } catch (failure) {
-            mayHaveChanged = mayHaveChanged || _policyWriteUncertain(failure);
-            staleDraft =
-                staleDraft || failure is ApiFailure && failure.status == 412;
-            rethrow;
+      hasAccess: hasAccess, builder: (dialog, route, access) {
+    Future<Json> resolve(Json values, {required bool query}) async {
+      final operation = change(values);
+      try {
+        final result = await scope.request(
+            (api) => api.send('POST', query ? queryPath : writePath,
+                version: revision,
+                key: query ? null : key,
+                body: operation.body),
+            write: true,
+            hasAccess: () => access.permitted() && route.available);
+        Json committed;
+        if (query) {
+          final receipt = operation.queryResult(result, requestId: key);
+          committed = receipt.committed;
+          if (receipt.current['revision'] > receipt.committed['revision'] &&
+              dialog.mounted &&
+              scope.current &&
+              access.permitted() &&
+              route.isCurrent) {
+            toast(dialog, '原操作已核对，草稿已有后续修改，请核对当前列表。');
           }
+        } else {
+          committed = operation.committed(result);
         }
+        mayHaveChanged = true;
+        return committed;
+      } catch (failure) {
+        mayHaveChanged = mayHaveChanged || _policyWriteUncertain(failure);
+        staleDraft =
+            staleDraft || failure is ApiFailure && failure.status == 412;
+        rethrow;
+      }
+    }
 
-        return EditDialog(
-            key: rollback
-                ? const Key('policy-rollback-form')
-                : const Key('policy-copy-form'),
-            title: rollback ? '回滚为草稿' : '复制为策略',
-            description: rollback
-                ? '策略名称：$name。\n将历史规则恢复到当前策略草稿。不会改变已经发布的版本，仍需重新预览并发布。'
-                : '从模板「$name」复制独立策略草稿，保存后再预览并发布。',
-            fields: [FieldSpec('name', rollback ? '草稿名称' : '新策略名称')],
-            initial: {
-              'name': rollback || copyName.length > 100 ? name : copyName
-            },
-            submit: rollback ? '确认' : '保存',
-            accessChanges: access.changes,
-            hasAccess: () =>
-                scope.writable && access.permitted() && route.available,
-            reauth: () {
-              if (access.permitted() && route.available && route.isCurrent) {
-                scope.reauthenticate();
-              }
-            },
-            recoverLabel: '查询原保存结果',
-            onSubmit: (values) => resolve(values, query: false),
-            onRecoverUnknown: (values) => resolve(values, query: true));
-      });
+    return EditDialog(
+        key: rollback
+            ? const Key('policy-rollback-form')
+            : const Key('policy-copy-form'),
+        title: rollback ? '回滚为草稿' : '复制为策略',
+        description: rollback
+            ? '策略名称：$name。\n将历史规则恢复到当前策略草稿。不会改变已经发布的版本，仍需重新预览并发布。'
+            : '从模板「$name」复制独立策略草稿，保存后再预览并发布。',
+        fields: [FieldSpec('name', rollback ? '草稿名称' : '新策略名称')],
+        initial: {'name': rollback || copyName.length > 100 ? name : copyName},
+        submit: rollback ? '确认' : '保存',
+        accessChanges: access.changes,
+        hasAccess: () =>
+            scope.writable && access.permitted() && route.available,
+        reauth: () {
+          if (access.permitted() && route.available && route.isCurrent) {
+            scope.reauthenticate();
+          }
+        },
+        recoverLabel: '查询原保存结果',
+        onSubmit: (values) => resolve(values, query: false),
+        onRecoverUnknown: (values) => resolve(values, query: true));
+  });
   return mayHaveChanged || staleDraft;
 }
 
@@ -537,9 +540,9 @@ Future<bool> _versionDetails(
   }
 }
 
-Future<bool> _rollbackPolicy(
-    BuildContext context, _PolicyDetailsScope scope, Json draft, Json version,
-    {required Listenable accessChanges,
-    required bool Function() hasAccess}) =>
-    _policyBranchDialog(context, scope, draft, version: version,
-        accessChanges: accessChanges, hasAccess: hasAccess);
+Future<bool> _rollbackPolicy(BuildContext context, _PolicyDetailsScope scope,
+        Json draft, Json version,
+        {required Listenable accessChanges,
+        required bool Function() hasAccess}) =>
+    _policyBranchDialog(context, scope, draft,
+        version: version, accessChanges: accessChanges, hasAccess: hasAccess);

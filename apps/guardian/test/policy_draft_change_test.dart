@@ -7,39 +7,94 @@ const _policyId = 'policy-opaque-id';
 const _sourceId = 'published-version-opaque-id';
 
 List<Json> _rules() => [
-  {'id': 'launch', 'kind': 'APP_LAUNCH', 'effect': 'ALLOW',
-    'required': true, 'applicationId': 'application-id'},
-  {'id': 'install', 'kind': 'APP_INSTALL', 'effect': 'DENY',
-    'required': true, 'applicationId': 'application-id'},
-  {'id': 'protect', 'kind': 'APP_UNINSTALL', 'effect': 'PROTECT',
-    'required': true, 'applicationId': 'application-id'},
-  {'id': 'permission', 'kind': 'RUNTIME_PERMISSION', 'effect': 'DEFAULT',
-    'required': false, 'applicationId': 'application-id',
-    'permission': 'android.permission.CAMERA'},
-  {'id': 'special', 'kind': 'SPECIAL_ACCESS', 'effect': 'GRANT',
-    'required': false, 'applicationId': 'application-id', 'permission': 'usage'},
-  {'id': 'quota', 'kind': 'DAILY_QUOTA', 'effect': 'LIMIT',
-    'required': true, 'seconds': 3600},
-  {'id': 'window', 'kind': 'TIME_WINDOW', 'effect': 'ALLOW',
-    'required': true, 'scheduleId': 'schedule-id'},
-  {'id': 'domain', 'kind': 'DOMAIN_ACCESS', 'effect': 'DENY',
-    'required': true, 'domain': 'example.test'},
-  {'id': 'reminder', 'kind': 'USAGE_REMINDER', 'effect': 'REMIND',
-    'required': false, 'applicationId': 'application-id', 'seconds': 600},
-];
+      {
+        'id': 'launch',
+        'kind': 'APP_LAUNCH',
+        'effect': 'ALLOW',
+        'required': true,
+        'applicationId': 'application-id'
+      },
+      {
+        'id': 'install',
+        'kind': 'APP_INSTALL',
+        'effect': 'DENY',
+        'required': true,
+        'applicationId': 'application-id'
+      },
+      {
+        'id': 'protect',
+        'kind': 'APP_UNINSTALL',
+        'effect': 'PROTECT',
+        'required': true,
+        'applicationId': 'application-id'
+      },
+      {
+        'id': 'permission',
+        'kind': 'RUNTIME_PERMISSION',
+        'effect': 'DEFAULT',
+        'required': false,
+        'applicationId': 'application-id',
+        'permission': 'android.permission.CAMERA'
+      },
+      {
+        'id': 'special',
+        'kind': 'SPECIAL_ACCESS',
+        'effect': 'GRANT',
+        'required': false,
+        'applicationId': 'application-id',
+        'permission': 'usage'
+      },
+      {
+        'id': 'quota',
+        'kind': 'DAILY_QUOTA',
+        'effect': 'LIMIT',
+        'required': true,
+        'seconds': 3600
+      },
+      {
+        'id': 'window',
+        'kind': 'TIME_WINDOW',
+        'effect': 'ALLOW',
+        'required': true,
+        'scheduleId': 'schedule-id'
+      },
+      {
+        'id': 'domain',
+        'kind': 'DOMAIN_ACCESS',
+        'effect': 'DENY',
+        'required': true,
+        'domain': 'example.test'
+      },
+      {
+        'id': 'reminder',
+        'kind': 'USAGE_REMINDER',
+        'effect': 'REMIND',
+        'required': false,
+        'applicationId': 'application-id',
+        'seconds': 600
+      },
+    ];
 
 Json _values({bool creating = false}) => {
-  'name': '本次草稿',
-  if (creating) 'kind': 'POLICY',
-  'rules': _rules(),
-};
+      'name': '本次草稿',
+      if (creating) 'kind': 'POLICY',
+      'rules': _rules(),
+    };
 
-Json _snapshot({String id = _policyId, String name = '原草稿',
-    String kind = 'POLICY', int revision = 4,
-    String? sourceVersionId = _sourceId}) => {
-  'id': id, 'name': name, 'kind': kind, 'revision': revision,
-  'rules': _rules(), 'sourceVersionId': sourceVersionId,
-};
+Json _snapshot(
+        {String id = _policyId,
+        String name = '原草稿',
+        String kind = 'POLICY',
+        int revision = 4,
+        String? sourceVersionId = _sourceId}) =>
+    {
+      'id': id,
+      'name': name,
+      'kind': kind,
+      'revision': revision,
+      'rules': _rules(),
+      'sourceVersionId': sourceVersionId,
+    };
 
 Json _clone(Json value) => jsonDecode(jsonEncode(value)) as Json;
 List _ruleList(Json value) => value['rules'] as List;
@@ -47,7 +102,8 @@ List _ruleList(Json value) => value['rules'] as List;
 Object? _reverseKeys(Object? value) {
   if (value is Json) {
     return <String, dynamic>{
-      for (final key in value.keys.toList().reversed) key: _reverseKeys(value[key])
+      for (final key in value.keys.toList().reversed)
+        key: _reverseKeys(value[key])
     };
   }
   if (value is List) return value.map(_reverseKeys).toList();
@@ -61,15 +117,22 @@ Matcher get _invalidInput => _failure(400, 'VALIDATION_FAILED');
 Matcher get _invalidResponse => _failure(502, 'INVALID_RESPONSE');
 
 void main() {
-  test('draft changes preserve every rule kind and detach immutable inputs', () {
+  test('draft changes preserve every rule kind and detach immutable inputs',
+      () {
     final values = _values(creating: true);
     final create = PolicyDraftChange.create(values);
     expect(create.body.keys.toSet(), {'operation', 'name', 'kind', 'rules'});
     expect(create.body['operation'], 'CREATE');
     expect(create.body['kind'], 'POLICY');
     expect(_ruleList(create.body).map((rule) => rule['kind']).toList(), [
-      'APP_LAUNCH', 'APP_INSTALL', 'APP_UNINSTALL', 'RUNTIME_PERMISSION',
-      'SPECIAL_ACCESS', 'DAILY_QUOTA', 'TIME_WINDOW', 'DOMAIN_ACCESS',
+      'APP_LAUNCH',
+      'APP_INSTALL',
+      'APP_UNINSTALL',
+      'RUNTIME_PERMISSION',
+      'SPECIAL_ACCESS',
+      'DAILY_QUOTA',
+      'TIME_WINDOW',
+      'DOMAIN_ACCESS',
       'USAGE_REMINDER',
     ]);
     expect((_ruleList(create.body)[3] as Json)['permission'],
@@ -99,37 +162,60 @@ void main() {
     expect(update.body['operation'], 'UPDATE');
     expect(update.body['policyId'], _policyId);
     expect(update.body['revision'], 4);
-    expect(update.committed(_snapshot(name: '本次草稿', revision: 5))
-        ['sourceVersionId'], _sourceId);
+    expect(
+        update
+            .committed(_snapshot(name: '本次草稿', revision: 5))['sourceVersionId'],
+        _sourceId);
     expect(() => update.body.clear(), throwsUnsupportedError);
     expect(() => _ruleList(update.body).clear(), throwsUnsupportedError);
-    final snapshot = readPolicyDraftSnapshot(_snapshot(), expectedId: _policyId);
+    final snapshot =
+        readPolicyDraftSnapshot(_snapshot(), expectedId: _policyId);
     expect(snapshot['sourceVersionId'], _sourceId);
     expect(() => snapshot['revision'] = 5, throwsUnsupportedError);
     expect(() => _ruleList(snapshot).clear(), throwsUnsupportedError);
     expect(() => (_ruleList(snapshot).first as Json).clear(),
         throwsUnsupportedError);
-    expect(PolicyDraftChange.create({..._values(creating: true),
-      'kind': 'TEMPLATE'}).body['kind'], 'TEMPLATE');
+    expect(
+        PolicyDraftChange.create(
+            {..._values(creating: true), 'kind': 'TEMPLATE'}).body['kind'],
+        'TEMPLATE');
 
     final invalidRules = <Object?>[
-      null, {}, [{'id': 'missing-fields'}],
+      null,
+      {},
+      [
+        {'id': 'missing-fields'}
+      ],
       [_rules().first, _rules().first],
-      [{..._rules().first, 'effect': 'REMIND'}],
-      [{..._rules().first, 'scheduleId': 'unused-schedule'}],
-      [{..._rules()[5], 'seconds': 0}],
-      [{..._rules()[5], 'seconds': 86401}],
-      [{..._rules()[3], 'required': 'false'}],
-      [for (var index = 0; index < 101; index++)
-        {..._rules().first, 'id': 'rule_$index'}],
+      [
+        {..._rules().first, 'effect': 'REMIND'}
+      ],
+      [
+        {..._rules().first, 'scheduleId': 'unused-schedule'}
+      ],
+      [
+        {..._rules()[5], 'seconds': 0}
+      ],
+      [
+        {..._rules()[5], 'seconds': 86401}
+      ],
+      [
+        {..._rules()[3], 'required': 'false'}
+      ],
+      [
+        for (var index = 0; index < 101; index++)
+          {..._rules().first, 'id': 'rule_$index'}
+      ],
     ];
     for (final rules in invalidRules) {
-      expect(() => PolicyDraftChange.create({
-        ..._values(creating: true), 'rules': rules
-      }), _invalidInput);
+      expect(
+          () => PolicyDraftChange.create(
+              {..._values(creating: true), 'rules': rules}),
+          _invalidInput);
     }
     for (final values in <Json>[
-      {}, {..._values(creating: true), 'name': ' '},
+      {},
+      {..._values(creating: true), 'name': ' '},
       {..._values(creating: true), 'kind': 'UNKNOWN'},
       {..._values(creating: true), 'unexpected': true},
     ]) {
@@ -146,13 +232,17 @@ void main() {
         _invalidInput);
   });
 
-  test('committed receipts match exact content and the one committed revision', () {
+  test('committed receipts match exact content and the one committed revision',
+      () {
     for (final creating in [true, false]) {
       final values = _values(creating: creating);
-      final change = creating ? PolicyDraftChange.create(values)
+      final change = creating
+          ? PolicyDraftChange.create(values)
           : PolicyDraftChange.update(_snapshot(), values);
-      final receipt = _snapshot(id: creating ? 'created-policy-id' : _policyId,
-          name: '本次草稿', revision: creating ? 0 : 5,
+      final receipt = _snapshot(
+          id: creating ? 'created-policy-id' : _policyId,
+          name: '本次草稿',
+          revision: creating ? 0 : 5,
           sourceVersionId: creating ? null : _sourceId);
       final result = change.committed(_reverseKeys(receipt));
       final expected = _clone(result);
@@ -171,8 +261,11 @@ void main() {
         mutate(value);
         return value;
       }
+
       for (final invalid in <Object?>[
-        null, [], {},
+        null,
+        [],
+        {},
         changed((draft) => draft['id'] = ''),
         if (!creating) changed((draft) => draft['id'] = 'different-policy'),
         changed((draft) => draft['name'] = '其他内容'),
@@ -193,15 +286,20 @@ void main() {
         rule.removeWhere((key, value) => value == null);
       }
       expect(change.committed(explicitNull), expected,
-          reason: 'Absent optional fields and explicit nulls have one meaning.');
+          reason:
+              'Absent optional fields and explicit nulls have one meaning.');
     }
   });
 
-  test('queries keep the original receipt separate from later current edits', () {
+  test('queries keep the original receipt separate from later current edits',
+      () {
     for (final creating in [true, false]) {
-      final change = creating ? PolicyDraftChange.create(_values(creating: true))
+      final change = creating
+          ? PolicyDraftChange.create(_values(creating: true))
           : PolicyDraftChange.update(_snapshot(), _values());
-      final committed = _snapshot(name: '本次草稿', revision: creating ? 0 : 5,
+      final committed = _snapshot(
+          name: '本次草稿',
+          revision: creating ? 0 : 5,
           sourceVersionId: creating ? null : _sourceId);
       final current = _clone(committed)
         ..['revision'] = (committed['revision'] as int) + 3
@@ -209,10 +307,10 @@ void main() {
         ..['sourceVersionId'] = 'later-rollback-version'
         ..['rules'] = <Json>[];
       Json query({Json? original, Json? latest}) => {
-        'operation': creating ? 'CREATE' : 'UPDATE',
-        'committed': original ?? committed,
-        'current': latest ?? current,
-      };
+            'operation': creating ? 'CREATE' : 'UPDATE',
+            'committed': original ?? committed,
+            'current': latest ?? current,
+          };
       final result = change.queryResult(_reverseKeys(query()));
       expect(result.committed['name'], '本次草稿');
       expect(_ruleList(result.committed), hasLength(9));
@@ -232,11 +330,13 @@ void main() {
         mutate(value);
         return value;
       }
+
       final changedSameRevision = _clone(committed)..['name'] = '同版本篡改';
       final reorderedSameRevision = _clone(committed)
         ..['rules'] = _ruleList(committed).reversed.toList();
       for (final invalid in <Object?>[
-        null, {},
+        null,
+        {},
         {...query(), 'operation': creating ? 'UPDATE' : 'CREATE'},
         {...query(), 'current': null},
         {...query(), 'committed': current},
@@ -244,8 +344,9 @@ void main() {
         query(latest: changedCurrent((draft) => draft['kind'] = 'TEMPLATE')),
         query(latest: {...committed, 'sourceVersionId': 'same-version-tamper'}),
         query(latest: changedCurrent((draft) => draft['sourceVersionId'] = 12)),
-        query(latest: changedCurrent((draft) =>
-            draft['revision'] = (committed['revision'] as int) - 1)),
+        query(
+            latest: changedCurrent((draft) =>
+                draft['revision'] = (committed['revision'] as int) - 1)),
         query(latest: changedSameRevision),
         query(latest: reorderedSameRevision),
       ]) {

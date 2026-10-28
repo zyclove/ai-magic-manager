@@ -102,10 +102,15 @@ class _Fixture {
         expect(body['operation'], 'UPDATE');
         expect(body['policyId'], _policy);
         expect(body['revision'], revision);
-        expect(body.keys, unorderedEquals(['operation', 'policyId', 'revision', 'name', 'rules']));
+        expect(
+            body.keys,
+            unorderedEquals(
+                ['operation', 'policyId', 'revision', 'name', 'rules']));
         expect(request.headers['If-Match'], isNull);
-        expect(request.headers['Idempotency-Key'], matches(
-            RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+        expect(
+            request.headers['Idempotency-Key'],
+            matches(RegExp(
+                r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
         currentName = body['name'] as String;
         revision++;
         return reply({...draft(), 'rules': body['rules']});
@@ -130,15 +135,19 @@ class _Fixture {
           (request.url.path.contains('/copy-results/') ||
               request.url.path.contains('/rollback-draft-results/'))) {
         final original = [...copies, ...rollbacks].singleWhere((original) =>
-            request.url.path.endsWith('/${original.headers['Idempotency-Key']}/query'));
+            request.url.path
+                .endsWith('/${original.headers['Idempotency-Key']}/query'));
         expect(request.body, original.body);
         expect(request.headers['If-Match'], original.headers['If-Match']);
         expect(request.headers['Idempotency-Key'], isNull);
         final committed = branchReceipt(original);
         final current = laterBranch
-            ? {...committed, 'revision': (committed['revision'] as int) + 2,
+            ? {
+                ...committed,
+                'revision': (committed['revision'] as int) + 2,
                 'name': '后续修改后的草稿',
-                'sourceVersionId': 'later-rollback-version'}
+                'sourceVersionId': 'later-rollback-version'
+              }
             : committed;
         final copy = original.url.path.endsWith('/copies');
         if (copy) {
@@ -148,9 +157,12 @@ class _Fixture {
           revision = current['revision'] as int;
           sourceVersionId = current['sourceVersionId'] as String?;
         }
-        return reply({'requestId': original.headers['Idempotency-Key'],
+        return reply({
+          'requestId': original.headers['Idempotency-Key'],
           'operation': copy ? 'TEMPLATE_COPY' : 'ROLLBACK_DRAFT',
-          'committed': committed, 'current': current});
+          'committed': committed,
+          'current': current
+        });
       }
       throw StateError(
           'Unexpected HTTP boundary: ${request.method} ${request.url}');
@@ -200,10 +212,14 @@ class _Fixture {
 
   Json branchReceipt(http.Request original) {
     final copy = original.url.path.endsWith('/copies');
-    return {...draft(), 'id': copy ? 'copy-private-a' : _policy,
+    return {
+      ...draft(),
+      'id': copy ? 'copy-private-a' : _policy,
       'kind': copy ? 'POLICY' : draft()['kind'],
       'name': (jsonDecode(original.body) as Json)['name'],
-      'revision': copy ? 0 : 8, 'sourceVersionId': copy ? null : _version};
+      'revision': copy ? 0 : 8,
+      'sourceVersionId': copy ? null : _version
+    };
   }
 
   List<http.Request> get copies => requests
@@ -212,14 +228,20 @@ class _Fixture {
           request.url.path.endsWith('/policies/$_policy/copies'))
       .toList();
 
-  List<http.Request> get rollbacks => requests.where((request) =>
-      request.method == 'POST' && request.url.path.endsWith(
-          '/policies/$_policy/versions/$_version/rollback-drafts')).toList();
+  List<http.Request> get rollbacks => requests
+      .where((request) =>
+          request.method == 'POST' &&
+          request.url.path.endsWith(
+              '/policies/$_policy/versions/$_version/rollback-drafts'))
+      .toList();
 
-  List<http.Request> get branchQueries => requests.where((request) =>
-      request.method == 'POST' && request.url.path.endsWith('/query') &&
-      (request.url.path.contains('/copy-results/') ||
-          request.url.path.contains('/rollback-draft-results/'))).toList();
+  List<http.Request> get branchQueries => requests
+      .where((request) =>
+          request.method == 'POST' &&
+          request.url.path.endsWith('/query') &&
+          (request.url.path.contains('/copy-results/') ||
+              request.url.path.contains('/rollback-draft-results/')))
+      .toList();
 
   List<http.Request> get versionReads => requests
       .where((request) =>
@@ -404,7 +426,8 @@ void _expectNoSchedulePrivate(WidgetTester tester) {
 }
 
 void main() {
-  testWidgets('preview resource loss during journal read stops child work while its parent route stays active',
+  testWidgets(
+      'preview resource loss during journal read stops child work while its parent route stays active',
       (tester) async {
     final fixture = _Fixture();
     final journal = _PendingPreviewJournal();
@@ -419,8 +442,8 @@ void main() {
     final parent = ModalRoute.of(context)!;
     final tenant = fixture.session.tenant;
     final invocation = _Invocation(fixture.actions.previewPolicy(
-        context, fixture.draft(), journal: journal,
-        accessChanges: changes, hasAccess: () => allowed));
+        context, fixture.draft(),
+        journal: journal, accessChanges: changes, hasAccess: () => allowed));
     await _waitUntil(tester, () => journal.reads == 1);
     expect(invocation.completed, isFalse);
     expect(parent.isActive, isTrue);
@@ -440,7 +463,8 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing);
     _expectNoPrivate(tester);
     expect(fixture.requests, isEmpty,
-        reason: 'A late journal read cannot open the target picker or start preview HTTP after resource loss.');
+        reason:
+            'A late journal read cannot open the target picker or start preview HTTP after resource loss.');
     expect(fixture.session.previews, isEmpty);
     expect(fixture.session.publications, isEmpty);
     expect(tester.takeException(), isNull);
@@ -511,10 +535,15 @@ void main() {
     expect(sent.method, 'POST');
     expect(sent.url.path, '/api/v1/tenants/tenant-a/policy-draft-changes');
     expect(sent.headers['If-Match'], isNull);
-    expect(sent.headers['Idempotency-Key'], matches(
-        RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+    expect(
+        sent.headers['Idempotency-Key'],
+        matches(RegExp(
+            r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
     final body = jsonDecode(sent.body) as Json;
-    expect(body.keys, unorderedEquals(['operation', 'policyId', 'revision', 'name', 'rules']));
+    expect(
+        body.keys,
+        unorderedEquals(
+            ['operation', 'policyId', 'revision', 'name', 'rules']));
     expect(body['operation'], 'UPDATE');
     expect(body['policyId'], _policy);
     expect(body['revision'], 7);
@@ -620,7 +649,8 @@ void main() {
         }
         if (request.url.path.endsWith('/query')) {
           if (fixture.branchQueries.length == 1) {
-            return reply({'errorCode': 'POLICY_BRANCH_RESULT_UNAVAILABLE'}, 404);
+            return reply(
+                {'errorCode': 'POLICY_BRANCH_RESULT_UNAVAILABLE'}, 404);
           }
           if (fixture.branchQueries.length == 2) {
             return reply({'errorCode': 'REAUTH_REQUIRED'}, 401);
@@ -634,19 +664,28 @@ void main() {
         await _waitUntil(tester, () => _ready(tester, '保存'));
       } else {
         _capture(tester, '版本历史')();
-        await _waitUntil(tester, () => find.text('版本 98731').evaluate().length == 1);
+        await _waitUntil(
+            tester, () => find.text('版本 98731').evaluate().length == 1);
         await tester.tap(find.text('版本 98731'));
         await _waitUntil(tester, () => _ready(tester, '回滚为草稿'));
         _capture(tester, '回滚为草稿')();
         await _waitUntil(tester, () => _ready(tester, '确认'));
-        expect(tester.widget<TextFormField>(find.byType(TextFormField)).controller!.text, _name);
+        expect(
+            tester
+                .widget<TextFormField>(find.byType(TextFormField))
+                .controller!
+                .text,
+            _name);
       }
       final name = template ? _copyName : '恢复历史规则后的草稿';
       await tester.enterText(find.byType(TextFormField), name);
       final heldSubmit = _capture(tester, template ? '保存' : '确认');
       heldSubmit();
-      await _waitUntil(tester, () => fixture.copies.length + fixture.rollbacks.length == 1 &&
-          _ready(tester, '查询原保存结果'));
+      await _waitUntil(
+          tester,
+          () =>
+              fixture.copies.length + fixture.rollbacks.length == 1 &&
+              _ready(tester, '查询原保存结果'));
       final original = [...fixture.copies, ...fixture.rollbacks].single;
       final key = original.headers['Idempotency-Key'];
       expect(key, matches(_v4Key));
@@ -655,8 +694,11 @@ void main() {
       fixture.currentName = '当前草稿的后续名称';
       for (var query = 1; query <= 2; query++) {
         (query == 1 ? _capture(tester, '查询原保存结果') : heldSubmit)();
-        await _waitUntil(tester, () => fixture.branchQueries.length == query &&
-            _ready(tester, '查询原保存结果'));
+        await _waitUntil(
+            tester,
+            () =>
+                fixture.branchQueries.length == query &&
+                _ready(tester, '查询原保存结果'));
         final field = tester.widget<TextFormField>(find.byType(TextFormField));
         expect(field.controller!.text, name);
         expect(field.enabled, isFalse);
@@ -665,12 +707,18 @@ void main() {
         expect(details.available, isTrue);
       }
       _capture(tester, '查询原保存结果')();
-      await _waitUntil(tester, () => fixture.branchQueries.length == 3 &&
-          fixture.listReads.length == 2 && !details.available);
+      await _waitUntil(
+          tester,
+          () =>
+              fixture.branchQueries.length == 3 &&
+              fixture.listReads.length == 2 &&
+              !details.available);
       for (final query in fixture.branchQueries) {
-        expect(query.url.path, template
-            ? '/api/v1/tenants/tenant-a/policies/$_policy/copy-results/$key/query'
-            : '/api/v1/tenants/tenant-a/policies/$_policy/versions/$_version/rollback-draft-results/$key/query');
+        expect(
+            query.url.path,
+            template
+                ? '/api/v1/tenants/tenant-a/policies/$_policy/copy-results/$key/query'
+                : '/api/v1/tenants/tenant-a/policies/$_policy/versions/$_version/rollback-draft-results/$key/query');
         expect(query.body, original.body);
         expect(query.headers['If-Match'], original.headers['If-Match']);
         expect(query.headers['Idempotency-Key'], isNull);
@@ -681,12 +729,16 @@ void main() {
       expect(find.byType(AlertDialog), findsNothing);
       expect(find.text('后续修改后的草稿'), findsOneWidget);
       expect(find.textContaining('原操作已核对，草稿已有后续修改'), findsOneWidget);
-      expect(template ? fixture.copied!['revision'] : fixture.revision, template ? 2 : 10);
-      expect(template ? fixture.copied!['sourceVersionId'] : fixture.sourceVersionId,
+      expect(template ? fixture.copied!['revision'] : fixture.revision,
+          template ? 2 : 10);
+      expect(
+          template
+              ? fixture.copied!['sourceVersionId']
+              : fixture.sourceVersionId,
           'later-rollback-version');
       expect(tester.takeException(), isNull);
     }
-  });
+  }, tags: 'policy-draft-results');
 
   testWidgets(
       'policy-return unknown copy survives MFA and closes only for review',
@@ -709,23 +761,24 @@ void main() {
     await _waitUntil(tester, () => find.text('复制为策略').evaluate().isNotEmpty);
     await tester.enterText(find.byType(TextFormField), _copyName);
     _capture(tester, '保存')();
-    await _waitUntil(tester, () => fixture.copies.length == 1 &&
-        _ready(tester, '查询原保存结果'));
+    await _waitUntil(
+        tester, () => fixture.copies.length == 1 && _ready(tester, '查询原保存结果'));
     final original = fixture.copies.single;
     _capture(tester, '查询原保存结果')();
-    await _waitUntil(
-        tester, () => fixture.branchQueries.length == 1 && _ready(tester, '重新安全验证'));
+    await _waitUntil(tester,
+        () => fixture.branchQueries.length == 1 && _ready(tester, '重新安全验证'));
     var field = tester.widget<TextFormField>(find.byType(TextFormField));
     expect(field.controller!.text, _copyName);
     expect(field.enabled, isFalse);
     expect(_button('查询原保存结果'), findsOneWidget);
     _capture(tester, '重新安全验证')();
     await _waitUntil(tester, () => fixture.session.securityChecks == 1);
-    expect(fixture.branchQueries, hasLength(1), reason: 'MFA does not query or submit automatically.');
+    expect(fixture.branchQueries, hasLength(1),
+        reason: 'MFA does not query or submit automatically.');
     expect(fixture.copies, hasLength(1));
     _capture(tester, '查询原保存结果')();
-    await _waitUntil(tester, () => fixture.branchQueries.length == 2 &&
-        _ready(tester, '查询原保存结果'));
+    await _waitUntil(tester,
+        () => fixture.branchQueries.length == 2 && _ready(tester, '查询原保存结果'));
     field = tester.widget<TextFormField>(find.byType(TextFormField));
     expect(field.controller!.text, _copyName);
     expect(field.enabled, isFalse);
@@ -756,7 +809,7 @@ void main() {
     expect(find.text(_copyName), findsNothing);
     expect(find.textContaining('保存成功'), findsNothing);
     expect(fixture.listReads, hasLength(2));
-  });
+  }, tags: 'policy-draft-results');
 
   testWidgets(
       'policy-return closed or ABA parent blocks late client under a cover',
@@ -845,10 +898,13 @@ void main() {
       expect(fixture.writes, hasLength(1));
       final original = fixture.writes.single;
       expect(original.method, 'POST');
-      expect(original.url.path, '/api/v1/tenants/tenant-a/policy-draft-changes');
+      expect(
+          original.url.path, '/api/v1/tenants/tenant-a/policy-draft-changes');
       expect(original.headers['If-Match'], isNull);
-      expect(original.headers['Idempotency-Key'], matches(
-          RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+      expect(
+          original.headers['Idempotency-Key'],
+          matches(RegExp(
+              r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
       final body = jsonDecode(original.body) as Json;
       expect(body['operation'], 'UPDATE');
       expect(body['policyId'], _policy);
@@ -1180,7 +1236,7 @@ void main() {
       expect(invocation.completed, isTrue);
       expect(invocation.failure, isNull);
       expect(tester.takeException(), isNull);
-    });
+    }, tags: 'policy-draft-results');
   }
   testWidgets('schedule checks replace inline results without closing the plan',
       (tester) async {
