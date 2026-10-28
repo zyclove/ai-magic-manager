@@ -35,6 +35,7 @@ class _OverviewSession extends Session {
   final Api _fixtureApi;
   bool signedIn = true;
   int fixtureGeneration = 1;
+  final loginRequests = <bool>[];
 
   _OverviewSession(FutureOr<http.Response> Function(http.Request) handle)
       : _fixtureApi = Api(() async => MockClient((request) async {
@@ -53,7 +54,7 @@ class _OverviewSession extends Session {
   @override
   int get scopeGeneration => fixtureGeneration;
   @override
-  void login({bool stepUp = false}) {}
+  void login({bool stepUp = false}) => loginRequests.add(stepUp);
 
   void change({String? actor, String? nextRole, int? generation}) {
     if (actor != null) profile = {...profile!, 'subject': actor};
@@ -381,23 +382,84 @@ void main() {
   });
 
   testWidgets(
-      '403 hides loaded data and invalidates the retained refresh callback',
+      'reauth-required refresh keeps the last summary and same-scope recovery controls',
       (tester) async {
     var reads = 0;
-    final session = _OverviewSession((_) => ++reads == 1
-        ? _summary(137)
-        : http.Response('{"errorCode":"SCOPE_DENIED"}', 403));
+    final session = _OverviewSession((request) {
+      expect(request.url.path, endsWith('/tenants/tenant-a/overview'));
+      return switch (++reads) {
+        1 => _summary(137),
+        2 => http.Response('{"errorCode":"REAUTH_REQUIRED"}', 401),
+        _ => _summary(246),
+      };
+    });
     await _mount(tester, session);
     await _settle(tester);
+    final originalState = tester.state(find.byType(ScopedOverviewPage));
+    final initialGeneration = session.scopeGeneration;
+    final timestamp = find.textContaining('上次读取完成：');
+    expect(find.text('137'), findsOneWidget);
+    final completedAt = tester.widget<Text>(timestamp).data;
     final refresh = _refresh(tester);
     refresh();
     await _settle(tester);
-    expect(find.text('137'), findsNothing);
-    expect(find.text('工作空间或权限已变化'), findsOneWidget);
+    final failure = find.byWidgetPredicate((widget) => widget is FailureView &&
+        widget.error is ApiFailure && (widget.error as ApiFailure).code == 'REAUTH_REQUIRED');
+    expect(failure, findsOneWidget);
+    expect(find.text('137'), findsOneWidget);
+    expect(tester.widget<Text>(timestamp).data, completedAt);
+    expect(find.text('以下为上次成功读取的数据，当前状态尚未更新。'), findsOneWidget);
+    expect(find.text('工作空间或权限已变化'), findsNothing);
+    expect(tester.widget<TextButton>(_button<TextButton>('刷新状态')).onPressed,
+        isNotNull);
+    final reauth = _button<TextButton>('重新安全验证');
+    expect(tester.widget<TextButton>(reauth).onPressed, isNotNull);
+    await tester.ensureVisible(reauth);
+    await tester.pumpAndSettle();
+    await tester.tap(reauth);
+    await _settle(tester);
+    expect(session.loginRequests, [true]);
+    expect(reads, 2, reason: 'Step-up must not automatically repeat the original read.');
+    expect(session.scopeGeneration, initialGeneration);
     refresh();
     await _settle(tester);
-    expect(reads, 2);
+    expect(reads, 3);
+    expect(tester.state(find.byType(ScopedOverviewPage)), same(originalState));
+    expect(session.scopeGeneration, initialGeneration);
+    expect(find.text('246'), findsOneWidget);
+    expect(find.text('137'), findsNothing);
+    expect(failure, findsNothing);
+    expect(timestamp, findsOneWidget);
+    expect(find.text('以下为上次成功读取的数据，当前状态尚未更新。'), findsNothing);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'real authorization denials hide loaded data and retire the retained refresh callback',
+      (tester) async {
+    for (final failure in <({int status, String code})>[
+      (status: 403, code: 'SCOPE_DENIED'),
+      (status: 401, code: 'UNAUTHENTICATED'),
+    ]) {
+      var reads = 0;
+      final session = _OverviewSession((_) => ++reads == 1
+          ? _summary(137)
+          : http.Response(jsonEncode({'errorCode': failure.code}), failure.status));
+      await _mount(tester, session);
+      await _settle(tester);
+      final refresh = _refresh(tester);
+      refresh();
+      await _settle(tester);
+      expect(find.text('137'), findsNothing);
+      expect(find.textContaining('上次读取完成：'), findsNothing);
+      expect(find.text('工作空间或权限已变化'), findsOneWidget);
+      refresh();
+      await _settle(tester);
+      expect(reads, 2);
+      expect(tester.takeException(), isNull, reason: failure.code);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await _settle(tester);
+    }
   });
 
   testWidgets(

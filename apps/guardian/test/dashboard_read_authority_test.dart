@@ -256,6 +256,68 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('recent authentication retains the original dashboard until manual retry',
+      (tester) async {
+    for (final viaAction in [false, true]) {
+      var reads = 0;
+      final actions = _ActionRecord();
+      if (viaAction) actions.failure = const ApiFailure(401, 'REAUTH_REQUIRED');
+      final session = _DashboardSession((_) {
+        reads++;
+        return !viaAction && reads == 2
+            ? http.Response('{"errorCode":"REAUTH_REQUIRED"}', 401)
+            : _summary(reads == 1 ? 137 : 291);
+      });
+      final host = await _mount(tester, session, actions);
+      final original = _view(tester);
+      final originalSummary = original.summary;
+      final originalTime = original.refreshedAt;
+      final generation = session.scopeGeneration;
+      if (viaAction) {
+        original.onAddSubject!();
+      } else {
+        original.onRefresh();
+      }
+      await settleReads(tester);
+      final failed = _view(tester);
+      final failure = failed.error;
+      expect(failed.summary, same(originalSummary));
+      expect(failed.refreshedAt, originalTime);
+      expect(failure, isA<ApiFailure>().having((e) => e.code, 'code', 'REAUTH_REQUIRED'));
+      expect(failed.refreshing, isFalse);
+      expect(failed.busy, isFalse);
+      expect(find.text('137'), findsOneWidget);
+      expect(find.text('最近活动'), findsOneWidget);
+      expect(find.textContaining('上次读取完成：'), findsOneWidget);
+      final expectedReads = viaAction ? 1 : 2;
+      final expectedActions = viaAction ? 1 : 0;
+      expect(reads, expectedReads);
+      expect(actions.starts, expectedActions);
+      final reauthenticate = tester.widget<FailureView>(find.byType(FailureView)).reauth!;
+      reauthenticate();
+      host.rebuild.value++;
+      await settleReads(tester);
+      expect(session.reauthCalls, 1);
+      expect(session.scopeGeneration, generation);
+      expect(reads, expectedReads, reason: 'Reauthentication must not silently refresh the overview.');
+      expect(actions.starts, expectedActions, reason: 'Reauthentication must not retry a write action.');
+      expect(_view(tester).summary, same(originalSummary));
+      expect(_view(tester).refreshedAt, originalTime);
+      expect(_view(tester).error, same(failure));
+      original.onRefresh();
+      await settleReads(tester);
+      expect(reads, expectedReads + 1);
+      expect(_view(tester).summary!.subjectCount, 291);
+      expect(_view(tester).error, isNull);
+      expect(actions.starts, expectedActions);
+      expect(session.scopeGeneration, generation,
+          reason: 'A recent-authentication challenge must keep the original read scope.');
+      expect(tester.takeException(), isNull, reason: viaAction ? 'action' : 'read');
+      await tester.pumpWidget(const SizedBox.shrink());
+      await settleReads(tester);
+    }
+  });
+
   testWidgets('ordinary 503 retains the last summary and permits a fresh retry',
       (tester) async {
     var reads = 0;
@@ -312,7 +374,7 @@ void main() {
       (tester) async {
     var reads = 0;
     final session = _DashboardSession((_) => ++reads == 2
-        ? http.Response('{"errorCode":"REAUTH_REQUIRED"}', 401)
+        ? http.Response('{"errorCode":"UNAUTHENTICATED"}', 401)
         : _summary(reads == 1 ? 137 : 291));
     final host = await _mount(tester, session, _ActionRecord());
     _view(tester).onRefresh();

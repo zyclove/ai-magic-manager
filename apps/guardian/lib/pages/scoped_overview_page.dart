@@ -134,6 +134,7 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
         setState(() {
           error = failure;
           if (failure is ApiFailure &&
+              failure.code != 'REAUTH_REQUIRED' &&
               (failure.status == 401 ||
                   failure.status == 403 ||
                   failure.code == 'WORKSPACE_CHANGED')) {

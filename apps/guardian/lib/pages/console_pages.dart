@@ -2384,8 +2384,10 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _recordFailure(DeviceSubflowScope scope, Object failure) {
-    if (failure is ApiFailure && (failure.status == 401 ||
-        failure.status == 403 || failure.code == 'WORKSPACE_CHANGED')) {
+    if (failure is ApiFailure &&
+        failure.code != 'REAUTH_REQUIRED' &&
+        (failure.status == 401 ||
+            failure.status == 403 || failure.code == 'WORKSPACE_CHANGED')) {
       _clearScopeState();
       _serverDenied = true;
       // Session may still carry the old membership until its next reload.
