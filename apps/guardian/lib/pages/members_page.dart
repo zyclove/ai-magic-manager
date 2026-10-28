@@ -349,14 +349,17 @@ class _MembersPageState extends State<MembersPage> {
       final target = MemberAccessTarget.fromRow(row);
       final path = '$root/members/${target.memberKey}/access';
       Future<MemberAccessSnapshot?> readAccess(
-          {MemberAccessSnapshot? previous}) async {
+          {MemberAccessSnapshot? previous, Api? api,
+          bool Function()? isCurrent}) async {
+        bool accepted() => current(scope) && (isCurrent?.call() ?? true);
         try {
-          final raw = await scope.api.send('GET', path);
-          if (!current(scope)) return null;
+          final raw = await (api ?? scope.api).send('GET', path,
+              isCurrent: accepted);
+          if (!accepted()) return null;
           return MemberAccessSnapshot.read(raw,
               kind: kind, target: target, previous: previous);
         } catch (failure) {
-          if (rejectTargetRead(failure)) return null;
+          if (!accepted() || rejectTargetRead(failure)) return null;
           rethrow;
         }
       }
@@ -368,7 +371,7 @@ class _MembersPageState extends State<MembersPage> {
       final classIds = access.classIds;
       final member = memberPresentation(row, access);
       final allowed = memberRoles(kind, operatorRole, currentRole: access.role);
-      var edit = false;
+      MemberAccessSnapshot? editAccess;
       final removalKey = requestId();
       final changes = Listenable.merge([
         flowChanges(scope, listLease: listLease), targetLost,
@@ -415,7 +418,26 @@ class _MembersPageState extends State<MembersPage> {
             if (allowed.isNotEmpty) ...[
               DetailAction('调整权限', (dialog) async {
                 final complete = captureDialogCompletion(dialog);
-                edit = true;
+                final route = ModalRoute.of(dialog);
+                bool available() => dialog.mounted && current(scope) &&
+                    route?.isActive == true &&
+                    (route is! OwnedDialogRoute<dynamic> || route.available);
+                // Keep the detail and its retry action until the fresh access
+                // facts are verified. A failed read must not restart the journey.
+                final latest = await readAccess(previous: access,
+                    api: dialogApi(dialog, scope), isCurrent: available);
+                if (latest == null || !mounted || !available()) return;
+                needsReview = needsReview || latest.version != access.version;
+                // Never open the editor above an independent covering window.
+                if (route?.isCurrent != true) return;
+                if (memberRoles(kind, operatorRole,
+                    currentRole: latest.role).isEmpty) {
+                  needsReview = true;
+                  complete();
+                  toast(context, '该成员当前不支持权限调整，请核对最新成员资料。');
+                  return;
+                }
+                editAccess = latest;
                 complete();
               }, closeOnSuccess: false),
               DetailAction('撤销访问', (dialog) async {
@@ -436,17 +458,10 @@ class _MembersPageState extends State<MembersPage> {
               }, destructive: true, closeOnSuccess: false),
             ],
           ]);
-      if (edit && current(scope)) {
-        // Fetch again after leaving the detail dialog: never silently replace the version on submit.
-        final latest = await readAccess(previous: access);
-        if (latest == null || !mounted || !current(scope)) {
-          return sourceCurrent() && needsReview;
-        }
-        needsReview = needsReview || latest.version != access.version;
-        if (memberRoles(kind, operatorRole, currentRole: latest.role).isEmpty) {
-          toast(context, '该成员当前不支持权限调整，请核对最新成员资料。');
-          return true;
-        }
+      final latest = editAccess;
+      if (latest != null && mounted && pageInteractive && current(scope)) {
+        // Pin the verified facts from the original detail; saving never rereads
+        // or silently replaces this version.
         final key = requestId();
         final result = await memberEditorDialog(context,
                   kind: kind,

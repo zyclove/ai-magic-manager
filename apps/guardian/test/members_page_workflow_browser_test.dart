@@ -271,7 +271,10 @@ void main() {
         if (rejectRead != null) {
           expect(fixture.reads('$_members/$_memberKey/access'), hasLength(rejectRead));
           expect(find.byType(MemberEditor), findsNothing, reason: scenario.name);
-          expect(find.text('调整权限'), findsNothing);
+          expect(find.text('调整权限'), rejectRead == 1 ? findsNothing : findsOneWidget);
+          if (rejectRead == 2) {
+            expect(_routeReady(tester, find.text('成员详情')), isTrue);
+          }
           expect(fixture.writes, isEmpty, reason: scenario.name);
           expect(fixture.reads(_members), hasLength(1));
         } else {
@@ -280,6 +283,134 @@ void main() {
         expect(fixture.reads('$_root/classes'), isEmpty);
         expect(tester.takeException(), isNull, reason: scenario.name);
       } finally {
+        await fixture.cleanup(tester);
+      }
+    }
+  });
+
+  testWidgets('member edit preparation retries in the same detail and pins the latest version',
+      (tester) async {
+    _wide(tester);
+    final preparation = Completer<http.Response>();
+    late final _Fixture fixture;
+    fixture = _Fixture(responseOverride: (request) {
+      if (request.method == 'GET' && request.url.path == '$_members/$_memberKey/access') {
+        final count = fixture.reads(request.url.path).length;
+        if (count == 2) return preparation.future;
+        if (count == 3) return _reply({..._access(), 'version': 8});
+      }
+      if (request.method == 'PATCH') {
+        return _reply({..._access(), ...(jsonDecode(request.body) as Json), 'version': 9});
+      }
+      return null;
+    });
+    addTearDown(() async {
+      if (!preparation.isCompleted) preparation.complete(_reply(_access()));
+      await fixture.cleanup(tester);
+    });
+    await tester.pumpWidget(_host(fixture));
+    await _until(tester, () => find.text('林老师').evaluate().length == 1);
+    await _tap(tester, find.text('林老师'));
+    await _until(tester, () => _routeReady(tester, find.text('成员详情')));
+    final detail = ModalRoute.of(tester.element(find.text('成员详情')));
+    final heldAdjust = tester.widget<ButtonStyleButton>(_dialogButton('调整权限')).onPressed!;
+    await _tap(tester, _dialogButton('调整权限'));
+    await _until(tester, () => fixture.reads('$_members/$_memberKey/access').length == 2);
+    heldAdjust();
+    heldAdjust();
+    await tester.pump();
+    expect(fixture.reads('$_members/$_memberKey/access'), hasLength(2));
+    expect(find.byType(MemberEditor), findsNothing);
+    expect(fixture.reads(_members), hasLength(1));
+
+    preparation.complete(_reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503));
+    await _until(tester, () => _failure('SERVICE_UNAVAILABLE').evaluate().length == 1 &&
+        tester.widget<ButtonStyleButton>(_dialogButton('调整权限')).onPressed != null);
+    expect(ModalRoute.of(tester.element(find.text('成员详情'))), same(detail));
+    expect(detail?.isCurrent, isTrue);
+    expect(fixture.reads(_members), hasLength(1));
+    await _tap(tester, _dialogButton('调整权限'));
+    await _until(tester, () => _routeReady(tester, find.byType(MemberEditor)));
+    expect(find.text('成员详情'), findsNothing);
+    expect(_failure('SERVICE_UNAVAILABLE'), findsNothing);
+    heldAdjust();
+    await tester.pump();
+    expect(fixture.reads('$_members/$_memberKey/access'), hasLength(3));
+    await _tap(tester, find.byKey(const Key('member-role')));
+    await _until(tester, () => _routeReady(tester, find.text('机构管理员').hitTestable()));
+    await _tap(tester, find.text('机构管理员').last);
+    final save = find.byKey(const Key('member-editor-save'));
+    await _until(tester, () => find.text('机构管理员').evaluate().length == 1 &&
+        tester.widget<FilledButton>(save).onPressed != null);
+    await _tap(tester, save);
+    await _until(tester, () => find.byType(MemberEditor).evaluate().isEmpty &&
+        fixture.reads(_members).length == 2 && _listReady(tester));
+    expect(fixture.writes, hasLength(1));
+    expect(fixture.writes.single.method, 'PATCH');
+    expect(fixture.writes.single.headers['if-match'], '"8"');
+    expect(jsonDecode(fixture.writes.single.body), {'role': 'ORG_ADMIN'});
+    expect(fixture.reads('$_members/$_memberKey/access'), hasLength(3));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('retired member edit preparation cannot open an editor or retire a later cover',
+      (tester) async {
+    _wide(tester);
+    for (final status in [200, 403]) {
+      final preparation = Completer<http.Response>();
+      late final _Fixture fixture;
+      fixture = _Fixture(responseOverride: (request) {
+        if (request.method == 'GET' && request.url.path == '$_members/$_memberKey/access' &&
+            fixture.reads(request.url.path).length == 2) return preparation.future;
+        return null;
+      });
+      try {
+        await tester.pumpWidget(_host(fixture));
+        await _until(tester, () => find.text('林老师').evaluate().length == 1);
+        await _tap(tester, find.text('林老师'));
+        await _until(tester, () => _routeReady(tester, find.text('成员详情')));
+        final detailContext = tester.element(find.text('成员详情'));
+        final detail = ModalRoute.of(detailContext)! as OwnedDialogRoute<void>;
+        final heldAdjust = tester.widget<ButtonStyleButton>(_dialogButton('调整权限')).onPressed!;
+        await _tap(tester, _dialogButton('调整权限'));
+        await _until(tester, () => fixture.reads('$_members/$_memberKey/access').length == 2);
+        unawaited(showDialog<void>(context: detailContext, builder: (context) => AlertDialog(
+            title: const Text('独立覆盖通知'), actions: [TextButton(
+                onPressed: () => Navigator.of(context).pop(), child: const Text('知道了'))])));
+        await _until(tester, () => _routeReady(tester, find.text('独立覆盖通知')));
+        var detailCompleted = false;
+        unawaited(detail.completed.then<void>((_) {
+          detailCompleted = true;
+        }));
+        detail.navigator!.removeRoute(detail);
+        await _until(tester, () => detailCompleted && !detail.available &&
+            find.text('成员详情').evaluate().isEmpty);
+        preparation.complete(status == 200 ? _reply({..._access(), 'version': 8}) :
+            _reply({'errorCode': 'FORBIDDEN'}, status: status));
+        await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+        await tester.pump(const Duration(milliseconds: 100));
+        heldAdjust();
+        await tester.pump();
+        expect(_routeReady(tester, find.text('独立覆盖通知')), isTrue);
+        expect(find.text('成员详情'), findsNothing);
+        expect(find.byType(MemberEditor), findsNothing);
+        expect(fixture.reads(_members), hasLength(1));
+        expect(fixture.reads('$_members/$_memberKey/access'), hasLength(2));
+        expect(fixture.writes, isEmpty);
+        await _tap(tester, _dialogButton('知道了'));
+        await _until(tester, () => find.byType(AlertDialog).evaluate().isEmpty &&
+            _listReady(tester));
+        await _tap(tester, find.text('林老师'));
+        await _until(tester, () => _routeReady(tester, find.text('成员详情')));
+        heldAdjust();
+        await tester.pump();
+        expect(fixture.reads('$_members/$_memberKey/access'), hasLength(3));
+        expect(find.byType(MemberEditor), findsNothing);
+        expect(fixture.reads(_members), hasLength(1));
+        expect(fixture.writes, isEmpty);
+        expect(tester.takeException(), isNull);
+      } finally {
+        if (!preparation.isCompleted) preparation.complete(_reply(_access()));
         await fixture.cleanup(tester);
       }
     }
