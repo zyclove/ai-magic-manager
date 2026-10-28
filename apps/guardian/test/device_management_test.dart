@@ -202,19 +202,23 @@ void main() {
     expect(f.controller.inventory, isNotNull);
   });
   test(
-      'read 403 hides all previously read private data and action availability',
+      'read denial hides all previously read private data and action availability',
       () async {
-    final f = Fixture();
-    addTearDown(f.controller.dispose);
-    await f.controller.initialize();
-    await f.controller.selectSection(DeviceManagementSection.capabilities);
-    f.intercept = (_) async =>
-        http.Response(jsonEncode({'errorCode': 'SCOPE_DENIED'}), 403);
-    await f.controller.refresh();
-    expect(f.controller.device, isNull);
-    expect(f.controller.capabilities, isNull);
-    expect(f.controller.inventory, isNull);
-    expect(f.controller.canRevoke, isFalse);
+    for (final status in [401, 403]) {
+      final f = Fixture();
+      addTearDown(f.controller.dispose);
+      await f.controller.initialize();
+      await f.controller.selectSection(DeviceManagementSection.capabilities);
+      f.intercept = (_) async => http.Response(jsonEncode({
+        'errorCode': status == 401 ? 'UNAUTHENTICATED' : 'SCOPE_DENIED',
+      }), status);
+      await f.controller.refresh();
+      expect(f.controller.hasAccess, isFalse);
+      expect(f.controller.device, isNull);
+      expect(f.controller.capabilities, isNull);
+      expect(f.controller.inventory, isNull);
+      expect(f.controller.canRevoke, isFalse);
+    }
   });
   test('transient reads retain previous facts without advancing last read time',
       () async {
@@ -314,6 +318,78 @@ void main() {
     expect(f.controller.error, isA<ApiFailure>());
     expect(f.controller.revokeResultUnknown, isFalse);
   });
+  test('read MFA preserves facts and every revoke recovery remains read only',
+      () async {
+    for (final phase in ['refresh', 'accepted revoke', 'unknown revoke']) {
+      final f = Fixture();
+      addTearDown(f.controller.dispose);
+      await f.controller.initialize();
+      await f.controller.selectSection(DeviceManagementSection.capabilities);
+      await f.controller.selectSection(DeviceManagementSection.applications);
+      final device = f.controller.device;
+      final capabilities = f.controller.capabilities;
+      final applications = f.controller.inventory;
+      final readAt = f.controller.updatedAt;
+      final sectionAt = f.controller.sectionUpdatedAt;
+      expect(device, isNotNull);
+      expect(capabilities, isNotNull);
+      expect(applications, isNotNull);
+      f.intercept = (request) async {
+        if (request.method == 'POST') {
+          if (phase == 'unknown revoke') {
+            throw http.ClientException('fixture revoke response lost');
+          }
+          return http.Response('', 204);
+        }
+        return http.Response(jsonEncode({'errorCode': 'REAUTH_REQUIRED'}), 401);
+      };
+      if (phase == 'refresh') {
+        await f.controller.refresh();
+      } else {
+        await f.controller.revoke((_) async => true);
+        if (phase == 'unknown revoke') await f.controller.refresh();
+      }
+      expect(f.controller.hasAccess, isTrue, reason: phase);
+      expect(f.controller.device, same(device), reason: phase);
+      expect(f.controller.capabilities, same(capabilities), reason: phase);
+      expect(f.controller.inventory, same(applications), reason: phase);
+      expect(f.controller.updatedAt, same(readAt), reason: phase);
+      expect(f.controller.sectionUpdatedAt, same(sectionAt), reason: phase);
+      expect(f.controller.error, isA<ApiFailure>().having(
+          (failure) => failure.code, 'code', 'REAUTH_REQUIRED'));
+      expect(f.controller.revokeAcceptedAwaitingRead, phase == 'accepted revoke');
+      expect(f.controller.revokeResultUnknown, phase == 'unknown revoke');
+      final expectedPosts = phase == 'refresh' ? 0 : 1;
+      if (phase != 'refresh') {
+        expect(f.controller.canRevoke, isFalse);
+        await f.controller.revoke((_) async => true);
+      }
+      expect(f.requests.where((request) => request.method == 'POST'),
+          hasLength(expectedPosts), reason: phase);
+      f.intercept = (request) async {
+        if (request.method != 'GET') throw StateError('Recovery must remain a GET.');
+        final revoked = phase != 'refresh';
+        final value = request.url.path.endsWith('/application-inventory')
+            ? (revoked ? {...inventory(), 'observationStatus': 'REVOKED',
+                'visibility': 'UNKNOWN', 'sequence': 0, 'receivedAt': null,
+                'applications': <Json>[]} : inventory())
+            : {...record(state: revoked ? 'REVOKED' : 'ACTIVE'),
+                'version': revoked ? 1 : 0};
+        return http.Response(jsonEncode(value), 200,
+            headers: {'content-type': 'application/json; charset=utf-8'});
+      };
+      await f.controller.refresh();
+      expect(f.controller.hasAccess, isTrue);
+      expect(f.controller.error, isNull);
+      expect(f.controller.device?.state, phase == 'refresh' ? 'ACTIVE' : 'REVOKED');
+      expect(f.controller.revokeAcceptedAwaitingRead, isFalse);
+      expect(f.controller.revokeResultUnknown, isFalse);
+      if (phase != 'refresh') await f.controller.revoke((_) async => true);
+      expect(f.requests.where((request) => request.method == 'POST'),
+          hasLength(expectedPosts), reason: phase);
+    }
+  });
+
   test('returning from a nested action keeps details open and re-reads facts',
       () async {
     final f = Fixture();

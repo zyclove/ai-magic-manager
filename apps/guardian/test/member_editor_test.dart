@@ -500,10 +500,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('教师').last);
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byKey(const Key('member-scope-mode')));
-    await tester.tap(find.byKey(const Key('member-scope-mode')));
+    final subjectScope = find.byKey(const Key('member-scope-mode-subject'));
+    await tester.ensureVisible(subjectScope);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('单个档案').last);
+    await tester.tap(subjectScope);
     await tester.pumpAndSettle();
     await tester.tap(find.text('创建邀请'));
     await tester.pumpAndSettle();
@@ -535,6 +535,8 @@ void main() {
       'actorId': 'teacher', 'displayName': '林老师', 'role': 'TEACHER',
       'subjectId': null, 'classIds': ['c1'], 'version': 0,
     });
+    final subjectScope = find.byKey(const Key('member-scope-mode-subject'));
+    final heldScopeChange = tester.widget<RadioListTile<bool>>(subjectScope).onChanged!;
     await tester.ensureVisible(find.text('七年级二班'));
     final originalToggle = tester.widget<CheckboxListTile>(
         find.widgetWithText(CheckboxListTile, '七年级二班')).onChanged!;
@@ -549,6 +551,10 @@ void main() {
         of: review, matching: find.byType(Text)))
         .map((value) => value.data ?? '').join('\n');
     final frozenReview = reviewText();
+    for (final key in ['member-scope-mode-classes', 'member-scope-mode-subject']) {
+      expect(tester.widget<RadioListTile<bool>>(find.byKey(Key(key))).onChanged, isNull);
+    }
+    heldScopeChange(false);
     expect(frozenReview, matches(RegExp(r'新增\s*1')));
     expect(frozenReview, matches(RegExp(r'移除\s*0')));
     originalToggle(false);
@@ -559,8 +565,12 @@ void main() {
         reason: 'A later authentication rejection must keep the original pending review.');
     expect(tester.widget<DropdownButtonFormField<String>>(
         find.byKey(const Key('member-role'))).onChanged, isNull);
+    expect(tester.widget<RadioListTile<bool>>(subjectScope).onChanged, isNull);
+    heldScopeChange(false);
     originalToggle(false);
     await tester.pump();
+    expect(tester.widget<RadioListTile<bool>>(subjectScope).groupValue, isTrue);
+    expect(find.byKey(const Key('member-subject')), findsNothing);
     expect(tester.widget<CheckboxListTile>(
         find.widgetWithText(CheckboxListTile, '七年级二班')).value, isTrue);
     await tester.ensureVisible(find.text('重新安全验证'));

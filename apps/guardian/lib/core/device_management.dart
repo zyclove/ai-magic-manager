@@ -451,7 +451,8 @@ class DeviceManagementController extends ChangeNotifier {
       if (failure.code == 'WORKSPACE_CHANGED') {
         checkScope();
       }
-      if (failure.status == 401 || failure.status == 403) {
+      if (failure.code != 'REAUTH_REQUIRED' &&
+          (failure.status == 401 || failure.status == 403)) {
         _readDenied = true;
         _clear(forgetIdentity: true);
       }

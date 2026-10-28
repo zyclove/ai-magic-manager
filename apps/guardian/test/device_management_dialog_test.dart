@@ -1110,16 +1110,33 @@ void main() {
   });
 
   testWidgets(
-      'MFA retry delegates reauthentication without closing readable facts',
+      'MFA retry preserves readable facts and the read-only revoke recovery entry',
       (tester) async {
-    final f = Fixture();
-    f.controller.failure = const ApiFailure(401, 'REAUTH_REQUIRED');
-    await mount(tester, f);
-    expect(find.text(deviceName), findsOneWidget);
-    await press(tester, 'device-management-reauth');
-    expect(f.reauthCalls, 1);
-    expect(f.closeCalls, 0);
-    expect(f.controller.confirmedMutations, 0);
+    for (final phase in ['refresh', 'accepted revoke', 'unknown revoke']) {
+      final f = Fixture();
+      f.controller.failure = const ApiFailure(401, 'REAUTH_REQUIRED');
+      f.controller.acceptedAwaitingReadValue = phase == 'accepted revoke';
+      f.controller.unknownValue = phase == 'unknown revoke';
+      await mount(tester, f);
+      expect(find.text(deviceName), findsOneWidget);
+      expect(find.byKey(const Key('device-management-read-warning')), findsOneWidget);
+      if (phase != 'refresh') {
+        expect(find.byKey(const Key('device-management-check-result')), findsOneWidget);
+        expect(find.byKey(const Key('device-management-revoke')), findsNothing);
+      }
+      await press(tester, 'device-management-reauth');
+      expect(f.reauthCalls, 1);
+      expect(f.closeCalls, 0);
+      await press(tester, phase == 'refresh'
+          ? 'device-management-refresh' : 'device-management-check-result');
+      expect(f.controller.refreshCalls, 1);
+      expect(f.controller.revokeCalls, 0);
+      expect(f.controller.confirmedMutations, 0);
+      expect(find.text(deviceName), findsOneWidget);
+      expect(f.closeCalls, 0);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    }
   });
 
   testWidgets('opaque identifiers are secondary and can be expanded in place',

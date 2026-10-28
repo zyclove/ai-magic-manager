@@ -341,15 +341,18 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
 
   Widget readWarning() {
     final error = c.error;
-    if (error == null || checkingRevoke) return const SizedBox.shrink();
+    if (error == null) return const SizedBox.shrink();
     final failure = error is ApiFailure ? error : null;
     final needsAuthentication = failure?.code == 'REAUTH_REQUIRED';
+    if (checkingRevoke && !needsAuthentication) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Notice(
           needsAuthentication
-              ? '此操作需要重新安全验证，已读取的设备资料仍可查看。'
+              ? checkingRevoke
+                  ? '核对当前设备状态需要重新安全验证；验证后请继续核对结果，不会再次提交撤销。'
+                  : '此操作需要重新安全验证，已读取的设备资料仍可查看。'
               : c.device == null
                   ? '暂未取得可用的设备资料，请重试读取。'
                   : '部分内容尚未更新，请重试核对。下面保留最近读取到的资料。',

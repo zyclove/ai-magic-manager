@@ -184,6 +184,13 @@ class _MemberEditorState extends State<MemberEditor> {
         (!directoryLoading.contains(directory) && optionsFor(directory) != null);
   }
 
+  void selectScopeMode(bool? value) {
+    if (!current || locked || role != 'TEACHER' || value == null ||
+        value == classMode) return;
+    setState(() => classMode = value);
+    ensureRequiredDirectory();
+  }
+
   void ensureRequiredDirectory() {
     final directory = requiredDirectory;
     if (directory == null || initialDirectories == null || !current || locked ||
@@ -617,24 +624,27 @@ class _MemberEditorState extends State<MemberEditor> {
                                   const TextStyle(color: muted, height: 1.6)),
                           if (role == 'TEACHER') ...[
                             const SizedBox(height: 20),
-                            DropdownButtonFormField<bool>(
+                            Column(
                               key: const Key('member-scope-mode'),
-                              value: classMode,
-                              decoration:
-                                  const InputDecoration(labelText: '教师访问范围'),
-                              items: const [
-                                DropdownMenuItem(
-                                    value: true, child: Text('一个或多个班级')),
-                                DropdownMenuItem(
-                                    value: false, child: Text('单个档案'))
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('教师访问范围',
+                                    style: Theme.of(context).textTheme.bodySmall),
+                                RadioListTile<bool>(
+                                    key: const Key('member-scope-mode-classes'),
+                                    contentPadding: EdgeInsets.zero,
+                                    title: const Text('一个或多个班级'),
+                                    value: true,
+                                    groupValue: classMode,
+                                    onChanged: locked ? null : selectScopeMode),
+                                RadioListTile<bool>(
+                                    key: const Key('member-scope-mode-subject'),
+                                    contentPadding: EdgeInsets.zero,
+                                    title: const Text('单个档案'),
+                                    value: false,
+                                    groupValue: classMode,
+                                    onChanged: locked ? null : selectScopeMode),
                               ],
-                              onChanged: locked
-                                  ? null
-                                  : (v) {
-                                      if (!current || locked || v == null) return;
-                                      setState(() => classMode = v);
-                                      ensureRequiredDirectory();
-                                    },
                             ),
                             if (classMode) ...[
                               const SizedBox(height: 14),

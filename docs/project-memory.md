@@ -119,6 +119,8 @@ ResourcePage 可由纯 `searchText` 提供领域格式化后的本地检索文�
 
 [MemberEditor](../apps/guardian/lib/ui/member_editor.dart) 在回调前冻结原 Map 与班级 List；已有未知提交后，认证/权限等普通拒绝不清 pending。412 与通用不可恢复结果停止旧请求重试，保留原草稿；未知关闭先就地确认，再返回 refresh/reviewInvitations 核对信号。输入与目录来源绑定当前窗口，换绑或失权不能复活旧窗口。
 
+成员教师范围用原Material纵向单选直接切换，两种模式保留本地选择；重复选中当前项不读取目录，旧回调仍受角色／锁定／原窗口门禁。设备管理读取的REAUTH_REQUIRED表示近期安全验证要求，不等于真实401／403失权：保留已有事实及验证入口；撤销结果核对中的验证也不重放写入。
+
 [DeviceGroupsPage](../apps/guardian/lib/pages/device_groups_page.dart) 以一个加入入口复用 [DeviceGroupBatchPicker](../apps/guardian/lib/ui/device_group_batch_picker.dart)，1～50台均走既有原子 batches；确认保留完整设备／注册编号。详情操作锁在首个等待前建立并保持至子路由完成，返回、筛选及操作捕获原视图代次。选择器明确读取拒绝时锁存失权并清空私有数据，普通网络／近期认证保留选择，满50台有就近提示。五类修改共用 EditDialog 的固定UUID／原值查询钩子，单台移出也走 removals；新建借用 ResourceActionLease 并返回布尔核对信号，普通取消不重读，不再维护设备组专用确认状态机。[device_group_change.dart](../apps/guardian/lib/core/device_group_change.dart) 校验7字段、原回执／当前事实及合法无变化结果，未知后仅用既有 operation-results 查询，不重放写入，不改变目录性质或设备执行能力。
 
 设备组页面在原有效读取／操作范围内收到明确拒绝时锁存失权，借既有 accessChanged 清空私有状态、推进视图代次并关闭自有窗口；旧范围晚到拒绝不影响当前视图。近期认证／网络失败保持原恢复语义，不能用刷新或本地旧Session让失权页面复活。
