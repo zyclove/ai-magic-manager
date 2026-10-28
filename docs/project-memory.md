@@ -89,6 +89,8 @@ ResourcePage 可由纯 `searchText` 提供领域格式化后的本地检索文�
 
 [ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 按自身有限布局约束选择760宽度断点，无界时才回退到视窗；搜索框用最大宽度约束随父容器收缩。尺寸变化只重排既有 State，不重读列表或重置搜索／游标；窄卡与表格共用明确的“查看详情”按钮和原操作门禁，卡片外层 InkWell 只保留指针快捷点击，不占键盘焦点或额外操作语义；具体静态候选及待验证范围见[布局记录](reviews/resource-page-layout-20261028.md)。宽屏表格保留主题最小行高，最大行高按内容增长；不修改全局表格主题。可用稳定的纯 `includeRow` 谓词接收已授权分页中的可展示行，保留原下一页游标；谓词改变按新的列表生命周期隔离，不能代替服务端筛选与授权。默认空态使用中性说明，有创建能力时由现有按钮提供入口；业务页面仍可明确覆盖领域空态文案。既有读取拒绝分支会清除已读数据/搜索并推进读取与列表两种代次，作废旧事件和自动刷新；新操作须在完整新读取成功后恢复。恢复读取与安全验证仍可用，单次操作的 MFA 不据此撤销只读资料；通用操作错误使用结果待核对文案。
 
+共用 [dateLabel](../apps/guardian/lib/core/labels.dart) 对数值先验证有限且为整毫秒，原生日期构造越界时显示“时间无效”；正常毫秒／ISO文本仍按本地分钟显示，null保持“—”，未解析文本保留原回退。显示失败不推断邀请过期或设备离线，也不替代策略版本等领域的严格准入；静态候选与待验证范围见[日期显示记录](reviews/shared-date-display-20261028.md)。
+
 访问审批的 [AccessRequestsPage](../apps/guardian/lib/pages/access_requests_page.dart) 接收宿主唯一持有的 pendingFilter 与筛选事件，编排待处理/全部视图及行摘要，不再另存本地筛选；复用 ResourcePage 的读取、分页及错误恢复；管理角色默认待处理，其他角色默认全部。消费实际返回的名称，不追加目录请求；审计视图只用核心编号。列表筛选后的空批次不等于后续页无待办，原详情与决定流程继续独立授权。[approval_decision](../apps/guardian/lib/core/approval_decision.dart) 集中七种状态、当前申请快照和精确秒数正文转换；列表名称先脱离原行，再以完整引用匹配，不能覆盖最新核心事实。通用 FieldSpec 可选整数范围由既有表单就近校验，跨字段合计在提交前验证；继续使用原未知结果与幂等保护。
 
 [DevicesPage](../apps/guardian/lib/pages/devices_page.dart) 只编排受路由控制的全部/连接检查筛选，继续复用 ResourcePage 的分页和操作边界。`connection=NEEDS_CHECK` 由 FleetReads 在授权 SQL 内筛选 ACTIVE 与缺失/过期心跳，使用现有观察时限配置；客户端不按单页计算全局队列。工作台任务保留目标 section 的权限检查，再导航固定筛选位置；登录只允许明确列入目录的精确筛选回跳地址。注册查询复用同一操作锁且不自动刷新列表。

@@ -172,9 +172,19 @@ String accessRetryLabel(dynamic value) =>
     value == null ? '—' : label('ACCESS_RETRY_$value');
 String dateLabel(dynamic value) {
   if (value == null) return '—';
-  final d = value is num
-      ? DateTime.fromMillisecondsSinceEpoch(value.toInt())
-      : DateTime.tryParse(value.toString());
+  DateTime? d;
+  if (value is num) {
+    if (!value.isFinite || value != value.truncateToDouble()) {
+      return '时间无效';
+    }
+    try {
+      d = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+    } on ArgumentError {
+      return '时间无效';
+    }
+  } else {
+    d = DateTime.tryParse(value.toString());
+  }
   return d == null
       ? value.toString()
       : DateFormat('yyyy-MM-dd HH:mm').format(d.toLocal());

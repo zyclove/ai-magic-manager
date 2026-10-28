@@ -25,4 +25,30 @@ void main() {
     expect(accessRetryLabel('WINDOW_ENDING'), '剩余批准时间不足以重试');
     expect(label('ACCESS_DOCUMENT_RETRIED'), '重新尝试审批文档交付');
   });
+  test('date labels reject malformed numeric epochs without changing valid text',
+      () {
+    final local = DateTime(2024, 1, 2, 3, 4);
+    final milliseconds = local.millisecondsSinceEpoch;
+    expect(dateLabel(null), '—');
+    for (final value in <Object>[
+      milliseconds,
+      milliseconds.toDouble(),
+      local.toUtc().toIso8601String(),
+    ]) {
+      expect(dateLabel(value), '2024-01-02 03:04');
+    }
+    for (final value in <num>[
+      double.nan,
+      double.infinity,
+      double.negativeInfinity,
+      1730000000000.5,
+      -0.5,
+      8640000000000001,
+      -8640000000000001,
+      1e300,
+    ]) {
+      expect(dateLabel(value), '时间无效');
+    }
+    expect(dateLabel('unknown-time'), 'unknown-time');
+  });
 }
