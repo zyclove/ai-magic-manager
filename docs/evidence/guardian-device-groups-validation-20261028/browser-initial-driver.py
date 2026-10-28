@@ -1,0 +1,229 @@
+import hashlib
+import importlib.util
+import json
+import os
+import sys
+import math
+import re
+from pathlib import Path
+import subprocess
+import time
+
+import psutil
+
+START = time.monotonic()
+COMMAND_END, CLEANUP_END = START + 135, START + 140
+ROOT = Path(__file__).resolve().parents[2]
+assert len(sys.argv) in (2, 3), 'Use native [attempt-output-name]'
+MODE = sys.argv[1]
+assert MODE == 'native'
+ATTEMPT = sys.argv[2] if len(sys.argv) == 3 else 'browser-'+MODE
+assert len(ATTEMPT) <= 64 and re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', ATTEMPT), 'Unsafe attempt output name'
+assert ATTEMPT not in {'con', 'prn', 'aux', 'nul', *('com'+str(n) for n in range(1, 10)), *('lpt'+str(n) for n in range(1, 10))}, 'Reserved attempt output name'
+BASE = Path(__file__).resolve().parent / ATTEMPT
+BASE.mkdir()
+MODULE = ROOT / 'apps/guardian'
+SDK = Path('D:/softwares/flutter')
+PWSH = Path('C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe')
+HELPER = ROOT / 'scripts/verification/owned_job.py'
+HELPER_SHA = '4fe9af9efda326986044163bb48ac1447813cab07730fdfaa689a9c7307ca5ec'
+TESTS = ['device_group_flow_test.dart', 'device_group_batch_picker_test.dart']
+EXPECTED_TEST_SHA = '92682a051d30e9102c1ae8a2c6297fbff7f53fa7f93903d50e9ffbe555da02b1'
+EXPECTED_PICKER_TEST_SHA = 'e9035e52b30d03af35cc0e0f2c07a2ad5a4eae518373ebbf21e8555886764687'
+CHROME = Path('C:/Program Files/Google/Chrome/Application/chrome.exe')
+COMPONENTS = ROOT / 'scripts/verification'
+
+INPUTS = [MODULE / path for path in ['lib/pages/device_groups_page.dart', 'lib/core/device_group_change.dart', 'lib/core/device_group_summary.dart', 'lib/ui/device_group_batch_picker.dart', 'lib/ui/resource_page.dart', 'lib/ui/resource_action_lease.dart', 'lib/ui/design.dart', 'lib/ui/time_zone_field.dart', 'lib/ui/dialog_access.dart', 'lib/ui/owned_dialog_route.dart', 'lib/core/api.dart', 'lib/core/labels.dart', 'lib/core/session.dart', 'lib/core/scoped_http_client.dart', 'lib/core/access.dart', 'lib/core/report_job_resume.dart', 'lib/core/contract_action_resume.dart', 'lib/core/family_identity_controller.dart', 'lib/pages/device_subflow_scope.dart', 'test/device_group_flow_test.dart', 'test/device_group_batch_picker_test.dart', '.dart_tool/package_config.json', 'pubspec.lock', 'pubspec.yaml']]
+
+
+def pin(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def inventory():
+    code = r"""$ErrorActionPreference='Stop'; $p=@(Get-Process); [pscustomobject]@{sdk=@($p|Where-Object {$_.ProcessName -match '^(dart|dartaotruntime|flutter|flutter_tester|gen_snapshot|java|javac|gradle|gradlew|mvn|go|gofmt|compile|link|asm|cgo|vet|.+\.test)$'}|Select-Object -ExpandProperty ProcessName);unknown=@($p|Where-Object {[string]::IsNullOrWhiteSpace($_.ProcessName)}).Count}|ConvertTo-Json -Compress"""
+    completed = subprocess.run([str(PWSH), '-NoLogo', '-NoProfile', '-Command', code],
+        capture_output=True, text=True, encoding='utf-8', timeout=10, check=True)
+    return json.loads(completed.stdout)
+
+def resources():
+    return {'ram': psutil.virtual_memory().available,
+            'cFree': psutil.disk_usage('C:/').free, 'dFree': psutil.disk_usage('D:/').free}
+
+
+def require(condition, message):
+    if not condition: raise RuntimeError(message)
+
+def same_json(left, right):
+    return json.dumps(left, sort_keys=True, ensure_ascii=True, allow_nan=False) == json.dumps(right, sort_keys=True, ensure_ascii=True, allow_nan=False)
+
+monotonic = time.monotonic
+
+def natural_command(state):
+    return (type(state) is dict and state.get('terminal') is True
+        and state.get('signaled') is True and type(state.get('exitCode')) is int and state['exitCode'] == 0
+        and type(state.get('activeProcesses')) is int and state['activeProcesses'] == 0
+        and type(state.get('firstSignaledQpc')) is float and math.isfinite(state['firstSignaledQpc'])
+        and type(state.get('firstCompleteTerminalQpc')) is float and math.isfinite(state['firstCompleteTerminalQpc'])
+        and START <= state['firstSignaledQpc'] <= state['firstCompleteTerminalQpc']
+        < min(COMMAND_END, state['firstSignaledQpc'] + .5))
+
+def save(name, value):
+    with (BASE / name).open('x', encoding='utf-8') as stream:
+        stream.write(json.dumps(value, ensure_ascii=True, indent=2, allow_nan=False)+'\n')
+
+def load_module(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+receipt = {'status': 'NOT_RUN', 'sdkCalls': 0, 'tests': TESTS, 'forceRequested': False, 'commandCloseFallback': False, 'checkType': 'BROWSER_DEVICE_GROUP_FLOW', 'driverSha256': pin(Path(__file__).resolve())}
+job = None
+observer = None
+state = None
+try:
+    (BASE / 'tmp').mkdir()
+    (BASE / 'out').mkdir()
+    assert pin(HELPER) == HELPER_SHA, 'Qualified OwnedJob helper changed'
+    receipt['retainedHelperSha256'] = HELPER_SHA
+    receipt['head'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+
+    assert pin(MODULE / 'test' / TESTS[0]) == EXPECTED_TEST_SHA, 'Test source differs from complete case contract'
+    assert pin(MODULE / 'test' / TESTS[1]) == EXPECTED_PICKER_TEST_SHA, 'Picker test source differs from complete case contract'
+    assert pin(CHROME) == '480f275b63d1ea39113cbc8344ac395578acc25b432bd39af5fbc77005179aca', 'Browser executable changed'
+    receipt['browserSha256'] = '480f275b63d1ea39113cbc8344ac395578acc25b432bd39af5fbc77005179aca'
+    for name, digest in {
+        'owned_chrome_evidence.py':'81be26d61faf4b2a77a18b0c2cd8b34c908e776517dc95159b3c903b8e2371b0',
+        'chrome-evidence-json-guard.fragment':'0f44fe849b8dbdacdca28c111232f8ad29511ad35d87d935df423b08d9547a3d',
+        'worker-command-finality-hook.fragment':'332e6e3830b33d26208f0bc42ec3fa089d1812c9972b1ce94eb062c5d4ab89b4',
+    }.items():
+        assert pin(COMPONENTS / name) == digest, 'Qualified Chrome component changed: '+name
+    exec((COMPONENTS / 'chrome-evidence-json-guard.fragment').read_text(encoding='utf-8'), globals())
+    exec((COMPONENTS / 'worker-command-finality-hook.fragment').read_text(encoding='utf-8'), globals())
+    chrome_module = load_module('qualified_chrome_evidence', COMPONENTS / 'owned_chrome_evidence.py')
+    before = {str(p.relative_to(ROOT)): pin(p) for p in INPUTS}
+    receipt['resourcesBefore'] = resources()
+    receipt['sdkBefore'] = inventory()
+    assert min(receipt['resourcesBefore'].values()) >= 2**31, 'Original resource gate not met'
+    assert not receipt['sdkBefore']['sdk'] and receipt['sdkBefore']['unknown'] == 0, 'SDKs busy or unknown names'
+    spec = importlib.util.spec_from_file_location('qualified_owned_job', HELPER)
+    native = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(native)
+    job = native.OwnedJob()
+    env = os.environ.copy()
+    env['CHROME_EXECUTABLE'] = str(CHROME)
+    env.update(TEMP=str(BASE / 'tmp'), TMP=str(BASE / 'tmp'),
+        PATH=r'C:\Windows\System32;C:\Program Files\Git\cmd;D:\softwares\flutter\bin\cache\dart-sdk\bin',
+        PUB_HOSTED_URL='http://127.0.0.1:9', FLUTTER_STORAGE_BASE_URL='http://127.0.0.1:9',
+        FLUTTER_SUPPRESS_ANALYTICS='true', DART_SUPPRESS_ANALYTICS='true', CI='true',
+        COMSPEC=r'C:\Windows\System32\cmd.exe', GIT_OPTIONAL_LOCKS='0', GIT_TERMINAL_PROMPT='0',
+        GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='NUL', GIT_CONFIG_COUNT='2',
+        GIT_CONFIG_KEY_0='safe.directory', GIT_CONFIG_VALUE_0=ROOT.as_posix(),
+        GIT_CONFIG_KEY_1='safe.directory', GIT_CONFIG_VALUE_1=SDK.as_posix())
+    command = str(SDK / 'bin/flutter.bat') + ' --no-version-check --suppress-analytics test --platform=chrome --no-pub --concurrency=1 --web-renderer=html --reporter=json ' + ' '.join('test/' + name for name in TESTS)
+    assert not any(c in command for c in '&|<>^%!"\r\n'), 'Unsafe fixed command text'
+    assert time.monotonic() + 1 < COMMAND_END, 'No original command budget remains'
+    job.create_suspended([r'C:\Windows\System32\cmd.exe', '/d', '/v:off', '/c', command],
+        MODULE, BASE / 'out/tests.jsonl', env)
+    observer = chrome_module.OwnedChromeEvidence(job, CHROME, BASE / 'tmp', COMMAND_END)
+    state = job.sample(0)
+    assert not state['signaled'] and state['activeProcesses'] == 1, 'Suspended root is not exclusive'
+    receipt.update(status='STARTED', sdkCalls=1, pid=job.pid, command=command)
+    job.resume()
+    print(json.dumps({'status': 'STARTED', 'pid': job.pid, 'files': len(TESTS)}), flush=True)
+    drain_end = None
+    while True:
+        sample_end = min(COMMAND_END, drain_end) if drain_end is not None else COMMAND_END
+        state = job.sample(max(0, min(50, int(max(0.0, sample_end-monotonic())*1000))))
+        if state['terminal']:
+            receipt['commandFinalityCapture'] = capture_command_finality(job, state)
+            break
+        if state['signaled']:
+            if drain_end is None: drain_end = min(COMMAND_END, state['firstSignaledQpc']+.5)
+            if monotonic() < drain_end: observer.sample(deadline_qpc=drain_end)
+            if monotonic() < drain_end:
+                time.sleep(min(.01, max(0.0, drain_end-monotonic())))
+                continue
+        if not state['signaled'] and monotonic() < COMMAND_END: observer.sample(deadline_qpc=COMMAND_END)
+        if monotonic() >= COMMAND_END or (state['signaled'] and drain_end is not None and monotonic() >= drain_end):
+            state = job.sample(0)
+            if state['terminal']:
+                receipt['commandFinalityCapture'] = capture_command_finality(job, state)
+                break
+            job.terminate_owned()
+            while not state['terminal'] and monotonic() < CLEANUP_END: state = job.sample(50)
+            break
+    receipt['terminal'] = state
+    receipt['forceRequested'] = job.force_requested
+    receipt['naturalZero'] = bool(state['terminal'] and state['exitCode'] == 0 and not job.force_requested
+        and START <= state['firstSignaledQpc'] <= state['firstCompleteTerminalQpc']
+        < min(COMMAND_END, state['firstSignaledQpc'] + .5))
+    evidence = observer.finish(receipt.get('commandFinalityCapture'))
+    save('member-failure-ledger.json', evidence['failureLedger'])
+    save('command-job-finality.json', evidence['terminalFinality'])
+    save('owned-chrome-evidence.json', evidence)
+    assert (BASE/'member-failure-ledger.json').stat().st_size <= 262144
+    assert (BASE/'command-job-finality.json').stat().st_size <= 65536
+    assert same_json(json.loads((BASE/'member-failure-ledger.json').read_text()), evidence['failureLedger'])
+    assert same_json(json.loads((BASE/'command-job-finality.json').read_text()), evidence['terminalFinality'])
+    assert same_json(evidence['terminalFinality'], receipt.get('commandFinalityCapture'))
+    receipt['browserBoundariesAccepted'] = chrome_evidence_valid(evidence, {'browserExecutable':{'path':str(CHROME)}}, state, START, COMMAND_END, BASE)
+    receipt['browserEvidenceStatus'] = evidence['status']
+    receipt['browserProblems'] = evidence['problems']
+    events = []
+    for line in (BASE / 'out/tests.jsonl').read_text(encoding='utf-8-sig').splitlines():
+        try:
+            event = json.loads(line)
+            if isinstance(event, dict): events.append(event)
+        except json.JSONDecodeError:
+            pass
+    endings = [e for e in events if e.get('type') == 'testDone' and e.get('hidden') is False]
+    suites = [e['suite'] for e in events if e.get('type') == 'suite']
+    expected = {str((MODULE / 'test' / name).resolve()).casefold() for name in TESTS}
+    actual = {str(Path(s['path']).resolve()).casefold() for s in suites}
+    receipt.update(passed=sum(e.get('result') == 'success' and not e.get('skipped') for e in endings),
+        failed=sum(e.get('result') != 'success' for e in endings),
+        skipped=sum(bool(e.get('skipped')) for e in endings),
+        reporterDone=any(e.get('type') == 'done' and e.get('success') is True for e in events),
+        suiteFilesMatch=actual == expected and len(suites) == len(TESTS),
+        sourceUnchanged=before == {str(p.relative_to(ROOT)): pin(p) for p in INPUTS})
+    receipt['sourcePins'] = before
+    receipt['sdkAfter'] = inventory()
+    by_test = {e['test']['id']: e['test']['suiteID'] for e in events if e.get('type') == 'testStart'}
+    by_suite = {s['id']: Path(s['path']).name for s in suites}
+    counts = {}
+    for e in endings:
+        name = by_suite[by_test[e['testID']]]
+        counts[name] = counts.get(name, 0) + 1
+    receipt['caseCounts'] = counts
+    expected_cases = counts == {'device_group_flow_test.dart': 5, 'device_group_batch_picker_test.dart': 2}
+    receipt['appTestsPassed'] = bool(receipt['naturalZero'] and receipt['reporterDone'] and endings
+        and expected_cases and not receipt['failed'] and not receipt['skipped'] and receipt['suiteFilesMatch'] and receipt['sourceUnchanged'] and receipt['browserBoundariesAccepted'])
+    receipt['windowReleased'] = not receipt['sdkAfter']['sdk'] and receipt['sdkAfter']['unknown'] == 0
+    receipt['status'] = 'PASSED' if receipt['appTestsPassed'] and receipt['windowReleased'] else 'NOT_ACCEPTED'
+except BaseException as error:
+    receipt['error'] = str(error)
+    receipt['status'] = 'NOT_ACCEPTED' if receipt['sdkCalls'] else 'NO_START'
+finally:
+    if job is not None:
+        if job.process is not None:
+            state = job.sample(0)
+            if state['activeProcesses']:
+                job.terminate_owned()
+                while time.monotonic() < CLEANUP_END:
+                    state = job.sample(50)
+                    if state['terminal']: break
+            receipt['forceRequested'] = job.force_requested
+            receipt['finalOwnedState'] = state
+        receipt['memberCacheBeforeClose'] = dict(job.member_cache_stats)
+        job.close()
+        receipt['memberCacheAfterClose'] = dict(job.member_cache_stats)
+        if receipt['memberCacheAfterClose']['retained'] or receipt['memberCacheAfterClose']['closeErrors']:
+            receipt['status'] = 'NOT_ACCEPTED'
+    receipt['elapsedSeconds'] = time.monotonic() - START
+    with (BASE / 'result.json').open('x', encoding='utf-8') as stream:
+        json.dump(receipt, stream, ensure_ascii=True, indent=2)
+    print(json.dumps({k: v for k, v in receipt.items() if k in
+        ('status','sdkCalls','passed','failed','skipped','error','forceRequested','elapsedSeconds')}), flush=True)
+raise SystemExit(0 if receipt['status'] == 'PASSED' else 1)

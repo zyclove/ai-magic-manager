@@ -1,0 +1,22 @@
+
+┌─────────────────────────────────────────────────────────┐
+│ A new version of Flutter is available!                  │
+│                                                         │
+│ To update to the latest version, run "flutter upgrade". │
+└─────────────────────────────────────────────────────────┘
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+Analyzing 6 items...                                            
+
+   info - Statements in an if should be enclosed in a block - lib\core\device_group_change.dart:50:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\core\device_group_change.dart:174:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\device_groups_page.dart:332:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\device_groups_page.dart:441:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\device_groups_page.dart:461:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\device_groups_page.dart:526:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\device_groups_page.dart:737:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\device_groups_page.dart:1019:23 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - test\device_group_flow_test.dart:173:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - test\device_group_flow_test.dart:210:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - test\device_group_flow_test.dart:935:11 - curly_braces_in_flow_control_structures
+
+11 issues found. (ran in 4.2s)

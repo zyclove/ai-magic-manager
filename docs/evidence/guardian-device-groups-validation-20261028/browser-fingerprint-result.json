@@ -1,0 +1,16 @@
+{
+  "status": "NO_START",
+  "sdkCalls": 0,
+  "tests": [
+    "device_group_flow_test.dart",
+    "device_group_batch_picker_test.dart"
+  ],
+  "forceRequested": false,
+  "commandCloseFallback": false,
+  "checkType": "BROWSER_DEVICE_GROUP_FLOW",
+  "driverSha256": "99f6cf4393eb6634380a6069e07725eff9252cccf228c43a9e174479f9a27976",
+  "retainedHelperSha256": "4fe9af9efda326986044163bb48ac1447813cab07730fdfaa689a9c7307ca5ec",
+  "head": "99ffbb85392a27ae286ee2a94f7678538823a613",
+  "error": "Browser executable changed",
+  "elapsedSeconds": 0.05040290000033565
+}

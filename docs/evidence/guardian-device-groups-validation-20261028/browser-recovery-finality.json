@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "source": "SAME_COMMAND_OWNED_JOB",
+  "jobRootPid": 35224,
+  "jobRootCreationFiletime": 134376225173516516,
+  "originalCommandDeadlineQpc": 45215.4197884,
+  "deadlineQpc": 45104.7208537,
+  "naturalDrainSeconds": 0.5,
+  "A0": {
+    "pid": 35224,
+    "creationFiletime": 134376225173516516,
+    "firstSignaledQpc": 45104.2208537,
+    "sampleQpc": 45104.263773,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134376225404745225,
+    "kernel100ns": 0,
+    "user100ns": 156250,
+    "jobAccountingObservedQpc": 45104.2637952,
+    "firstCompleteTerminalQpc": 45104.2637378,
+    "activeProcesses": 0,
+    "totalProcesses": 23,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "M": {
+    "startedQpc": 45104.2639016,
+    "deadlineQpc": 45104.7208537,
+    "before": {
+      "qpc": 45104.2639016,
+      "complete": true,
+      "assigned": 0,
+      "listed": 0,
+      "limit": 32,
+      "error": 0,
+      "pids": []
+    },
+    "identities": [],
+    "after": {
+      "qpc": 45104.2639107,
+      "complete": true,
+      "assigned": 0,
+      "listed": 0,
+      "limit": 32,
+      "error": 0,
+      "pids": []
+    },
+    "identityRowsLimitedByDeadline": false,
+    "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+    "causeClassified": false
+  },
+  "A1": {
+    "pid": 35224,
+    "creationFiletime": 134376225173516516,
+    "firstSignaledQpc": 45104.2208537,
+    "sampleQpc": 45104.2639176,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134376225404745225,
+    "kernel100ns": 0,
+    "user100ns": 156250,
+    "jobAccountingObservedQpc": 45104.2639389,
+    "firstCompleteTerminalQpc": 45104.2637378,
+    "activeProcesses": 0,
+    "totalProcesses": 23,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "forceRequested": false,
+  "closeFallback": false
+}

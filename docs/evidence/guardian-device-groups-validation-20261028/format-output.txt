@@ -1,0 +1,7 @@
+Formatted lib/core/device_group_change.dart
+Formatted lib/pages/device_groups_page.dart
+Formatted lib/ui/device_group_batch_picker.dart
+Formatted test/device_group_change_test.dart
+Formatted test/device_group_batch_picker_test.dart
+Formatted test/device_group_flow_test.dart
+Formatted 6 files (6 changed) in 0.49 seconds.

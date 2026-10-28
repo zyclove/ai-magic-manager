@@ -41,8 +41,8 @@ class _Fixture {
     expect(request.url.queryParameters.containsKey('cursor'), isFalse);
     return reply({'items': firstPage, 'nextCursor': 'next'});
   });
-  late final api = Api(() async => client,
-      baseUrl: 'https://fixture.invalid/api/v1');
+  late final api =
+      Api(() async => client, baseUrl: 'https://fixture.invalid/api/v1');
 }
 
 Future<void> _waitUntil(WidgetTester tester, bool Function() ready) async {
@@ -126,19 +126,20 @@ void main() {
       unawaited(showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
-              title: const Text('独立通知'),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('关闭通知'))
-              ])).then((_) => coverClosed = true));
-      await _waitUntil(
-          tester, () => find.text('独立通知').evaluate().isNotEmpty);
+                  title: const Text('独立通知'),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('关闭通知'))
+                  ])).then((_) => coverClosed = true));
+      await _waitUntil(tester, () => find.text('独立通知').evaluate().isNotEmpty);
       response.complete(reply({'errorCode': rejection.value}, rejection.key));
-      await _waitUntil(tester, () => find
-          .text('工作空间或权限已变化', skipOffstage: false)
-          .evaluate()
-          .isNotEmpty);
+      await _waitUntil(
+          tester,
+          () => find
+              .text('工作空间或权限已变化', skipOffstage: false)
+              .evaluate()
+              .isNotEmpty);
 
       confirm();
       fixture.changes.value++;
@@ -174,7 +175,10 @@ void main() {
       pages++;
       if (pages == 1) throw http.ClientException('offline');
       if (pages == 2) return reply({'errorCode': 'REAUTH_REQUIRED'}, 401);
-      return reply({'items': [_device(50)], 'nextCursor': null});
+      return reply({
+        'items': [_device(50)],
+        'nextCursor': null
+      });
     });
     await _mount(tester, fixture);
     expect(find.text('选择加入设备'), findsOneWidget);
@@ -182,8 +186,8 @@ void main() {
     await tester.enterText(find.byType(TextField), '私有平板');
     _capture(tester, '加载更多设备')();
     for (var failedPage = 1; failedPage <= 2; failedPage++) {
-      await _waitUntil(tester, () => pages == failedPage &&
-          _button('重试').evaluate().isNotEmpty);
+      await _waitUntil(tester,
+          () => pages == failedPage && _button('重试').evaluate().isNotEmpty);
       expect(find.text('已选择 1 / 50 台 · 当前显示 50 台'), findsOneWidget);
       expect(tester.widget<TextField>(find.byType(TextField)).controller!.text,
           '私有平板');
@@ -191,8 +195,8 @@ void main() {
       expect(fixture.completed, isFalse);
       _capture(tester, '重试')();
     }
-    await _waitUntil(tester, () => pages == 3 &&
-        find.text('已加载 51 台').evaluate().isNotEmpty);
+    await _waitUntil(tester,
+        () => pages == 3 && find.text('已加载 51 台').evaluate().isNotEmpty);
     final scrolling = find.descendant(
         of: find.byType(ListView), matching: find.byType(Scrollable));
     for (var index = 1; index < 50; index++) {
@@ -213,7 +217,8 @@ void main() {
     _capture(tester, '核对并加入 50 台')();
     await _waitUntil(tester, () => fixture.completed);
     expect(fixture.result, hasLength(50));
-    expect(fixture.result!.map((row) => row['id']),
+    expect(
+        fixture.result!.map((row) => row['id']),
         allOf(contains('private-device-0'), contains('private-device-50'),
             isNot(contains('private-device-49'))));
     expect(fixture.requests, hasLength(4));

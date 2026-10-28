@@ -1,0 +1,11 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+-j/--concurrency was parsed but will be ignored, this option is not supported when running Integration Tests or web tests.
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":4408,"type":"start","time":0}
+{"suite":{"id":0,"platform":"chrome","path":"D:/codes/mobile/ai-manager/apps/guardian/test/device_group_flow_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/device_group_flow_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":6,"type":"allSuites"}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3370}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":3372}
+{"test":{"id":3,"name":"all five uncertain group changes only query their fixed original operation","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":3373}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12315}
+{"success":true,"type":"done","time":12321}

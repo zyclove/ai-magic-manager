@@ -50,7 +50,10 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   }
 
   bool get current =>
-      mounted && _active && permitted && _route?.isCurrent == true &&
+      mounted &&
+      _active &&
+      permitted &&
+      _route?.isCurrent == true &&
       (_route is! OwnedDialogRoute<dynamic> ||
           (_route as OwnedDialogRoute<dynamic>).available);
 
@@ -87,9 +90,11 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   }
 
   void confirm() {
-    if (!current || selected.isEmpty || selected.length > 50 ||
-        selected.entries.any((entry) => entry.key != idOf(entry.value) ||
-            !selectable(entry.value))) return;
+    if (!current ||
+        selected.isEmpty ||
+        selected.length > 50 ||
+        selected.entries.any((entry) =>
+            entry.key != idOf(entry.value) || !selectable(entry.value))) return;
     finish(List<Json>.unmodifiable(selected.values));
   }
 
@@ -98,10 +103,13 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
       item['registrationId'] == row['registrationId'] &&
       (removing || item['state'] == 'ACTIVE'));
 
-  List<Json> get visibleDevices => devices.where((row) =>
-      (!onlySelected || selected.containsKey(idOf(row))) &&
-      '${row['displayName']} ${idOf(row)} ${row['registrationId']}'
-          .toLowerCase().contains(search)).toList();
+  List<Json> get visibleDevices => devices
+      .where((row) =>
+          (!onlySelected || selected.containsKey(idOf(row))) &&
+          '${row['displayName']} ${idOf(row)} ${row['registrationId']}'
+              .toLowerCase()
+              .contains(search))
+      .toList();
 
   void changeSearch(String value) {
     if (!current) return;
@@ -124,6 +132,7 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
     if (!current) return;
     setState(selected.clear);
   }
+
   bool get removing => widget.groupId != null;
   String idOf(Json row) => row[removing ? 'deviceId' : 'id'] as String;
 
@@ -150,7 +159,8 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
       oldWidget.accessChanges?.removeListener(_accessChanged);
       widget.accessChanges?.addListener(_accessChanged);
     }
-    if (oldWidget.root != widget.root || oldWidget.groupId != widget.groupId ||
+    if (oldWidget.root != widget.root ||
+        oldWidget.groupId != widget.groupId ||
         !identical(oldWidget.api, widget.api)) _revoked = true;
     _observeAccess();
   }
@@ -194,9 +204,10 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
       final path = removing
           ? '${widget.root}/device-groups/${widget.groupId}/devices'
           : '${widget.root}/devices';
-      final page = await widget.api.page(path, cursor: requestedCursor,
-          isCurrent: () => mounted && _active && permitted &&
-              generation == requested);
+      final page = await widget.api.page(path,
+          cursor: requestedCursor,
+          isCurrent: () =>
+              mounted && _active && permitted && generation == requested);
       if (!mounted || !_active || !permitted || generation != requested) return;
       final seen = more ? devices.map(idOf).toSet() : <String>{};
       for (final row in page.items) {
@@ -221,7 +232,8 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
           if (failure is ApiFailure &&
               (failure.code == 'WORKSPACE_CHANGED' ||
                   failure.status == 403 ||
-                  (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'))) {
+                  (failure.status == 401 &&
+                      failure.code != 'REAUTH_REQUIRED'))) {
             _revoked = true;
             generation++;
             selected.clear();
@@ -235,7 +247,9 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
             error = null;
           } else {
             error = failure;
-            if (more && failure is ApiFailure && failure.code == 'INVALID_CURSOR') {
+            if (more &&
+                failure is ApiFailure &&
+                failure.code == 'INVALID_CURSOR') {
               cursor = null;
               cursorInvalid = true;
             }
@@ -281,9 +295,13 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
       return AlertDialog(
           title: const Text('工作空间或权限已变化'),
           content: const Text('已隐藏原设备选择。请关闭窗口，在当前工作空间重新打开。'),
-          actions: [TextButton(onPressed: () {
-            if (_route?.isCurrent == true) finish();
-          }, child: const Text('关闭'))]);
+          actions: [
+            TextButton(
+                onPressed: () {
+                  if (_route?.isCurrent == true) finish();
+                },
+                child: const Text('关闭'))
+          ]);
     }
     final visible = visibleDevices;
     return AlertDialog(
@@ -318,7 +336,8 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                   const SizedBox(height: 12),
                   Semantics(
                       liveRegion: true,
-                      child: Text('已选择 ${selected.length} / 50 台 · 当前显示 ${visible.length} 台',
+                      child: Text(
+                          '已选择 ${selected.length} / 50 台 · 当前显示 ${visible.length} 台',
                           style: Theme.of(context).textTheme.titleMedium)),
                   if (selected.length >= 50) ...[
                     const SizedBox(height: 8),
@@ -334,7 +353,8 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                         onPressed: selected.isEmpty ? null : clearSelection,
                         child: const Text('清空选择')),
                   ]),
-                  Text('已加载 ${devices.length} 台${cursor == null ? '' : '，还有更多设备'}',
+                  Text(
+                      '已加载 ${devices.length} 台${cursor == null ? '' : '，还有更多设备'}',
                       style: Theme.of(context).textTheme.bodySmall),
                   const SizedBox(height: 8),
                   if (loading) const LinearProgressIndicator(),
@@ -348,27 +368,30 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                           icon: const Icon(Icons.refresh),
                           label: const Text('重新加载并清空选择')),
                     ] else
-                      FailureView(error!, retry: () => load(more: cursor != null)),
+                      FailureView(error!,
+                          retry: () => load(more: cursor != null)),
                   ],
                   SizedBox(
                       height: (MediaQuery.sizeOf(context).height * .36)
-                          .clamp(100.0, 320.0).toDouble(),
+                          .clamp(100.0, 320.0)
+                          .toDouble(),
                       child: visible.isEmpty
-                          ? Center(child: Text(devices.isEmpty
-                              ? loading
-                                  ? '正在加载设备…'
-                                  : error != null
-                                      ? '设备尚未加载，请重试。'
-                                      : removing
-                                          ? '组内没有设备。'
-                                          : '没有可选设备，请先注册并激活机构设备。'
-                              : onlySelected && selected.isEmpty
-                                  ? '还没有选择设备，关闭“仅看已选”后继续选择。'
-                                  : onlySelected
-                                      ? '已选设备中没有匹配项，请调整或清除搜索。'
-                                      : cursor != null
-                                          ? '已加载设备中没有匹配项，可调整搜索或继续加载更多。'
-                                          : '没有匹配的设备，请调整或清除搜索。'))
+                          ? Center(
+                              child: Text(devices.isEmpty
+                                  ? loading
+                                      ? '正在加载设备…'
+                                      : error != null
+                                          ? '设备尚未加载，请重试。'
+                                          : removing
+                                              ? '组内没有设备。'
+                                              : '没有可选设备，请先注册并激活机构设备。'
+                                  : onlySelected && selected.isEmpty
+                                      ? '还没有选择设备，关闭“仅看已选”后继续选择。'
+                                      : onlySelected
+                                          ? '已选设备中没有匹配项，请调整或清除搜索。'
+                                          : cursor != null
+                                              ? '已加载设备中没有匹配项，可调整搜索或继续加载更多。'
+                                              : '没有匹配的设备，请调整或清除搜索。'))
                           : ListView.builder(
                               itemCount: visible.length,
                               itemBuilder: (context, index) {
@@ -388,7 +411,8 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                                       '${label(row['platform'])} · ${label(row['state'])}'
                                       '${removing ? ' · ${label(row['membershipStatus'])}' : ''}\n设备 $id'),
                                   isThreeLine: true,
-                                  controlAffinity: ListTileControlAffinity.leading,
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
                                 );
                               })),
                   if (cursor != null && !cursorInvalid)
@@ -400,7 +424,8 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
         actions: [
           TextButton(onPressed: close, child: const Text('取消')),
           FilledButton(
-              onPressed: selected.isEmpty || selected.length > 50 ? null : confirm,
+              onPressed:
+                  selected.isEmpty || selected.length > 50 ? null : confirm,
               child: Text('核对并${removing ? '移出' : '加入'} ${selected.length} 台')),
         ]);
   }

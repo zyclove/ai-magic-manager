@@ -39,8 +39,12 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   bool get acting => activeAction != null;
   final dialogs = <OwnedDialogRoute<dynamic>>{};
 
-  bool get current => mounted && _active && !pageReadDenied &&
-      widget.session.tenant != null && pageScope.current;
+  bool get current =>
+      mounted &&
+      _active &&
+      !pageReadDenied &&
+      widget.session.tenant != null &&
+      pageScope.current;
 
   @override
   void initState() {
@@ -48,8 +52,12 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     root = widget.session.tenant == null ? '' : widget.session.root;
     final session = widget.session;
     pageScope = DeviceSubflowScope(session,
-        permitted: () => mounted && _active && !pageReadDenied &&
-            identical(widget.session, session) && session.canOpen('device-groups'));
+        permitted: () =>
+            mounted &&
+            _active &&
+            !pageReadDenied &&
+            identical(widget.session, session) &&
+            session.canOpen('device-groups'));
     pageScope.addListener(accessChanged);
   }
 
@@ -84,8 +92,11 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   // Only a rejection of the still-current request can retire this page capture.
   // Local scope failures and late responses must not revoke a newer view.
   bool rejectPrivateAccess(Object failure, bool Function() available) {
-    if (!current || !available() || failure is! ApiFailure ||
-        (failure.status != 403 && failure.code != 'WORKSPACE_CHANGED' &&
+    if (!current ||
+        !available() ||
+        failure is! ApiFailure ||
+        (failure.status != 403 &&
+            failure.code != 'WORKSPACE_CHANGED' &&
             (failure.status != 401 || failure.code == 'REAUTH_REQUIRED'))) {
       return false;
     }
@@ -108,7 +119,9 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   DeviceSubflowScope capture() {
     final capturedGeneration = generation, groupId = selectedId;
     return DeviceSubflowScope(widget.session,
-        permitted: () => current && generation == capturedGeneration &&
+        permitted: () =>
+            current &&
+            generation == capturedGeneration &&
             selectedId == groupId);
   }
 
@@ -121,13 +134,21 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     var live = true, parentOpen = true;
     late final OwnedDialogRoute<T> route;
     late final Api api;
-    bool available() => live && parentOpen && current && scope.current &&
+    bool available() =>
+        live &&
+        parentOpen &&
+        current &&
+        scope.current &&
         (owner == null || owner.current) &&
-        context.mounted && (parent == null || parent.isActive) &&
-        route.available && route.isActive;
-    route = OwnedDialogRoute<T>(context: context,
+        context.mounted &&
+        (parent == null || parent.isActive) &&
+        route.available &&
+        route.isActive;
+    route = OwnedDialogRoute<T>(
+        context: context,
         barrierDismissible: barrierDismissible,
-        builder: (context) => _GroupScopeView(scope: scope,
+        builder: (context) => _GroupScopeView(
+            scope: scope,
             changes: changes,
             hasAccess: available,
             builder: (context) => builder(context, api, available)));
@@ -144,8 +165,13 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     });
     try {
       final result = await presentOwnedDialog<T>(context, route);
-      return current && scope.current && (owner == null || owner.current) && parentOpen &&
-          (parent == null || parent.isActive) ? result : null;
+      return current &&
+              scope.current &&
+              (owner == null || owner.current) &&
+              parentOpen &&
+              (parent == null || parent.isActive)
+          ? result
+          : null;
     } finally {
       live = false;
       dialogs.remove(route);
@@ -203,7 +229,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
 
   Future<void> open(String id, {bool keepLoaded = true}) async {
     if (!current || (loading && selectedId == id && keepLoaded)) return;
-    final preserve = keepLoaded && selectedId == id && detail != null && summary != null;
+    final preserve =
+        keepLoaded && selectedId == id && detail != null && summary != null;
     final revision = ++generation;
     if (selectedId != id) memberFilter = null;
     setState(() {
@@ -241,8 +268,11 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
         showingPrevious = false;
       });
     } catch (failure) {
-      if (current && scope.current && revision == generation &&
-          !rejectPrivateAccess(failure, () => scope.current && revision == generation)) {
+      if (current &&
+          scope.current &&
+          revision == generation &&
+          !rejectPrivateAccess(
+              failure, () => scope.current && revision == generation)) {
         setState(() => error = failure);
       }
     } finally {
@@ -255,8 +285,13 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
 
   Future<void> moreMembers() async {
     final id = selectedId, cursor = nextMemberCursor;
-    if (!current || id == null || cursor == null || loading || loadingMore ||
-        acting || showingPrevious) return;
+    if (!current ||
+        id == null ||
+        cursor == null ||
+        loading ||
+        loadingMore ||
+        acting ||
+        showingPrevious) return;
     final scope = capture();
     setState(() {
       loadingMore = true;
@@ -275,7 +310,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
         nextMemberCursor = page.nextCursor;
       });
     } catch (failure) {
-      if (current && scope.current &&
+      if (current &&
+          scope.current &&
           !rejectPrivateAccess(failure, () => scope.current)) {
         setState(() {
           memberPageError = failure;
@@ -292,42 +328,62 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   }
 
   void chooseFilter(String? status) {
-    if (!current || acting || selectedId == null || memberFilter == status) return;
+    if (!current || acting || selectedId == null || memberFilter == status) {
+      return;
+    }
     memberFilter = status;
     open(selectedId!, keepLoaded: false);
   }
 
-  bool needsReview(Object failure) => failure is! ApiFailure ||
-      failure.status == 0 || failure.status == 408 || failure.status >= 500 ||
-      failure.status == 412 || isUnavailableOperationResult(failure);
+  bool needsReview(Object failure) =>
+      failure is! ApiFailure ||
+      failure.status == 0 ||
+      failure.status == 408 ||
+      failure.status >= 500 ||
+      failure.status == 412 ||
+      isUnavailableOperationResult(failure);
 
-  Future<Json> sendChange(BuildContext dialog, Api api, bool Function() available,
-      DeviceGroupChange change, String key, {required bool query}) async {
+  Future<Json> sendChange(BuildContext dialog, Api api,
+      bool Function() available, DeviceGroupChange change, String key,
+      {required bool query}) async {
     if (!available()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     final (method, path) = switch (change.operation) {
       'CREATE' => ('POST', '$root/device-groups'),
       'RENAME' => ('PATCH', '$root/device-groups/${change.groupId}'),
       'ARCHIVE' => ('POST', '$root/device-groups/${change.groupId}/archive'),
-      'ADD' => ('POST', '$root/device-groups/${change.groupId}/devices/batches'),
-      'REMOVE' => ('POST', '$root/device-groups/${change.groupId}/devices/removals'),
+      'ADD' => (
+          'POST',
+          '$root/device-groups/${change.groupId}/devices/batches'
+        ),
+      'REMOVE' => (
+          'POST',
+          '$root/device-groups/${change.groupId}/devices/removals'
+        ),
       _ => throw const ApiFailure(400, 'VALIDATION_FAILED'),
     };
     final raw = await api.send(query ? 'POST' : method,
         query ? '$root/device-groups/operation-results/$key/query' : path,
-        body: query ? change.queryBody : change.operation == 'ARCHIVE' ? null : change.body,
-        version: query ? null : change.version, key: query ? null : key);
+        body: query
+            ? change.queryBody
+            : change.operation == 'ARCHIVE'
+                ? null
+                : change.body,
+        version: query ? null : change.version,
+        key: query ? null : key);
     if (!available()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     if (!query) return change.committed(raw);
     final result = change.queryResult(raw);
     if (result.current['version'] > result.committed['version'] &&
-        dialog.mounted && available() && ModalRoute.of(dialog)?.isCurrent == true) {
+        dialog.mounted &&
+        available() &&
+        ModalRoute.of(dialog)?.isCurrent == true) {
       toast(dialog, '原操作已核对，设备组已有后续修改，请核对当前记录。');
     }
     return result.committed;
   }
 
-  Future<Json?> editName({Json? group, ResourceActionLease? owner,
-      VoidCallback? onReview}) async {
+  Future<Json?> editName(
+      {Json? group, ResourceActionLease? owner, VoidCallback? onReview}) async {
     if (!current) return null;
     final before = group == null ? null : validGroup(group);
     final scope = capture();
@@ -337,10 +393,12 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     try {
       final result = await present<Json>(scope, (dialog, api, available) {
         Future<Json> resolve(Json values, {required bool query}) async {
-          final change = before == null ? DeviceGroupChange.create(values)
+          final change = before == null
+              ? DeviceGroupChange.create(values)
               : DeviceGroupChange.rename(before, values);
           try {
-            final result = await sendChange(dialog, api, available, change, key, query: query);
+            final result = await sendChange(dialog, api, available, change, key,
+                query: query);
             review = true;
             return result;
           } catch (failure) {
@@ -348,6 +406,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
             rethrow;
           }
         }
+
         return EditDialog(
             title: id == null ? '新建设备组' : '修改设备组名称',
             description: '设备组只整理本机构设备；关联设备不会自动下发或执行策略。'
@@ -355,8 +414,11 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
             fields: const [FieldSpec('name', '设备组名称')],
             initial: {'name': before?['name'] ?? ''},
             submit: id == null ? '创建设备组' : '保存名称',
-            accessChanges: scope, hasAccess: available,
-            reauth: () { if (available()) reauth(); },
+            accessChanges: scope,
+            hasAccess: available,
+            reauth: () {
+              if (available()) reauth();
+            },
             recoverLabel: '查询原操作结果',
             onSubmit: (values) => resolve(values, query: false),
             onRecoverUnknown: (values) => resolve(values, query: true));
@@ -376,7 +438,9 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     if (!current || !owner.current) return false;
     var review = false;
     final group = await editName(owner: owner, onReview: () => review = true);
-    if (current && owner.current && group != null) await open(group['id'] as String);
+    if (current && owner.current && group != null) {
+      await open(group['id'] as String);
+    }
     return review;
   }
 
@@ -391,20 +455,32 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     if (!current || detail == null) return;
     final scope = capture(), group = Map<String, dynamic>.of(detail!);
     try {
-      final chosen = await present<List<Json>>(scope,
-          (_, api, available) => DeviceGroupBatchPicker(api: api, root: root,
-              current: available, accessChanges: scope));
-      if (!current || !scope.current || chosen == null || chosen.isEmpty) return;
-      final names = chosen.map((row) =>
-          '• ${row['displayName']}\n  设备 ${row['id']}\n  注册 ${row['registrationId']}').join('\n');
-      final result = await confirm(scope: scope,
+      final chosen = await present<List<Json>>(
+          scope,
+          (_, api, available) => DeviceGroupBatchPicker(
+              api: api, root: root, current: available, accessChanges: scope));
+      if (!current || !scope.current || chosen == null || chosen.isEmpty) {
+        return;
+      }
+      final names = chosen
+          .map((row) =>
+              '• ${row['displayName']}\n  设备 ${row['id']}\n  注册 ${row['registrationId']}')
+          .join('\n');
+      final result = await confirm(
+          scope: scope,
           title: '加入设备组',
           description:
               '将以下 ${chosen.length} 台设备加入“${group['name']}”。整批会以当前组版本核对，任一设备注册周期或状态变化都不会提交。设备组关联不改变设备规则。\n\n本次设备清单：\n$names',
           submit: '确认加入 ${chosen.length} 台',
-          change: DeviceGroupChange.members(group, chosen.map((row) => <String, dynamic>{
-            'deviceId': row['id'], 'registrationId': row['registrationId']
-          }).toList(), removing: false));
+          change: DeviceGroupChange.members(
+              group,
+              chosen
+                  .map((row) => <String, dynamic>{
+                        'deviceId': row['id'],
+                        'registrationId': row['registrationId']
+                      })
+                  .toList(),
+              removing: false));
       if (current && scope.current && result != null) {
         await open(group['id'] as String);
       }
@@ -415,7 +491,11 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
 
   /// Lock before opening a child route; a retained old view cannot start work.
   Future<void> runAction(int view, Future<void> Function() operation) async {
-    if (!current || acting || loading || loadingMore || showingPrevious ||
+    if (!current ||
+        acting ||
+        loading ||
+        loadingMore ||
+        showingPrevious ||
         view != generation) return;
     final action = Object(), groupId = selectedId;
     setState(() => activeAction = action);
@@ -437,21 +517,36 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     if (!current || detail == null) return;
     final scope = capture(), group = Map<String, dynamic>.of(detail!);
     try {
-      final chosen = await present<List<Json>>(scope,
-          (_, api, available) => DeviceGroupBatchPicker(api: api, root: root,
+      final chosen = await present<List<Json>>(
+          scope,
+          (_, api, available) => DeviceGroupBatchPicker(
+              api: api,
+              root: root,
               groupId: group['id'] as String,
-              current: available, accessChanges: scope));
-      if (!current || !scope.current || chosen == null || chosen.isEmpty) return;
-      final names = chosen.map((row) =>
-          '• ${row['displayName']}\n  设备 ${row['deviceId']}\n  注册 ${row['registrationId']}').join('\n');
-      final result = await confirm(scope: scope,
+              current: available,
+              accessChanges: scope));
+      if (!current || !scope.current || chosen == null || chosen.isEmpty) {
+        return;
+      }
+      final names = chosen
+          .map((row) =>
+              '• ${row['displayName']}\n  设备 ${row['deviceId']}\n  注册 ${row['registrationId']}')
+          .join('\n');
+      final result = await confirm(
+          scope: scope,
           title: '批量移出设备组',
           description:
               '将以下 ${chosen.length} 台设备从“${group['name']}”移出。整批按当前组版本及原注册周期核对；不会撤销设备注册或已发布的独立配置。\n\n本次设备清单：\n$names',
           submit: '确认移出 ${chosen.length} 台',
-          change: DeviceGroupChange.members(group, chosen.map((row) => <String, dynamic>{
-            'deviceId': row['deviceId'], 'registrationId': row['registrationId']
-          }).toList(), removing: true));
+          change: DeviceGroupChange.members(
+              group,
+              chosen
+                  .map((row) => <String, dynamic>{
+                        'deviceId': row['deviceId'],
+                        'registrationId': row['registrationId']
+                      })
+                  .toList(),
+              removing: true));
       if (current && scope.current && result != null) {
         await open(group['id'] as String);
       }
@@ -464,14 +559,21 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     if (!current || detail == null) return;
     final scope = capture(), group = Map<String, dynamic>.of(detail!);
     try {
-      final result = await confirm(scope: scope,
+      final result = await confirm(
+          scope: scope,
           title: '移出设备组',
           description:
               '将“${member['displayName']}”从“${group['name']}”移出。此操作不解除设备注册，也不撤销现有独立策略。\n设备 ${member['deviceId']}\n注册 ${member['registrationId']}',
           submit: '确认移出',
-          change: DeviceGroupChange.members(group, [<String, dynamic>{
-            'deviceId': member['deviceId'], 'registrationId': member['registrationId']
-          }], removing: true));
+          change: DeviceGroupChange.members(
+              group,
+              [
+                <String, dynamic>{
+                  'deviceId': member['deviceId'],
+                  'registrationId': member['registrationId']
+                }
+              ],
+              removing: true));
       if (current && scope.current && result != null) {
         await open(group['id'] as String);
       }
@@ -484,7 +586,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     if (!current || detail == null) return;
     final scope = capture(), group = Map<String, dynamic>.of(detail!);
     try {
-      final result = await confirm(scope: scope,
+      final result = await confirm(
+          scope: scope,
           title: '归档设备组',
           description: '归档“${group['name']}”后不能继续修改成员。成员历史会保留；后续批量策略必须排除归档组。',
           submit: '确认归档',
@@ -510,7 +613,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     final result = await present<Json>(scope, (dialog, api, available) {
       Future<Json> resolve({required bool query}) async {
         try {
-          final result = await sendChange(dialog, api, available, change, key, query: query);
+          final result = await sendChange(dialog, api, available, change, key,
+              query: query);
           review = true;
           return result;
         } catch (failure) {
@@ -518,12 +622,18 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
           rethrow;
         }
       }
+
       return EditDialog(
           title: title,
           description: '$description\n\n设备组编号：$groupId · 原版本：${change.version}',
-          fields: const [], initial: const {}, submit: submit,
-          accessChanges: scope, hasAccess: available,
-          reauth: () { if (available()) reauth(); },
+          fields: const [],
+          initial: const {},
+          submit: submit,
+          accessChanges: scope,
+          hasAccess: available,
+          reauth: () {
+            if (available()) reauth();
+          },
           recoverLabel: '查询原操作结果',
           onSubmit: (_) => resolve(query: false),
           onRecoverUnknown: (_) => resolve(query: true));
@@ -541,9 +651,11 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     Widget filterChip(String? status, String title, int count) => ChoiceChip(
           label: Text('$title $count'),
           selected: memberFilter == status,
-          onSelected: acting ? null : (_) {
-            if (view == generation) chooseFilter(status);
-          },
+          onSelected: acting
+              ? null
+              : (_) {
+                  if (view == generation) chooseFilter(status);
+                },
         );
     return Panel(
         child:
@@ -577,8 +689,11 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     }
     if (selectedId == null) {
       final listView = generation, includeArchived = archived;
-      bool sourceCurrent() => current && selectedId == null &&
-          generation == listView && archived == includeArchived;
+      bool sourceCurrent() =>
+          current &&
+          selectedId == null &&
+          generation == listView &&
+          archived == includeArchived;
       return ResourcePage(
           key: listKey,
           title: '机构设备组',
@@ -619,10 +734,14 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
           });
     }
     final view = generation, groupId = selectedId;
-    bool viewCurrent() => current && generation == view && selectedId == groupId;
+    bool viewCurrent() =>
+        current && generation == view && selectedId == groupId;
     void refreshDetail() {
-      if (viewCurrent() && !acting && !loading && groupId != null) open(groupId);
+      if (viewCurrent() && !acting && !loading && groupId != null) {
+        open(groupId);
+      }
     }
+
     final canAct = !acting && !loading && !loadingMore && !showingPrevious;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       PageHeading('设备组详情', '核对设备身份和注册周期后调整分组。',
@@ -633,31 +752,35 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                 icon: const Icon(Icons.refresh),
                 label: const Text('刷新设备组')),
             OutlinedButton.icon(
-              onPressed: acting ? null : () {
-                if (!viewCurrent() || acting) return;
-                setState(() {
-                  selectedId = null;
-                  detail = null;
-                  summary = null;
-                  memberFilter = null;
-                  members = const [];
-                  nextMemberCursor = null;
-                  loading = loadingMore = false;
-                  showingPrevious = false;
-                  error = null;
-                  memberPageError = null;
-                  memberCursorInvalid = false;
-                  generation++;
-                });
-              },
-              icon: const Icon(Icons.arrow_back),
-              label: const Text('返回列表'))])),
+                onPressed: acting
+                    ? null
+                    : () {
+                        if (!viewCurrent() || acting) return;
+                        setState(() {
+                          selectedId = null;
+                          detail = null;
+                          summary = null;
+                          memberFilter = null;
+                          members = const [];
+                          nextMemberCursor = null;
+                          loading = loadingMore = false;
+                          showingPrevious = false;
+                          error = null;
+                          memberPageError = null;
+                          memberCursorInvalid = false;
+                          generation++;
+                        });
+                      },
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('返回列表'))
+          ])),
       const Notice('分组成员不是策略执行回执；归档、移出设备也不会自动撤销其他独立策略。'),
       const SizedBox(height: 16),
       if (showingPrevious) ...[
-        Notice(loading
-            ? '正在刷新，显示上次读取的设备组资料；完成前暂不能修改或继续翻页。'
-            : '刷新未完成，显示上次读取的设备组资料；请重试刷新后再修改或继续翻页。',
+        Notice(
+            loading
+                ? '正在刷新，显示上次读取的设备组资料；完成前暂不能修改或继续翻页。'
+                : '刷新未完成，显示上次读取的设备组资料；请重试刷新后再修改或继续翻页。',
             warning: !loading),
         const SizedBox(height: 12),
       ],
@@ -685,7 +808,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                   icon: const Icon(Icons.add),
                   label: const Text('加入设备')),
               OutlinedButton.icon(
-                  onPressed: canAct ? () => runAction(view, removeDevices) : null,
+                  onPressed:
+                      canAct ? () => runAction(view, removeDevices) : null,
                   icon: const Icon(Icons.playlist_remove),
                   label: const Text('批量移出')),
               OutlinedButton.icon(
@@ -710,13 +834,15 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                 const Notice('部分成员关联已失效，不会进入设备组策略目标。请核对注册周期后移出旧成员。',
                     warning: true),
               if (members.isEmpty)
-                showingPrevious ? EmptyView(
-                    memberFilter == null ? '上次读取时组内暂无设备' : '上次读取时此状态下暂无设备',
-                    '请刷新设备组，核对当前成员。') : EmptyView(
-                    memberFilter == null ? '组内暂无设备' : '此状态下暂无设备',
-                    memberFilter == null
-                        ? '从已激活的机构设备清单中选择并加入。'
-                        : '可切换上方状态查看其他成员。'),
+                showingPrevious
+                    ? EmptyView(
+                        memberFilter == null ? '上次读取时组内暂无设备' : '上次读取时此状态下暂无设备',
+                        '请刷新设备组，核对当前成员。')
+                    : EmptyView(
+                        memberFilter == null ? '组内暂无设备' : '此状态下暂无设备',
+                        memberFilter == null
+                            ? '从已激活的机构设备清单中选择并加入。'
+                            : '可切换上方状态查看其他成员。'),
               for (final member in members)
                 ListTile(
                     contentPadding: EdgeInsets.zero,
@@ -728,7 +854,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                         ? IconButton(
                             tooltip: '移出 ${member['displayName']}',
                             onPressed: canAct
-                                ? () => runAction(view, () => removeDevice(member))
+                                ? () =>
+                                    runAction(view, () => removeDevice(member))
                                 : null,
                             icon: const Icon(Icons.remove_circle_outline))
                         : null),
@@ -742,21 +869,25 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                     warning: true),
                 FailureView(memberPageError!, reauth: reauth),
                 TextButton.icon(
-                    onPressed: loading || loadingMore || acting || showingPrevious
-                        ? null
-                        : memberCursorInvalid
-                            ? refreshDetail
-                            : () {
-                                if (viewCurrent() && !acting) moreMembers();
-                              },
+                    onPressed:
+                        loading || loadingMore || acting || showingPrevious
+                            ? null
+                            : memberCursorInvalid
+                                ? refreshDetail
+                                : () {
+                                    if (viewCurrent() && !acting) moreMembers();
+                                  },
                     icon: const Icon(Icons.refresh),
                     label: Text(memberCursorInvalid ? '刷新设备组' : '重试加载更多')),
               ],
               if (memberPageError == null && nextMemberCursor != null)
                 TextButton.icon(
-                    onPressed: loading || loadingMore || acting || showingPrevious ? null : () {
-                      if (viewCurrent() && !acting) moreMembers();
-                    },
+                    onPressed:
+                        loading || loadingMore || acting || showingPrevious
+                            ? null
+                            : () {
+                                if (viewCurrent() && !acting) moreMembers();
+                              },
                     icon: const Icon(Icons.expand_more),
                     label: const Text('加载更多设备'))
             ]))
@@ -773,8 +904,8 @@ class _GroupDialogApi extends Api {
   _GroupDialogApi(this.source, this.rejected)
       : super(source.client, baseUrl: source.baseUrl);
 
-  Future<T> request<T>(bool Function()? isCurrent,
-      Future<T> Function() operation) async {
+  Future<T> request<T>(
+      bool Function()? isCurrent, Future<T> Function() operation) async {
     try {
       return await operation();
     } catch (failure) {
@@ -791,15 +922,25 @@ class _GroupDialogApi extends Api {
 
   @override
   Future<dynamic> send(String method, String path,
-      {Json? body, int? version, String? key, String? clientRequestId,
-      bool Function()? isCurrent}) => request(isCurrent, () => source.send(method, path,
-          body: body, version: version, key: key, clientRequestId: clientRequestId,
-          isCurrent: isCurrent));
+          {Json? body,
+          int? version,
+          String? key,
+          String? clientRequestId,
+          bool Function()? isCurrent}) =>
+      request(
+          isCurrent,
+          () => source.send(method, path,
+              body: body,
+              version: version,
+              key: key,
+              clientRequestId: clientRequestId,
+              isCurrent: isCurrent));
 
   @override
   Future<PageResult> page(String path,
-      {String? cursor, bool Function()? isCurrent}) =>
-      request(isCurrent, () => source.page(path, cursor: cursor, isCurrent: isCurrent));
+          {String? cursor, bool Function()? isCurrent}) =>
+      request(isCurrent,
+          () => source.page(path, cursor: cursor, isCurrent: isCurrent));
 
   @override
   Future<List<Json>> all(String path, {bool Function()? isCurrent}) =>
@@ -812,7 +953,10 @@ class _GroupScopeView extends StatefulWidget {
   final Listenable changes;
   final WidgetBuilder builder;
   final bool Function() hasAccess;
-  const _GroupScopeView({required this.scope, required this.changes, required this.builder,
+  const _GroupScopeView(
+      {required this.scope,
+      required this.changes,
+      required this.builder,
       required this.hasAccess});
 
   @override
@@ -872,9 +1016,15 @@ class _GroupScopeViewState extends State<_GroupScopeView> {
       : AlertDialog(
           title: const Text('工作空间或权限已变化'),
           content: const Text('已隐藏原操作内容。请关闭窗口，在当前工作空间重新打开。'),
-          actions: [TextButton(onPressed: () {
-            final route = _route;
-            if (!mounted || !_active || route?.isCurrent != true) return;
-            if (route is OwnedDialogRoute<dynamic>) route.finish();
-          }, child: const Text('关闭'))]);
+          actions: [
+              TextButton(
+                  onPressed: () {
+                    final route = _route;
+                    if (!mounted || !_active || route?.isCurrent != true) {
+                      return;
+                    }
+                    if (route is OwnedDialogRoute<dynamic>) route.finish();
+                  },
+                  child: const Text('关闭'))
+            ]);
 }
