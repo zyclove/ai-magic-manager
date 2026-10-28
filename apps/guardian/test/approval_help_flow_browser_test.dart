@@ -652,9 +652,14 @@ void main() {
     expect(find.text('独立通知'), findsOneWidget);
     navigator.removeRoute(cover);
     await _flushPending(tester);
+    final historyRoute = ModalRoute.of(tester.element(history))!;
+    var historyCompleted = false;
+    unawaited(historyRoute.completed.then<void>((_) => historyCompleted = true));
     await tester.tap(find.descendant(of: history, matching: _helpButton('关闭')));
-    await _waitUntil(tester, () => history.evaluate().isEmpty);
     final revoke = find.widgetWithText(OutlinedButton, '撤销批准');
+    await _waitUntil(tester, () => historyCompleted &&
+        history.evaluate().isEmpty && revoke.evaluate().length == 1 &&
+        tester.widget<OutlinedButton>(revoke).onPressed != null);
     expect(tester.widget<OutlinedButton>(revoke).onPressed, isNotNull);
     await tester.tap(revoke);
     await _waitUntil(tester, () => find.text('撤销此访问窗口并记录审计。')

@@ -185,6 +185,9 @@ bool _routeReady(WidgetTester tester, Finder content) {
       route?.animation?.status == AnimationStatus.completed;
 }
 
+bool _listReady(WidgetTester tester) => _refresh.evaluate().length == 1 &&
+    tester.widget<IconButton>(_refresh).onPressed != null;
+
 void _wide(WidgetTester tester) {
   tester.view.physicalSize = const Size(1200, 1100);
   tester.view.devicePixelRatio = 1;
@@ -438,7 +441,8 @@ void main() {
     await _until(tester, () => _routeReady(tester, find.text('独立覆盖通知')));
     historyRead.complete(_reply({'errorCode': 'SCOPE_DENIED'}, status: 403));
     await _until(tester, () => !memberRoute.available && !historyRoute.available &&
-        !historyDetailRoute.available && fixture.reads(_members).length == 2);
+        !historyDetailRoute.available && fixture.reads(_members).length == 2 &&
+        find.text('陈老师').evaluate().length == 1);
     expect(find.text('独立覆盖通知'), findsOneWidget);
     expect(find.text('成员详情'), findsNothing);
     expect(find.text('权限变更记录'), findsNothing);
@@ -479,7 +483,7 @@ void main() {
     expect(fixture.writes, hasLength(1));
     await _tap(tester, _dialogButton('关闭'));
     await _until(tester, () => fixture.reads(_members).length == 2 &&
-        find.byType(AlertDialog).evaluate().isEmpty);
+        find.byType(AlertDialog).evaluate().isEmpty && _listReady(tester));
     await _tap(tester, find.text('林老师'));
     await _until(tester, () => _routeReady(tester, find.text('成员详情')));
     expect(tester.widget<ButtonStyleButton>(_dialogButton('调整权限')).onPressed, isNotNull);
@@ -499,7 +503,7 @@ void main() {
     expect(fixture.reads(_members), hasLength(1));
     await _tap(tester, _dialogButton('关闭'));
     await _until(tester, () => fixture.reads(_members).length == 2 &&
-        find.byType(AlertDialog).evaluate().isEmpty);
+        find.byType(AlertDialog).evaluate().isEmpty && _listReady(tester));
     expect(fixture.writes, isEmpty);
     expect(find.byType(MemberEditor), findsNothing);
     expect(tester.takeException(), isNull);
@@ -631,7 +635,8 @@ void main() {
     await _tap(tester, _dialogButton('取消邀请'));
     await settleReads(tester);
     await _tap(tester, _confirm);
-    await settleReads(tester);
+    await _until(tester, () => fixture.reads(_invitations).length == 2 &&
+        find.byType(AlertDialog).evaluate().isEmpty && _listReady(tester));
     expect(fixture.writes, hasLength(1));
     expect(fixture.writes.single.method, 'DELETE');
     expect(fixture.writes.single.url.path, '$_invitations/$_invitation');
@@ -680,9 +685,8 @@ void main() {
     expect(fixture.writes, isEmpty);
     expect(find.text('独立覆盖通知'), findsOneWidget);
     await _tap(tester, _dialogButton('知道了'));
-    await settleReads(tester);
-    await _tap(tester, _dialogButton('关闭'));
-    await settleReads(tester);
+    await _until(tester, () => find.byType(AlertDialog).evaluate().isEmpty);
+    expect(find.text('成员详情'), findsNothing);
 
     await tester.pumpWidget(_host(fixture, pageKey: const ValueKey('fresh-members')));
     await settleReads(tester);
@@ -692,7 +696,8 @@ void main() {
     await settleReads(tester);
     final before = fixture.reads(_members).length;
     await _tap(tester, _confirm);
-    await settleReads(tester);
+    await _until(tester, () => _failure('SERVICE_UNAVAILABLE').evaluate().length == 1 &&
+        _routeReady(tester, find.text('成员详情')));
     expect(fixture.writes, hasLength(1));
     final removal = fixture.writes.single;
     expect(removal.method, 'DELETE');
@@ -701,7 +706,8 @@ void main() {
     expect(removal.headers['idempotency-key'], isNotEmpty);
     expect(fixture.reads(_members), hasLength(before));
     await _tap(tester, _dialogButton('关闭'));
-    await settleReads(tester);
+    await _until(tester, () => fixture.reads(_members).length == before + 1 &&
+        find.byType(AlertDialog).evaluate().isEmpty && _listReady(tester));
     expect(fixture.reads(_members), hasLength(before + 1));
     expect(fixture.writes, hasLength(1), reason: 'Closing an unknown removal never replays DELETE.');
     expect(fixture.requests.every((request) =>
