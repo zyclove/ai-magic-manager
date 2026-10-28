@@ -10,6 +10,7 @@ import '../ui/design.dart';
 import '../ui/dialog_access.dart';
 import '../ui/owned_dialog_route.dart';
 import '../ui/policy_domain_check_view.dart';
+import '../ui/resource_page.dart';
 import 'device_subflow_scope.dart';
 import 'editors.dart';
 
@@ -86,6 +87,12 @@ Object? _freezePolicyValue(Object? value) {
   throw _invalidPolicyResponse;
 }
 
+bool _policyAccessDenied(Object failure) =>
+    failure is ApiFailure &&
+    (failure.code == 'WORKSPACE_CHANGED' ||
+        failure.status == 403 ||
+        (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'));
+
 /// A details journey keeps its original authority through all child dialogs.
 class _PolicyDetailsScope extends ChangeNotifier {
   final BuildContext context;
@@ -134,6 +141,10 @@ class _PolicyDetailsScope extends ChangeNotifier {
     if (write && !writable) throw const ApiFailure(403, 'SCOPE_DENIED');
   }
 
+  Api apiFor(bool Function() hasAccess) => _scope.api
+      .trackingWrites(writeDispatch)
+      .scoped(() => current && hasAccess());
+
   Future<T> request<T>(Future<T> Function(Api) operation,
       {bool write = false, bool Function()? hasAccess}) async {
     void requireAvailable() {
@@ -145,17 +156,13 @@ class _PolicyDetailsScope extends ChangeNotifier {
 
     try {
       requireAvailable();
-      final api = _scope.api.trackingWrites(writeDispatch).scoped(
-          () => current && (!write || writable) && hasAccess?.call() != false);
+      final api = apiFor(
+          () => (!write || writable) && hasAccess?.call() != false);
       final result = await operation(api);
       requireAvailable();
       return result;
     } catch (failure) {
-      if (failure is ApiFailure &&
-          ((failure.code == 'WORKSPACE_CHANGED' &&
-                  hasAccess?.call() != false) ||
-              failure.status == 403 ||
-              (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'))) {
+      if (hasAccess?.call() != false && _policyAccessDenied(failure)) {
         _revoke();
       }
       rethrow;
@@ -441,63 +448,69 @@ Future<bool> _policyBranchDialog(
 
 Future<bool> _policyVersions(
     BuildContext context, _PolicyDetailsScope scope, Json draft) async {
-  final access = DialogAccessBinding(context,
-      accessChanges: scope, hasAccess: () => scope.current);
-  List<Json>? rows;
-  try {
-    final loaded = await scope.request(
-        (api) => api.all('${scope.root}/policies/${draft['id']}/versions'),
-        hasAccess: access.permitted);
-    rows = loaded;
-    if (!context.mounted || !access.permitted()) return false;
-    final versions = loaded
-        .map((value) => _readPolicyVersion(value, draft['id'] as String))
-        .toList(growable: false);
-    final changed = await _scopedDialog<bool>(context, scope,
-        accessChanges: access.changes,
-        hasAccess: access.permitted,
-        redact: loaded.clear,
-        builder: (dialog, route, dialogAccess) => AlertDialog(
-                title: const Text('版本历史'),
-                content: SizedBox(
-                    width: 620,
-                    child: SingleChildScrollView(
-                        child:
-                            Column(mainAxisSize: MainAxisSize.min, children: [
-                      if (versions.isEmpty)
-                        const EmptyView('还没有发布版本', '预览并发布后，可在这里查看历史。'),
-                      ...versions.map((version) => ListTile(
-                          title: Text('版本 ${version['sequence']}'),
-                          subtitle: Text(dateLabel(version['createdAt'])),
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: () async {
-                            if (!scope.current ||
-                                !dialogAccess.permitted() ||
-                                !route.available ||
-                                !route.isCurrent) return;
-                            final changed = await _versionDetails(
-                                dialog, scope, draft, version,
-                                accessChanges: dialogAccess.changes,
-                                hasAccess: () =>
-                                    dialogAccess.permitted() &&
-                                    route.available);
-                            if (changed && route.available) route.finish(true);
-                          }))
-                    ]))),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        if (route.available && route.isCurrent) {
-                          route.finish(false);
-                        }
-                      },
-                      child: const Text('关闭'))
-                ]));
-    return changed == true;
-  } finally {
-    rows?.clear();
-    access.dispose();
+  final policyId = draft['id'] as String;
+  Api? historyApi;
+  // Keep this predicate and the API stable across access-driven rebuilds.
+  // Validate the whole page before ResourcePage appends any of its rows.
+  bool includeVersion(Json value) {
+    _readPolicyVersion(value, policyId);
+    return true;
   }
+
+  final changed = await _scopedDialog<bool>(context, scope,
+      builder: (dialog, route, access) {
+    bool accepted() =>
+        scope.current && access.permitted() && route.available;
+    final api = historyApi ??= scope.apiFor(accepted);
+    return AlertDialog(
+        key: const Key('policy-version-history'),
+        scrollable: true,
+        content: SizedBox(
+            width: 880,
+            child: ResourcePage(
+                api: api,
+                path: '${scope.root}/policies/$policyId/versions',
+                title: '版本历史',
+                subtitle: draft['name'] as String,
+                emptyTitle: '还没有发布版本',
+                emptyDescription: scope.writable
+                    ? '预览并发布后，可在这里查看历史。'
+                    : '此策略尚无可查看的发布记录。',
+                isCurrent: accepted,
+                canInteract: () => route.isCurrent,
+                includeRow: includeVersion,
+                onReadDenied: (failure) {
+                  if (accepted() && _policyAccessDenied(failure)) {
+                    scope._revoke();
+                  }
+                },
+                reauth: () {
+                  if (accepted() && route.isCurrent) scope.reauthenticate();
+                },
+                columns: [
+                  ColumnSpec('版本', (r) => Text('版本 ${r['sequence']}')),
+                  ColumnSpec('发布时间', (r) => Text(dateLabel(r['createdAt']))),
+                ],
+                onOpenChanged: (row, lease) async {
+                  if (!accepted() || !route.isCurrent || !lease.current) {
+                    return false;
+                  }
+                  final changed = await _versionDetails(dialog, scope, draft,
+                      _readPolicyVersion(row, policyId),
+                      accessChanges: Listenable.merge([access.changes, lease]),
+                      hasAccess: () => accepted() && lease.current);
+                  if (changed && accepted()) route.finish(true);
+                  return false;
+                })),
+        actions: [
+          TextButton(
+              onPressed: () {
+                if (route.available && route.isCurrent) route.finish(false);
+              },
+              child: const Text('关闭'))
+        ]);
+  });
+  return changed == true;
 }
 
 Future<bool> _versionDetails(

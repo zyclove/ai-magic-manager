@@ -490,6 +490,199 @@ void main() {
   });
 
   testWidgets(
+      'policy history pages on demand and retries the same cursor without rereading after viewing',
+      (tester) async {
+    const cursor = '11111111-2222-4333-8444-555555555555';
+    final fixture = _Fixture();
+    final firstPage = Completer<http.Response>();
+    final first = {..._contractVersion(fixture), 'id': cursor};
+    final second = {
+      ..._contractVersion(fixture),
+      'id': 'version-private-b',
+      'sequence': 98730,
+      'createdAt': 1729999999000,
+    };
+    var nextAttempts = 0;
+    fixture.respond = (request) async {
+      if (request.method != 'GET' ||
+          !request.url.path.endsWith('/policies/$_policy/versions')) {
+        return null;
+      }
+      expect(request.url.queryParameters['limit'], '50');
+      if (!request.url.queryParameters.containsKey('cursor')) {
+        return firstPage.future;
+      }
+      expect(request.url.queryParameters['cursor'], cursor);
+      return ++nextAttempts == 1
+          ? reply({'errorCode': 'SERVICE_UNAVAILABLE'}, 500)
+          : reply({'items': [second], 'nextCursor': null});
+    };
+    await _mount(tester, fixture);
+    addTearDown(() {
+      if (!firstPage.isCompleted) {
+        firstPage.complete(reply({'items': [first], 'nextCursor': cursor}));
+      }
+    });
+    final invocation = await _open(tester, fixture);
+    _capture(tester, '版本历史')();
+    final historyWidget = find.byKey(const Key('policy-version-history'));
+    await _waitUntil(
+        tester,
+        () =>
+            historyWidget.evaluate().length == 1 &&
+            fixture.versionReads.length == 1);
+    final history = _topRoute(tester);
+    expect(firstPage.isCompleted, isFalse,
+        reason: 'The history window must open before its first page arrives.');
+    firstPage.complete(reply({'items': [first], 'nextCursor': cursor}));
+    await _waitUntil(
+        tester,
+        () =>
+            find.text('版本 98731').evaluate().length == 1 &&
+            _ready(tester, '加载更多'));
+    expect(fixture.versionReads, hasLength(1),
+        reason: 'A next cursor must not start another read automatically.');
+
+    await tester.ensureVisible(_button('加载更多'));
+    await tester.tap(_button('加载更多'));
+    await _waitUntil(
+        tester,
+        () =>
+            fixture.versionReads.length == 2 && _ready(tester, '重试加载更多'));
+    expect(find.text('版本 98731'), findsOneWidget);
+    expect(find.text('版本 98730'), findsNothing);
+    await tester.ensureVisible(_button('重试加载更多'));
+    await tester.tap(_button('重试加载更多'));
+    await _waitUntil(
+        tester,
+        () =>
+            fixture.versionReads.length == 3 &&
+            find.text('版本 98730').evaluate().length == 1);
+    expect(
+        fixture.versionReads
+            .map((request) => request.url.queryParameters['cursor']),
+        [null, cursor, cursor]);
+    expect(find.text('版本 98731'), findsOneWidget);
+
+    final firstRow = find.descendant(
+        of: historyWidget, matching: find.text('版本 98731'));
+    await tester.ensureVisible(firstRow);
+    await tester.tap(firstRow);
+    await _waitUntil(tester, () => find.text('历史版本').evaluate().isNotEmpty);
+    final version = _topRoute(tester);
+    await tester.tap(_topButton('关闭'));
+    final viewButtons = find.descendant(
+        of: historyWidget, matching: _button('查看详情'));
+    await _waitUntil(
+        tester,
+        () =>
+            !version.available &&
+            history.isCurrent &&
+            viewButtons.evaluate().length == 2 &&
+            tester.widget<ButtonStyleButton>(viewButtons.first).onPressed != null);
+    expect(fixture.versionReads, hasLength(3));
+    expect(find.text('版本 98730'), findsOneWidget);
+    expect(fixture.writes, isEmpty);
+    await tester.tap(_topButton('关闭'));
+    await _waitUntil(
+        tester, () => !history.available && _ready(tester, '关闭'));
+    expect(invocation.completed, isFalse);
+    expect(fixture.versionReads, hasLength(3));
+    _capture(tester, '关闭')();
+    await _waitUntil(tester, () => invocation.completed);
+    expect(invocation.failure, isNull);
+    expect(fixture.requests.every((request) => request.method == 'GET'), isTrue);
+    expect(tester.takeException(), isNull);
+  }, tags: 'policy-history-paging');
+
+  testWidgets(
+      'policy history rejects an entire mismatched page and keeps the first page available for review',
+      (tester) async {
+    const cursor = '11111111-2222-4333-8444-555555555555';
+    final fixture = _Fixture();
+    final candidate = {
+      ..._contractVersion(fixture),
+      'id': 'version-private-b',
+      'sequence': 98730,
+      'createdAt': 1729999999000,
+    };
+    final foreign = {
+      ..._contractVersion(fixture),
+      'id': 'foreign-private-version',
+      'policyId': 'foreign-private-policy',
+      'sequence': 98729,
+      'createdAt': 1729999998000,
+    };
+    fixture.respond = (request) async {
+      if (request.method != 'GET' ||
+          !request.url.path.endsWith('/policies/$_policy/versions')) {
+        return null;
+      }
+      expect(request.url.queryParameters['limit'], '50');
+      if (!request.url.queryParameters.containsKey('cursor')) {
+        return reply({
+          'items': [{..._contractVersion(fixture), 'id': cursor}],
+          'nextCursor': cursor,
+        });
+      }
+      expect(request.url.queryParameters['cursor'], cursor);
+      return reply({'items': [candidate, foreign], 'nextCursor': null});
+    };
+    await _mount(tester, fixture);
+    final invocation = await _open(tester, fixture);
+    _capture(tester, '版本历史')();
+    final historyWidget = find.byKey(const Key('policy-version-history'));
+    await _waitUntil(
+        tester,
+        () =>
+            historyWidget.evaluate().length == 1 && _ready(tester, '加载更多'));
+    final history = _topRoute(tester);
+    await tester.ensureVisible(_button('加载更多'));
+    await tester.tap(_button('加载更多'));
+    await _waitUntil(
+        tester,
+        () =>
+            fixture.versionReads.length == 2 && _ready(tester, '重试加载更多'));
+    expect(find.text('版本 98731'), findsOneWidget);
+    expect(find.text('版本 98730', skipOffstage: false), findsNothing,
+        reason: 'A valid row preceding the foreign row must not be appended.');
+    expect(find.text('版本 98729', skipOffstage: false), findsNothing);
+    expect(find.textContaining('foreign-private-', skipOffstage: false),
+        findsNothing);
+    _expectNoEnabledPolicyActions(tester, labels: ['回滚为草稿']);
+
+    final firstRow = find.descendant(
+        of: historyWidget, matching: find.text('版本 98731'));
+    await tester.ensureVisible(firstRow);
+    await tester.tap(firstRow);
+    await _waitUntil(tester, () => find.text('历史版本').evaluate().isNotEmpty);
+    expect(find.text(cursor), findsOneWidget);
+    final version = _topRoute(tester);
+    await tester.tap(_topButton('关闭'));
+    final viewButtons = find.descendant(
+        of: historyWidget, matching: _button('查看详情'));
+    await _waitUntil(
+        tester,
+        () =>
+            !version.available &&
+            history.isCurrent &&
+            viewButtons.evaluate().length == 1 &&
+            tester.widget<ButtonStyleButton>(viewButtons.first).onPressed != null);
+    expect(fixture.versionReads, hasLength(2));
+    expect(find.text('版本 98731'), findsOneWidget);
+    expect(fixture.writes, isEmpty);
+    await tester.tap(_topButton('关闭'));
+    await _waitUntil(
+        tester, () => !history.available && _ready(tester, '关闭'));
+    _capture(tester, '关闭')();
+    await _waitUntil(tester, () => invocation.completed);
+    expect(invocation.failure, isNull);
+    expect(fixture.versionReads, hasLength(2));
+    expect(fixture.requests.every((request) => request.method == 'GET'), isTrue);
+    expect(tester.takeException(), isNull);
+  }, tags: 'policy-history-paging');
+
+  testWidgets(
       'policy-return cancelling edit or template copy keeps old details',
       (tester) async {
     for (final template in [false, true]) {
