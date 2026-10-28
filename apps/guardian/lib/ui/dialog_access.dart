@@ -20,11 +20,15 @@ class DialogAccessBinding {
       accessChanges!.addListener(_observeAccess);
       _listening = true;
     }
-    parent?.popped.then<void>((_) {
-      if (!live) return;
-      parentClosed = true;
-      _observeAccess();
-    });
+    parent?.popped.then<void>((_) => _parentFinished());
+    // Raw removeRoute does not complete popped on every supported Flutter SDK.
+    parent?.completed.then<void>((_) => _parentFinished());
+  }
+
+  void _parentFinished() {
+    if (!live) return;
+    parentClosed = true;
+    _observeAccess();
   }
 
   bool permitted() {

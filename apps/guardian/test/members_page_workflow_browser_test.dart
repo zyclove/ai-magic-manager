@@ -127,10 +127,10 @@ class _Fixture {
   }
 }
 
-Widget _host(_Fixture fixture, {Key? pageKey}) => MaterialApp(
+Widget _host(_Fixture fixture, {Key? pageKey, Future<bool> Function()? invite}) => MaterialApp(
     theme: consoleTheme(), home: Scaffold(body: SingleChildScrollView(
         child: MembersPage(key: pageKey, session: fixture.session,
-            invite: ({accessChanges, hasAccess}) async => false))));
+            invite: ({accessChanges, hasAccess}) async => await invite?.call() ?? false))));
 
 Finder _button(String label) => find.ancestor(
     of: find.text(label),
@@ -162,6 +162,68 @@ void _wide(WidgetTester tester) {
 }
 
 void main() {
+  testWidgets('invite review signals retain cancelled lists and open invitations once',
+      (tester) async {
+    _wide(tester);
+    final fixture = _Fixture();
+    addTearDown(() => fixture.cleanup(tester));
+    final results = List.generate(3, (_) => Completer<bool>());
+    addTearDown(() {
+      for (final result in results) {
+        if (!result.isCompleted) result.complete(false);
+      }
+    });
+    var invites = 0;
+    await tester.pumpWidget(_host(fixture,
+        invite: () => results[invites++].future));
+    await settleReads(tester);
+    await _tap(tester, _button('加载更多'));
+    await settleReads(tester);
+    final search = find.byType(TextField);
+    await tester.enterText(search, '老师');
+    await tester.pump();
+    final filter = find.byWidgetPredicate((widget) => widget is SegmentedButton<bool>);
+    final oldFilter = tester.widget<SegmentedButton<bool>>(filter).onSelectionChanged!;
+    await _tap(tester, _button('邀请成员'));
+    await tester.pump();
+    expect(invites, 1);
+    expect(tester.widget<SegmentedButton<bool>>(filter).onSelectionChanged, isNull);
+    oldFilter({true});
+    await tester.pump();
+    expect(fixture.reads(_invitations), isEmpty);
+    results[0].complete(false);
+    await _until(tester,
+        () => tester.widget<ButtonStyleButton>(_button('邀请成员')).onPressed != null);
+    expect(fixture.reads(_members), hasLength(2));
+    expect(tester.widget<TextField>(search).controller!.text, '老师');
+    expect(find.text('陈老师'), findsOneWidget);
+    await _tap(tester, _button('邀请成员'));
+    await tester.pump();
+    expect(invites, 2);
+    results[1].complete(true);
+    await _until(tester, () => fixture.reads(_invitations).length == 1 &&
+        tester.widget<ButtonStyleButton>(_button('邀请成员')).onPressed != null);
+    expect(fixture.reads(_members), hasLength(2),
+        reason: 'Opening invitations must not first refresh the retired member list.');
+    expect(tester.widget<SegmentedButton<bool>>(filter).selected, {true});
+    oldFilter({false});
+    await tester.pump();
+    expect(tester.widget<SegmentedButton<bool>>(filter).selected, {true});
+    await tester.enterText(search, _invitation);
+    await tester.pump();
+    await _tap(tester, _button('邀请成员'));
+    await tester.pump();
+    expect(invites, 3);
+    results[2].complete(false);
+    await _until(tester,
+        () => tester.widget<ButtonStyleButton>(_button('邀请成员')).onPressed != null);
+    expect(tester.widget<TextField>(search).controller!.text, _invitation);
+    expect(fixture.reads(_invitations), hasLength(1));
+    expect(fixture.reads(_members), hasLength(2));
+    expect(fixture.writes, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('member read-only subflows keep loaded pages and invitation cancellation refreshes',
       (tester) async {
     _wide(tester);

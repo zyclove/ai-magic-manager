@@ -250,8 +250,12 @@ class PageResult {
 
 /// Records handoff to the authenticated client, not server execution.
 class ApiWriteDispatch {
+  /// Opt in only for a borrowed API whose unkeyed mutation methods write state.
+  /// Read-only POST queries must keep the default keyed-only observation.
+  final bool includeUnkeyedWrites;
   bool _dispatched = false;
   bool get dispatched => _dispatched;
+  ApiWriteDispatch({this.includeUnkeyedWrites = false});
 }
 
 class Api {
@@ -349,10 +353,11 @@ class Api {
         if (abort.isCompleted) {
           throw TimeoutException('Request deadline elapsed');
         }
-        if (key != null &&
-            const {'POST', 'PUT', 'PATCH', 'DELETE'}.contains(req.method)) {
+        if (const {'POST', 'PUT', 'PATCH', 'DELETE'}.contains(req.method)) {
           for (final observation in _writeDispatches) {
-            observation._dispatched = true;
+            if (key != null || observation.includeUnkeyedWrites) {
+              observation._dispatched = true;
+            }
           }
         }
         final streamed = await authenticated.send(req);

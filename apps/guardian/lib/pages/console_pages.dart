@@ -337,9 +337,14 @@ class ConsolePages extends StatelessWidget {
                   context.go(next ? deviceConnectionCheckPath : '/devices');
                 }
               },
-              onOpen: actions.deviceDetails,
-              create: s.canWrite ? actions.enrollment : null,
-              findEnrollment: s.canWrite ? actions.findEnrollment : null,
+              onOpenChanged: (row, lease) => actions.deviceDetailsChanged(row,
+                  accessChanges: lease, hasAccess: () => lease.current),
+              createChanged: s.canWrite ? (lease) => actions.enrollmentChanged(
+                  accessChanges: lease, hasAccess: () => lease.current) : null,
+              findEnrollmentChanged: s.canWrite
+                  ? (lease) => actions.findEnrollmentChanged(
+                      accessChanges: lease, hasAccess: () => lease.current)
+                  : null,
               reauth: () {
                 if (resourceCurrent()) s.login(stepUp: true);
               }),
@@ -426,9 +431,11 @@ class ConsolePages extends StatelessWidget {
               }
             },
             isCurrent: resourceCurrent,
-            onOpen: actions.approvalDetails,
-            create: ['TEACHER', 'CHILD'].contains(s.role)
-                ? actions.createAccessRequest
+            onOpenChanged: (row, lease) => actions.approvalDetailsChanged(row,
+                accessChanges: lease, hasAccess: () => lease.current),
+            createChanged: ['TEACHER', 'CHILD'].contains(s.role)
+                ? (lease) => actions.createAccessRequestChanged(
+                    accessChanges: lease, hasAccess: () => lease.current)
                 : null,
             reauth: () => s.login(stepUp: true));
       case 'members':
@@ -1048,17 +1055,28 @@ class ConsoleActions {
     }
   }
 
-  Future<void> enrollment() => _connectEnrollment();
+  Future<void> enrollment() async {
+    await enrollmentChanged();
+  }
 
-  Future<void> _connectEnrollment({String? lookupId}) async {
-    if (!s.authenticated || s.tenant == null || !s.canWrite) return;
-    final scope = EnrollmentScope(
-        actorId: s.profile!['subject'] as String,
-        tenantId: s.tenant!['id'] as String,
-        role: s.role);
+  Future<bool> enrollmentChanged(
+      {Listenable? accessChanges, bool Function()? hasAccess}) =>
+      _connectEnrollment(accessChanges: accessChanges, hasAccess: hasAccess);
+
+  Future<bool> _connectEnrollment({String? lookupId,
+      Listenable? accessChanges, bool Function()? hasAccess}) async {
+    if (!context.mounted || !s.authenticated || s.tenant == null || !s.canWrite) {
+      return false;
+    }
+    final actor = s.profile?['subject'], tenant = s.tenant?['id'];
+    if (actor is! String || tenant is! String) return false;
+    final parentAccess = DialogAccessBinding(context,
+        accessChanges: accessChanges, hasAccess: hasAccess);
+    final scope = EnrollmentScope(actorId: actor, tenantId: tenant, role: s.role);
     final generation = s.scopeGeneration;
     bool current() =>
         context.mounted &&
+        parentAccess.permitted() &&
         s.authenticated &&
         s.canWrite &&
         s.profile?['subject'] == scope.actorId &&
@@ -1066,31 +1084,36 @@ class ConsoleActions {
         s.role == scope.role &&
         s.scopeGeneration == generation;
     if (!current() || root != s.root || !_openEnrollmentScopes.add(scope.key)) {
-      return;
+      parentAccess.dispose();
+      return false;
     }
+    final writes = ApiWriteDispatch(includeUnkeyedWrites: true);
+    final api = s.api.scoped(current).trackingWrites(writes);
     final gateway = lookupId == null
-        ? EnrollmentGateway(s.api)
-        : EnrollmentGateway.lookup(s.api);
+        ? EnrollmentGateway(api)
+        : EnrollmentGateway.lookup(api);
+    final changes = Listenable.merge([s, parentAccess.changes]);
     EnrollmentController? controller;
-    ModalRoute<dynamic>? route;
+    OwnedDialogRoute<void>? route;
+    String? selectedDevice;
     void accessChanged() {
       if (current()) return;
       controller?.invalidate();
       final active = route;
       if (active != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (active.isActive) active.navigator?.removeRoute(active);
+          active.finish();
         });
       }
     }
 
-    s.addListener(accessChanged);
+    changes.addListener(accessChanged);
     try {
       EnrollmentJournal journal = _enrollmentJournal;
       if (lookupId != null) {
         final intent = await gateway.lookupIntent(scope, lookupId,
             now: DateTime.now().millisecondsSinceEpoch, isCurrent: current);
-        if (!context.mounted || !current()) return;
+        if (!context.mounted || !current()) return false;
         journal = EnrollmentLookupJournal(intent);
       }
       final active = EnrollmentController(
@@ -1102,7 +1125,7 @@ class ConsoleActions {
           now: () => DateTime.now().millisecondsSinceEpoch);
       controller = active;
       await active.initialize();
-      if (!context.mounted || !current()) return;
+      if (!context.mounted || !current()) return false;
       var children = <Json>[];
       final failure = active.error;
       final denied = failure is ApiFailure &&
@@ -1111,24 +1134,22 @@ class ConsoleActions {
           !denied &&
           (active.pending != null || active.error == null)) {
         try {
-          children = await s.api.all('$root/subjects', isCurrent: current);
+          children = await api.all('$root/subjects', isCurrent: current);
         } catch (_) {
           if (active.pending == null) rethrow;
         }
-        if (!context.mounted || !current()) return;
+        if (!context.mounted || !current()) return false;
         if (children.isEmpty && active.pending == null) {
           toast(context, '请先创建儿童或学生档案。');
           context.go('/subjects');
-          return;
+          return false;
         }
       }
-      if (!context.mounted || !current()) return;
-      await showDialog<void>(
+      if (!context.mounted || !current()) return false;
+      final dialog = OwnedDialogRoute<void>(
           context: context,
           barrierDismissible: false,
-          builder: (dialogContext) {
-            route = ModalRoute.of(dialogContext);
-            return EnrollmentDialog(
+          builder: (_) => EnrollmentDialog(
                 controller: active,
                 subjects: children,
                 organization: s.tenant?['kind'] == 'ORGANIZATION',
@@ -1139,65 +1160,82 @@ class ConsoleActions {
                   }
                 },
                 onViewDevice: (id) {
-                  if (!context.mounted || !current()) return;
-                  Navigator.of(dialogContext).pop();
-                  WidgetsBinding.instance.addPostFrameCallback((_) async {
-                    if (!context.mounted || !current()) return;
-                    try {
-                      await _enrollmentDeviceDetails(id, scope, current,
-                          subjectId: active.pending!.subjectId,
-                          platform: active.pending!.platform);
-                    } catch (failure) {
-                      if (context.mounted && current()) {
-                        toast(context, failure.toString());
-                      }
-                    }
-                  });
-                });
-          });
+                  if (!current() || route?.isCurrent != true) return;
+                  selectedDevice = id;
+                  route?.finish();
+                }));
+      route = dialog;
+      await presentOwnedDialog(context, dialog);
+      final deviceId = selectedDevice;
+      if (deviceId != null && current()) {
+        await _enrollmentDeviceDetails(deviceId, scope, current,
+            subjectId: active.pending!.subjectId,
+            platform: active.pending!.platform,
+            accessChanges: changes);
+      }
+      return writes.dispatched && current();
     } catch (failure) {
       if (context.mounted && current()) toast(context, failure.toString());
+      return writes.dispatched && current();
     } finally {
-      s.removeListener(accessChanged);
+      changes.removeListener(accessChanged);
       controller?.dispose();
       _openEnrollmentScopes.remove(scope.key);
       _enrollmentChanges.value++;
+      parentAccess.dispose();
     }
   }
 
   Future<void> findEnrollment() async {
-    if (!s.authenticated || s.tenant == null || !s.canWrite) return;
-    final generation = s.scopeGeneration;
-    final workspace = root;
-    final result = await formDialog(context,
-        title: '查询注册进度',
-        accessChanges: s,
-        hasAccess: () => context.mounted && s.authenticated &&
-            s.tenant != null && s.scopeGeneration == generation &&
-            s.root == workspace && s.canWrite,
-        description: '输入原注册编号，在同一窗口核对进度、现场确认或取消。',
-        submit: '查询进度',
-        fields: const [FieldSpec('id', '注册编号', maxLength: 36)],
-        onSubmit: (values) async {
-      final id = (values['id'] as String).trim();
-      if (!RegExp(
-              r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')
-          .hasMatch(id)) {
-        throw const ApiFailure(400, 'INVALID_ENROLLMENT_ID');
-      }
-      return {'id': id};
-    });
-    if (result == null ||
-        !context.mounted ||
-        !s.authenticated ||
-        s.scopeGeneration != generation ||
-        s.root != workspace) return;
-    await _connectEnrollment(lookupId: result['id'] as String);
+    await findEnrollmentChanged();
+  }
+
+  Future<bool> findEnrollmentChanged(
+      {Listenable? accessChanges, bool Function()? hasAccess}) async {
+    if (!context.mounted || !s.authenticated || s.tenant == null || !s.canWrite) {
+      return false;
+    }
+    final parentAccess = DialogAccessBinding(context,
+        accessChanges: accessChanges, hasAccess: hasAccess);
+    final changes = Listenable.merge([s, parentAccess.changes]);
+    try {
+      final generation = s.scopeGeneration;
+      final workspace = root;
+      final result = await formDialog(context,
+          title: '查询注册进度',
+          accessChanges: changes,
+          canCommit: false,
+          hasAccess: () => parentAccess.permitted() && context.mounted && s.authenticated &&
+              s.tenant != null && s.scopeGeneration == generation &&
+              s.root == workspace && s.canWrite,
+          description: '输入原注册编号，在同一窗口核对进度、现场确认或取消。',
+          submit: '查询进度',
+          fields: const [FieldSpec('id', '注册编号', maxLength: 36)],
+          onSubmit: (values) async {
+        final id = (values['id'] as String).trim();
+        if (!RegExp(
+                r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')
+            .hasMatch(id)) {
+          throw const ApiFailure(400, 'INVALID_ENROLLMENT_ID');
+        }
+        return {'id': id};
+      });
+      if (result == null ||
+          !context.mounted ||
+          !s.authenticated ||
+          s.scopeGeneration != generation ||
+          s.root != workspace || !parentAccess.permitted()) return false;
+      return await _connectEnrollment(lookupId: result['id'] as String,
+          accessChanges: changes, hasAccess: parentAccess.permitted);
+    } finally {
+      parentAccess.dispose();
+    }
   }
 
   Future<void> _enrollmentDeviceDetails(
       String id, EnrollmentScope scope, bool Function() current,
-      {required String subjectId, required String platform}) async {
+      {required String subjectId, required String platform,
+      Listenable? accessChanges}) async {
     if (!context.mounted || !current()) return;
     final value = await s.api.send(
         'GET', '/tenants/${scope.tenantId}/devices/$id',
@@ -1224,52 +1262,82 @@ class ConsoleActions {
               DeviceObservationStatus.explanation(value['observationStatus']),
           '设备编号': value['id'],
         },
-        accessChanges: s,
+        accessChanges: accessChanges ?? s,
         hasAccess: current);
   }
 
   Future<void> deviceDetails(Json row) async {
+    await deviceDetailsChanged(row);
+  }
+
+  Future<bool> deviceDetailsChanged(Json row,
+      {Listenable? accessChanges, bool Function()? hasAccess}) async {
     if (!context.mounted ||
         !s.authenticated ||
         s.tenant == null ||
         !s.canOpen('devices') ||
-        s.root != root) return;
+        s.root != root) return false;
     final actor = s.profile?['subject'], tenant = s.tenant!['id'];
     final openedRole = s.role, generation = s.scopeGeneration;
     final workspace = root;
-    if (actor is! String || tenant is! String || row['id'] is! String) return;
-    bool live = true;
+    if (actor is! String || tenant is! String || row['id'] is! String) return false;
+    final parentAccess = DialogAccessBinding(context,
+        accessChanges: accessChanges, hasAccess: hasAccess);
+    final scope = DeviceSubflowScope(s,
+        permitted: () => parentAccess.permitted() && s.root == workspace &&
+            s.canOpen('devices'));
+    final changes = Listenable.merge([scope, parentAccess.changes]);
+    final writes = ApiWriteDispatch(includeUnkeyedWrites: true);
+    var exitNeedsReview = false;
     bool current() =>
-        live &&
+        scope.current && parentAccess.permitted() &&
         s.authenticated &&
         s.profile?['subject'] == actor &&
         s.tenant?['id'] == tenant &&
         s.role == openedRole &&
         s.scopeGeneration == generation &&
         s.canOpen('devices');
-    final controller = DeviceManagementController(
+    final DeviceManagementController controller;
+    try {
+      controller = DeviceManagementController(
         repository: DeviceManagementRepository(
-            api: s.api,
+            api: scope.api.trackingWrites(writes),
             root: workspace,
             deviceId: row['id'] as String,
             current: current),
         canWrite: s.canWrite,
         canReadApplications: openedRole != 'TEACHER');
+    } catch (_) {
+      scope.dispose();
+      parentAccess.dispose();
+      rethrow;
+    }
     Future<void> child(Future<void> Function() action) async {
       if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
       await action();
       if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     }
 
+    late final OwnedDialogRoute<void> route;
+    void observe() {
+      if (current()) return;
+      controller.checkScope();
+      WidgetsBinding.instance.addPostFrameCallback((_) => route.finish());
+      WidgetsBinding.instance.ensureVisualUpdate();
+    }
+
     try {
-      await showDialog<void>(
+      if (!current()) return false;
+      route = OwnedDialogRoute<void>(
           context: context,
           barrierDismissible: false,
           builder: (dialogContext) => DeviceManagementDialog(
               controller: controller,
-              accessChanges: s,
+              accessChanges: changes,
               onReauth: reauth,
-              onClose: () => Navigator.of(dialogContext).pop(),
+              onClose: () {
+                if (route.isCurrent) route.finish();
+              },
               onExecutions: canReadManagedExecutions(openedRole)
                   ? (device) => child(() => openManagedExecutions(
                       dialogContext, s,
@@ -1300,10 +1368,21 @@ class ConsoleActions {
                   ? (device) => child(
                       () => openDeviceObservation(dialogContext, s, device.toJson()))
                   : null,
-              onExit: s.canWrite ? (device) => child(() => openDeviceExit(dialogContext, s, device.toJson())) : null));
+              onExit: s.canWrite ? (device) => child(() async {
+                final changed = await openDeviceExitChanged(
+                    dialogContext, s, device.toJson(),
+                    accessChanges: changes,
+                    hasAccess: () => current() && controller.hasAccess);
+                exitNeedsReview = exitNeedsReview || changed;
+              }) : null));
+      changes.addListener(observe);
+      await presentOwnedDialog(context, route);
+      return (writes.dispatched || exitNeedsReview) && current();
     } finally {
-      live = false;
+      changes.removeListener(observe);
       controller.dispose();
+      scope.dispose();
+      parentAccess.dispose();
     }
   }
 
@@ -1648,280 +1727,343 @@ class ConsoleActions {
       openPolicyVersions(ctx, s, root: root, draft: draft);
 
   Future<void> createAccessRequest() async {
-    final workspace = root, key = requestId();
-    void currentWorkspace() {
-      if (s.root != workspace) {
-        throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-      }
+    await createAccessRequestChanged();
+  }
+
+  Future<bool> createAccessRequestChanged(
+      {Listenable? accessChanges, bool Function()? hasAccess}) async {
+    final access = DialogAccessBinding(context,
+        accessChanges: accessChanges, hasAccess: hasAccess);
+    final scope = DeviceSubflowScope(s,
+        permitted: () => access.permitted() && s.tenant != null &&
+            s.root == root && s.canOpen('approvals') &&
+            const ['TEACHER', 'CHILD'].contains(s.role));
+    final writes = ApiWriteDispatch();
+    final api = scope.api.trackingWrites(writes);
+    final changes = Listenable.merge([scope, access.changes]);
+    final key = requestId();
+    late final OwnedDialogRoute<Json> route;
+    void observe() {
+      if (!scope.current || !access.permitted()) route.finish();
     }
 
-    await showDialog<Json>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AccessRequestDialog(load: (path, cursor) async {
-              currentWorkspace();
-              final page = await s.api.page('$workspace/$path', cursor: cursor);
-              currentWorkspace();
-              return page;
-            }, submit: (body) async {
-              currentWorkspace();
-              return await s.api.send('POST', '$workspace/access-requests',
-                  key: key, body: body) as Json;
-            }));
+    try {
+      if (!scope.current) return false;
+      route = OwnedDialogRoute<Json>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AnimatedBuilder(
+              animation: changes,
+              builder: (_, __) => scope.current && access.permitted()
+                  ? AccessRequestDialog(
+                      onComplete: route.finish,
+                      load: (path, cursor) =>
+                          api.page('$root/$path', cursor: cursor),
+                      submit: (body) async => await api.send(
+                          'POST', '$root/access-requests',
+                          key: key, body: body) as Json)
+                  : const SizedBox.shrink()));
+      changes.addListener(observe);
+      await presentOwnedDialog(context, route);
+      return writes.dispatched && scope.current && access.permitted();
+    } finally {
+      changes.removeListener(observe);
+      scope.dispose();
+      access.dispose();
+    }
   }
 
   Future<void> approvalDetails(Json row) async {
+    await approvalDetailsChanged(row);
+  }
+
+  Future<bool> approvalDetailsChanged(Json row,
+      {Listenable? accessChanges, bool Function()? hasAccess}) async {
     final listContext = ApprovalListContext.capture(row, role: s.role);
     final workspace = root;
+    final access = DialogAccessBinding(context,
+        accessChanges: accessChanges, hasAccess: hasAccess);
     final scope = DeviceSubflowScope(s,
-        permitted: () => context.mounted && s.tenant != null &&
+        permitted: () => access.permitted() && s.tenant != null &&
             s.root == workspace && s.canOpen('approvals'));
-    bool current() => scope.current;
+    final writes = ApiWriteDispatch();
+    final changes = Listenable.merge([scope, access.changes]);
+    bool current() => scope.current && access.permitted();
     try {
-    if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-    final api = scope.api;
-    final cancelKey = requestId();
-    final raw = await api.send('GET',
-        '$workspace/access-requests/${listContext.requestId}');
-    final request = ApprovalRequestSnapshot.read(raw,
-        expectedId: listContext.requestId, context: listContext);
-    final r = raw as Json;
-    Json? delivery;
-    if (request.state != 'PENDING') {
-      delivery = await api.send('GET',
-          '$workspace/access-requests/${request.id}/delivery') as Json;
-    }
-    if (!context.mounted) return;
-    if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-    await actionDetails(
-        context,
-        '临时访问申请',
-        {
-          '申请编号': request.id,
-          '申请对象': request.subjectName ?? request.subjectId,
-          if (request.subjectName != null) '对象编号': request.subjectId,
-          '设备': request.deviceName ?? request.deviceId,
-          if (request.deviceName != null) '设备编号': request.deviceId,
-          '应用': request.applicationName ?? request.applicationId,
-          if (request.applicationName != null) '应用编号': request.applicationId,
-          if (request.applicationPackageName != null)
-            '应用包名': request.applicationPackageName,
-          '状态': label(request.state),
-          if (r['reasonCode'] != null) '状态说明': label(r['reasonCode']),
-          '申请时长': approvalDuration(request.requestedSeconds),
-          '申请理由': r['reason'],
-          '申请有效期': dateLabel(r['requestExpiresAt']),
-          '批准截止': dateLabel(r['absoluteNotAfter']),
-          if (delivery == null)
-            '当前文档': '尚未批准，暂无文档'
-          else ...{
-            '当前文档': label(delivery['action']),
-            '文档交付 / 设备报告': delivery['approvalVersion'] == r['version']
-                ? label(delivery['deliveryState'])
-                : '审批状态已更新，请关闭后重新打开',
-            '最近回执': dateLabel(delivery['receivedAt']),
-            '交付尝试': delivery['deliveryAttempt'] == null
-                ? '尚未开始'
-                : '第 ${delivery['deliveryAttempt']} 次（最多 10 次）',
-            if (delivery['reasonCode'] != null)
-              '设备拒收原因': accessRejectionLabel(delivery['reasonCode']),
-            if (delivery['deliveryState'] == 'REJECTED') ...{
-              '恢复状态': accessRetryLabel(delivery['retryStatus']),
-              if (delivery['retryAfter'] != null)
-                '最早可重试': dateLabel(delivery['retryAfter']),
-              '恢复说明': '重试由设备端发起，原文档和批准截止时间保持不变。旧尝试的回执仅保留追溯。'
+      if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+      final api = scope.api.trackingWrites(writes);
+      final cancelKey = requestId();
+      final raw = await api.send('GET',
+          '$workspace/access-requests/${listContext.requestId}');
+      final request = ApprovalRequestSnapshot.read(raw,
+          expectedId: listContext.requestId, context: listContext);
+      final r = raw as Json;
+      Json? delivery;
+      if (request.state != 'PENDING') {
+        delivery = await api.send('GET',
+            '$workspace/access-requests/${request.id}/delivery') as Json;
+      }
+      if (!context.mounted) return false;
+      if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+      await actionDetails(
+          context,
+          '临时访问申请',
+          {
+            '申请编号': request.id,
+            '申请对象': request.subjectName ?? request.subjectId,
+            if (request.subjectName != null) '对象编号': request.subjectId,
+            '设备': request.deviceName ?? request.deviceId,
+            if (request.deviceName != null) '设备编号': request.deviceId,
+            '应用': request.applicationName ?? request.applicationId,
+            if (request.applicationName != null) '应用编号': request.applicationId,
+            if (request.applicationPackageName != null)
+              '应用包名': request.applicationPackageName,
+            '状态': label(request.state),
+            if (r['reasonCode'] != null) '状态说明': label(r['reasonCode']),
+            '申请时长': approvalDuration(request.requestedSeconds),
+            '申请理由': r['reason'],
+            '申请有效期': dateLabel(r['requestExpiresAt']),
+            '批准截止': dateLabel(r['absoluteNotAfter']),
+            if (delivery == null)
+              '当前文档': '尚未批准，暂无文档'
+            else ...{
+              '当前文档': label(delivery['action']),
+              '文档交付 / 设备报告': delivery['approvalVersion'] == r['version']
+                  ? label(delivery['deliveryState'])
+                  : '审批状态已更新，请关闭后重新打开',
+              '最近回执': dateLabel(delivery['receivedAt']),
+              '交付尝试': delivery['deliveryAttempt'] == null
+                  ? '尚未开始'
+                  : '第 ${delivery['deliveryAttempt']} 次（最多 10 次）',
+              if (delivery['reasonCode'] != null)
+                '设备拒收原因': accessRejectionLabel(delivery['reasonCode']),
+              if (delivery['deliveryState'] == 'REJECTED') ...{
+                '恢复状态': accessRetryLabel(delivery['retryStatus']),
+                if (delivery['retryAfter'] != null)
+                  '最早可重试': dateLabel(delivery['retryAfter']),
+                '恢复说明': '重试由设备端发起，原文档和批准截止时间保持不变。旧尝试的回执仅保留追溯。'
+              },
             },
+            '执行状态': label(r['executionState']),
+            '回执说明': '当前尚未接入设备例外执行。接收或保存回执仅表示文档状态；下载与重试不会延长原批准截止时间。'
           },
-          '执行状态': label(r['executionState']),
-          '回执说明': '当前尚未接入设备例外执行。接收或保存回执仅表示文档状态；下载与重试不会延长原批准截止时间。'
-        },
-        accessChanges: scope,
-        hasAccess: current,
-        reauth: reauth,
-        actions: [
-          if (['TEACHER', 'CHILD'].contains(s.role) && request.state == 'PENDING')
-            DetailAction('取消我的申请', (ctx) async {
-              final finish = captureDialogCompletion(ctx);
-              if (await confirmAction(ctx, '取消我的申请', '取消后管理员将无法批准此申请。')) {
-                if (!current()) {
-                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+          accessChanges: changes,
+          hasAccess: current,
+          reauth: reauth,
+          actions: [
+            if (['TEACHER', 'CHILD'].contains(s.role) && request.state == 'PENDING')
+              DetailAction('取消我的申请', (ctx) async {
+                final finish = captureDialogCompletion(ctx);
+                if (await confirmAction(ctx, '取消我的申请', '取消后管理员将无法批准此申请。')) {
+                  if (!current()) {
+                    throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                  }
+                  await api.send(
+                      'POST', '$workspace/access-requests/${request.id}/cancel',
+                      version: request.version, key: cancelKey);
+                  finish();
                 }
-                await api.send(
-                    'POST', '$workspace/access-requests/${request.id}/cancel',
-                    version: request.version, key: cancelKey);
-                finish();
-              }
-            }, destructive: true, closeOnSuccess: false),
-          if (delivery != null)
-            DetailAction('交付历史', (ctx) => approvalDeliveryHistory(ctx, request.id),
-                closeOnSuccess: false),
-          if (s.canWrite && request.state == 'PENDING') ...[
-            DetailAction('批准', (ctx) async {
-              final finish = captureDialogCompletion(ctx);
-              final key = requestId();
-              final result = await _tenantForm(
-                  parent: ctx,
-                  title: '批准临时访问',
-                  section: 'approvals',
-                  description: '对象：${request.subjectName ?? request.subjectId}\n'
-                      '设备：${request.deviceName ?? request.deviceId}\n'
-                      '应用：${request.applicationName ?? request.applicationId}\n'
-                      '申请 ${approvalDuration(request.requestedSeconds)}，批准总时长不能超过申请值。'
-                      '填写分钟和秒；当前只保存限时窗口，不直接解锁设备。',
-                  fields: [
-                    FieldSpec('minutes', '分钟', numeric: true, maxLength: 2,
-                        minValue: 0, maxValue: request.requestedSeconds ~/ 60),
-                    FieldSpec('seconds', '秒', numeric: true, maxLength: 2,
-                        minValue: 0,
-                        maxValue: request.requestedSeconds < 60
-                            ? request.requestedSeconds : 59),
-                  ],
-                  initial: {
-                    'minutes': request.requestedSeconds ~/ 60,
-                    'seconds': request.requestedSeconds % 60,
-                  },
-                  onSubmit: (api, v) async {
-                    final body = approvalGrantBody(v,
-                        requestedSeconds: request.requestedSeconds);
-                    return await api.send('POST',
-                        '$root/access-requests/${request.id}/decisions',
-                        version: request.version, key: key, body: body) as Json;
-                  });
-              if (result != null && current()) finish();
-            }, closeOnSuccess: false),
-            DetailAction('拒绝', (ctx) async {
-              final finish = captureDialogCompletion(ctx);
-              final key = requestId();
-              final result = await _tenantForm(
-                  parent: ctx,
-                  title: '拒绝申请',
-                  section: 'approvals',
-                  fields: const [
-                    FieldSpec('reasonCode', '原因', options: {
-                      'NOT_NOW': '当前不合适',
-                      'NOT_ALLOWED': '不允许访问',
-                      'OTHER': '其他原因'
-                    })
-                  ],
-                  onSubmit: (api, v) async => await api.send(
-                      'POST', '$root/access-requests/${request.id}/decisions',
-                      version: request.version,
-                      key: key,
-                      body: {'decision': 'DENY', ...v}) as Json);
-              if (result != null && current()) finish();
-            }, destructive: true, closeOnSuccess: false)
-          ],
-          if (s.canWrite && request.state == 'APPROVED_PENDING_DELIVERY')
-            DetailAction('撤销批准', (ctx) async {
-              final finish = captureDialogCompletion(ctx);
-              if (await confirmAction(ctx, '撤销批准', '撤销此访问窗口并记录审计。')) {
-                if (!current()) {
-                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+              }, destructive: true, closeOnSuccess: false),
+            if (delivery != null)
+              DetailAction('交付历史', (ctx) => approvalDeliveryHistory(
+                  ctx, request.id, scope: scope, api: api),
+                  closeOnSuccess: false),
+            if (s.canWrite && request.state == 'PENDING') ...[
+              DetailAction('批准', (ctx) async {
+                final finish = captureDialogCompletion(ctx);
+                final key = requestId();
+                final result = await _tenantForm(
+                    parent: ctx,
+                    title: '批准临时访问',
+                    section: 'approvals',
+                    accessChanges: changes,
+                    hasAccess: current,
+                    description: '对象：${request.subjectName ?? request.subjectId}\n'
+                        '设备：${request.deviceName ?? request.deviceId}\n'
+                        '应用：${request.applicationName ?? request.applicationId}\n'
+                        '申请 ${approvalDuration(request.requestedSeconds)}，批准总时长不能超过申请值。'
+                        '填写分钟和秒；当前只保存限时窗口，不直接解锁设备。',
+                    fields: [
+                      FieldSpec('minutes', '分钟', numeric: true, maxLength: 2,
+                          minValue: 0, maxValue: request.requestedSeconds ~/ 60),
+                      FieldSpec('seconds', '秒', numeric: true, maxLength: 2,
+                          minValue: 0,
+                          maxValue: request.requestedSeconds < 60
+                              ? request.requestedSeconds : 59),
+                    ],
+                    initial: {
+                      'minutes': request.requestedSeconds ~/ 60,
+                      'seconds': request.requestedSeconds % 60,
+                    },
+                    onSubmit: (api, v) async {
+                      final body = approvalGrantBody(v,
+                          requestedSeconds: request.requestedSeconds);
+                      return await api.trackingWrites(writes).send('POST',
+                          '$root/access-requests/${request.id}/decisions',
+                          version: request.version, key: key, body: body) as Json;
+                    });
+                if (result != null && current()) finish();
+              }, closeOnSuccess: false),
+              DetailAction('拒绝', (ctx) async {
+                final finish = captureDialogCompletion(ctx);
+                final key = requestId();
+                final result = await _tenantForm(
+                    parent: ctx,
+                    title: '拒绝申请',
+                    section: 'approvals',
+                    accessChanges: changes,
+                    hasAccess: current,
+                    fields: const [
+                      FieldSpec('reasonCode', '原因', options: {
+                        'NOT_NOW': '当前不合适',
+                        'NOT_ALLOWED': '不允许访问',
+                        'OTHER': '其他原因'
+                      })
+                    ],
+                    onSubmit: (api, v) async => await api.trackingWrites(writes).send(
+                        'POST', '$root/access-requests/${request.id}/decisions',
+                        version: request.version,
+                        key: key,
+                        body: {'decision': 'DENY', ...v}) as Json);
+                if (result != null && current()) finish();
+              }, destructive: true, closeOnSuccess: false)
+            ],
+            if (s.canWrite && request.state == 'APPROVED_PENDING_DELIVERY')
+              DetailAction('撤销批准', (ctx) async {
+                final finish = captureDialogCompletion(ctx);
+                if (await confirmAction(ctx, '撤销批准', '撤销此访问窗口并记录审计。')) {
+                  if (!current()) {
+                    throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                  }
+                  await api.send(
+                      'POST', '$root/access-requests/${request.id}/revoke',
+                      version: request.version, key: requestId());
+                  if (current()) finish();
                 }
-                await api.send(
-                    'POST', '$root/access-requests/${request.id}/revoke',
-                    version: request.version, key: requestId());
-                if (current()) finish();
-              }
-            }, destructive: true, closeOnSuccess: false)
-        ]);
+              }, destructive: true, closeOnSuccess: false)
+          ]);
+      return writes.dispatched && current();
     } finally {
       scope.dispose();
+      access.dispose();
     }
   }
 
-  Future<void> approvalDeliveryHistory(BuildContext ctx, String id) =>
-      showDialog<void>(
-          context: ctx,
-          builder: (dialog) => Dialog(
-              child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 940),
-                  child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Flexible(
-                            child: SingleChildScrollView(
-                                child: ResourcePage(
-                                    api: s.api,
-                                    path: '$root/access-requests/$id/documents',
-                                    title: '审批文档交付历史',
-                                    subtitle: '选择记录查看各次尝试与拒收原因。旧回执不会覆盖当前状态。',
-                                    emptyTitle: '设备尚未获取文档',
-                                    emptyDescription:
-                                        '设备获取批准或撤回文档后，这里会显示签发和回执记录。',
-                                    onOpen: (d) => approvalAttemptHistory(
-                                        dialog, id, d['documentId']),
-                                    columns: [
-                              ColumnSpec('审批版本',
-                                  (d) => Text('${d['approvalVersion']}')),
-                              ColumnSpec('动作', (d) => Text(label(d['action']))),
-                              ColumnSpec('交付 / 设备报告',
-                                  (d) => Text(label(d['deliveryState']))),
-                              ColumnSpec('尝试次数',
-                                  (d) => Text('${d['deliveryAttempt'] ?? 1}')),
-                              ColumnSpec(
-                                  '适用版本',
-                                  (d) =>
-                                      Text(d['current'] == true ? '当前' : '历史')),
-                              ColumnSpec(
-                                  '签发时间',
-                                  (d) =>
-                                      Text(dateLabel(d['documentIssuedAt']))),
-                              ColumnSpec('回执时间',
-                                  (d) => Text(dateLabel(d['receivedAt']))),
-                            ]))),
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                                onPressed: () => Navigator.pop(dialog),
-                                child: const Text('关闭')))
-                      ])))));
+  Future<void> _approvalHistoryDialog(
+      BuildContext parent, DeviceSubflowScope scope, Api api,
+      {required Key key,
+      required String path,
+      required String title,
+      required String subtitle,
+      required String emptyTitle,
+      required String emptyDescription,
+      required List<ColumnSpec> columns,
+      Future<void> Function(BuildContext, Json)? onOpen}) async {
+    final access = DialogAccessBinding(parent,
+        accessChanges: scope, hasAccess: () => scope.current);
+    late final OwnedDialogRoute<void> route;
+    Api? historyApi;
+    bool accepted() => scope.current && access.permitted() && route.available;
+    void observe() {
+      if (!access.permitted()) route.finish();
+    }
+
+    try {
+      if (!access.permitted()) return;
+      route = OwnedDialogRoute<void>(
+          context: parent,
+          barrierDismissible: false,
+          builder: (dialog) => AnimatedBuilder(
+              animation: access.changes,
+              builder: (_, __) => !access.permitted()
+                  ? const SizedBox.shrink()
+                  : Dialog(
+                      key: key,
+                      child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 940),
+                          child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                Flexible(
+                                    child: SingleChildScrollView(
+                                        child: ResourcePage(
+                                            api: historyApi ??=
+                                                api.scoped(accepted),
+                                            path: path,
+                                            title: title,
+                                            subtitle: subtitle,
+                                            emptyTitle: emptyTitle,
+                                            emptyDescription: emptyDescription,
+                                            isCurrent: accepted,
+                                            canInteract: () => route.isCurrent,
+                                            onOpenChanged: onOpen == null ? null
+                                                : (row, _) async {
+                                                    await onOpen(dialog, row);
+                                                    return false;
+                                                  },
+                                            columns: columns))),
+                                Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton(
+                                        onPressed: route.isCurrent && accepted()
+                                            ? () => route.finish() : null,
+                                        child: const Text('关闭')))
+                              ]))))));
+      access.changes.addListener(observe);
+      await presentOwnedDialog(parent, route);
+    } finally {
+      access.changes.removeListener(observe);
+      access.dispose();
+    }
+  }
+
+  Future<void> approvalDeliveryHistory(BuildContext ctx, String id,
+          {required DeviceSubflowScope scope, required Api api}) =>
+      _approvalHistoryDialog(ctx, scope, api,
+          key: const Key('approval-delivery-history'),
+          path: '$root/access-requests/$id/documents',
+          title: '审批文档交付历史',
+          subtitle: '选择记录查看各次尝试与拒收原因。旧回执不会覆盖当前状态。',
+          emptyTitle: '设备尚未获取文档',
+          emptyDescription: '设备获取批准或撤回文档后，这里会显示签发和回执记录。',
+          onOpen: (dialog, row) => approvalAttemptHistory(
+              dialog, id, row['documentId'] as String, scope: scope, api: api),
+          columns: [
+            ColumnSpec('审批版本', (row) => Text('${row['approvalVersion']}')),
+            ColumnSpec('动作', (row) => Text(label(row['action']))),
+            ColumnSpec('交付 / 设备报告',
+                (row) => Text(label(row['deliveryState']))),
+            ColumnSpec('尝试次数',
+                (row) => Text('${row['deliveryAttempt'] ?? 1}')),
+            ColumnSpec('适用版本',
+                (row) => Text(row['current'] == true ? '当前' : '历史')),
+            ColumnSpec('签发时间',
+                (row) => Text(dateLabel(row['documentIssuedAt']))),
+            ColumnSpec('回执时间', (row) => Text(dateLabel(row['receivedAt']))),
+          ]);
 
   Future<void> approvalAttemptHistory(
-          BuildContext ctx, String request, String document) =>
-      showDialog<void>(
-          context: ctx,
-          builder: (dialog) => Dialog(
-              child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 980),
-                  child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Flexible(
-                            child: SingleChildScrollView(
-                                child: ResourcePage(
-                                    api: s.api,
-                                    path:
-                                        '$root/access-requests/$request/documents/$document/attempts',
-                                    title: '交付尝试记录',
-                                    subtitle:
-                                        '每份文档最多 10 次尝试。接收与保存是设备报告，均不代表系统执行。',
-                                    emptyTitle: '暂无交付尝试',
-                                    emptyDescription: '设备获取文档后会建立第一次交付记录。',
-                                    columns: [
-                              ColumnSpec('尝试',
-                                  (a) => Text('第 ${a['deliveryAttempt']} 次')),
-                              ColumnSpec('交付状态',
-                                  (a) => Text(label(a['deliveryState']))),
-                              ColumnSpec(
-                                  '拒收原因',
-                                  (a) => Text(
-                                      accessRejectionLabel(a['reasonCode']))),
-                              ColumnSpec(
-                                  '适用记录',
-                                  (a) =>
-                                      Text(a['current'] == true ? '当前' : '历史')),
-                              ColumnSpec('开始时间',
-                                  (a) => Text(dateLabel(a['createdAt']))),
-                              ColumnSpec('回执时间',
-                                  (a) => Text(dateLabel(a['receivedAt']))),
-                            ]))),
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                                onPressed: () => Navigator.pop(dialog),
-                                child: const Text('关闭')))
-                      ])))));
+          BuildContext ctx, String request, String document,
+          {required DeviceSubflowScope scope, required Api api}) =>
+      _approvalHistoryDialog(ctx, scope, api,
+          key: const Key('approval-attempt-history'),
+          path: '$root/access-requests/$request/documents/$document/attempts',
+          title: '交付尝试记录',
+          subtitle: '每份文档最多 10 次尝试。接收与保存是设备报告，均不代表系统执行。',
+          emptyTitle: '暂无交付尝试',
+          emptyDescription: '设备获取文档后会建立第一次交付记录。',
+          columns: [
+            ColumnSpec('尝试', (row) => Text('第 ${row['deliveryAttempt']} 次')),
+            ColumnSpec('交付状态', (row) => Text(label(row['deliveryState']))),
+            ColumnSpec('拒收原因',
+                (row) => Text(accessRejectionLabel(row['reasonCode']))),
+            ColumnSpec('适用记录',
+                (row) => Text(row['current'] == true ? '当前' : '历史')),
+            ColumnSpec('开始时间', (row) => Text(dateLabel(row['createdAt']))),
+            ColumnSpec('回执时间', (row) => Text(dateLabel(row['receivedAt']))),
+          ]);
 
   Future<bool> invite({Listenable? accessChanges,
       bool Function()? hasAccess}) async {

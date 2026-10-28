@@ -31,7 +31,7 @@ http.Response _page(List<Json> rows, {String? cursor}) => http.Response.bytes(
     headers: {'content-type': 'application/json; charset=utf-8'});
 
 Widget _host(Api api, String role, bool Function() isCurrent,
-        Future<void> Function(Json) onOpen) =>
+        Future<bool> Function(Json) onOpen) =>
     MaterialApp(theme: consoleTheme(), home: _ControlledHost(
         key: ValueKey((api, role)), api: api, role: role,
         isCurrent: isCurrent, onOpen: onOpen));
@@ -40,7 +40,7 @@ class _ControlledHost extends StatefulWidget {
   final Api api;
   final String role;
   final bool Function() isCurrent;
-  final Future<void> Function(Json) onOpen;
+  final Future<bool> Function(Json) onOpen;
   const _ControlledHost({super.key, required this.api, required this.role,
       required this.isCurrent, required this.onOpen});
   @override
@@ -58,7 +58,8 @@ class _ControlledHostState extends State<_ControlledHost> {
   Widget build(BuildContext context) => Scaffold(body: SingleChildScrollView(
       child: AccessRequestsPage(
           key: ValueKey(widget.role), api: widget.api, path: _path,
-          role: widget.role, isCurrent: widget.isCurrent, onOpen: widget.onOpen,
+          role: widget.role, isCurrent: widget.isCurrent,
+          onOpenChanged: (row, _) => widget.onOpen(row),
           pendingFilter: pending,
           onFilterChanged: (value) => setState(() => pending = value))));
 }
@@ -75,7 +76,9 @@ void main() {
       (tester) async {
     _wide(tester);
     final requests = <http.Request>[];
-    final detail = Completer<void>();
+    final detail = Completer<bool>();
+    final review = Completer<bool>();
+    var opens = 0;
     final pending = {
       ..._row('request-pending', 'PENDING'),
       'requestedWindowSeconds': 95,
@@ -96,13 +99,14 @@ void main() {
     });
     addTearDown(client.close);
     addTearDown(() {
-      if (!detail.isCompleted) detail.complete();
+      if (!detail.isCompleted) detail.complete(false);
+      if (!review.isCompleted) review.complete(false);
     });
     Json? opened;
     await tester.pumpWidget(_host(Api(() async => client), 'OWNER', () => true,
         (row) {
       opened = row;
-      return detail.future;
+      return ++opens == 1 ? detail.future : review.future;
     }));
     await tester.pumpAndSettle();
     expect(find.text('成员：已到期成员'), findsNothing);
@@ -117,6 +121,8 @@ void main() {
     expect(find.text('申请时长：1 分钟 35 秒'), findsOneWidget);
     expect(requests, hasLength(2));
     expect(requests.last.url.queryParameters['cursor'], 'next-requests');
+    await tester.enterText(find.byType(TextField), '绘画');
+    await tester.pump();
     final open = find.ancestor(
         of: find.text('查看详情'),
         matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
@@ -129,9 +135,23 @@ void main() {
             find.byType(SegmentedButton<bool>)).onSelectionChanged,
         isNull, reason: 'An open operation blocks filter changes.');
     expect(requests.every((request) => request.method == 'GET'), isTrue);
-    await tester.pumpWidget(const SizedBox.shrink());
-    detail.complete();
+    detail.complete(false);
+    await tester.pumpAndSettle();
+    expect(requests, hasLength(2),
+        reason: 'Read-only details must keep the loaded second page.');
+    expect(find.text('成员：小明'), findsOneWidget);
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        '绘画');
+    await tester.tap(open);
     await tester.pump();
+    review.complete(true);
+    await tester.pumpAndSettle();
+    expect(requests, hasLength(3),
+        reason: 'A write outcome asks for exactly one first-page read.');
+    expect(requests.last.url.queryParameters['cursor'], isNull);
+    expect(requests.every((request) => request.method == 'GET'), isTrue);
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        '绘画');
     expect(tester.takeException(), isNull);
   });
 
@@ -160,7 +180,7 @@ void main() {
         if (!latePending.isCompleted) latePending.complete(_page([]));
       });
       final api = Api(() async => client);
-      Widget host() => _host(api, role, () => current, (_) async {});
+      Widget host() => _host(api, role, () => current, (_) async => false);
       await tester.pumpWidget(host());
       await tester.pumpAndSettle();
       expect(requests.single.url.queryParameters['state'], isNull);
@@ -194,6 +214,10 @@ void main() {
       expect(find.textContaining('迟到的私有名称'), findsNothing);
       expect(find.text('已拒绝'), findsOneWidget);
       expect(find.textContaining(_subject), findsOneWidget);
+      heldFilter({true});
+      await tester.pump();
+      expect(requests, hasLength(3), reason: 'A previous view cannot switch back.');
+      expect(tester.widget<SegmentedButton<bool>>(selector).selected, {false});
       current = false;
       await tester.pumpWidget(host());
       await tester.pumpAndSettle();

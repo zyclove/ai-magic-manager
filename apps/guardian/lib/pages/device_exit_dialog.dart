@@ -2,10 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:device_operations/device_operations.dart';
 import '../core/api.dart';
 import '../core/session.dart';
+import '../ui/dialog_access.dart';
+import '../ui/owned_dialog_route.dart';
 import 'device_subflow_scope.dart';
 
 Future<void> openDeviceExit(
-        BuildContext context, Session session, Json device) async {
+    BuildContext context, Session session, Json device) async {
+  await openDeviceExitChanged(context, session, device);
+}
+
+/// True asks the caller to review the list after a write was handed to the
+/// exit client. It is not evidence of transport dispatch or server execution.
+Future<bool> openDeviceExitChanged(
+    BuildContext context, Session session, Json device,
+    {Listenable? accessChanges, bool Function()? hasAccess}) async {
   final actor = session.profile?['subject'], tenant = session.tenant?['id'];
   final role = session.role;
   if (!session.authenticated ||
@@ -18,40 +28,129 @@ Future<void> openDeviceExit(
   if (id is! String || registration is! String) {
     throw const ApiFailure(502, 'INVALID_RESPONSE');
   }
+  if (!context.mounted || hasAccess?.call() == false) return false;
   final target = ExitScope(
       actorId: actor,
       tenantId: tenant,
       deviceId: id,
       registrationId: registration,
       role: role);
+  final access = DialogAccessBinding(context,
+      accessChanges: accessChanges, hasAccess: hasAccess);
   final scope = DeviceSubflowScope(session,
       permitted: () =>
-          const {'OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR'}.contains(session.role));
+          const {'OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR'}
+              .contains(session.role) && access.permitted());
+  final changes = Listenable.merge([
+    scope,
+    access.changes,
+    if (accessChanges != null) accessChanges,
+  ]);
   final name = device['displayName'] is String
       ? device['displayName'] as String
       : '当前设备';
+  var attempted = false;
+  late final OwnedDialogRoute<void> route;
+  void observe() {
+    if (!scope.current && route.available) route.finish();
+  }
+
   try {
-    if (!context.mounted || !scope.current) return;
-    await showDialog<void>(
+    if (!scope.current) return false;
+    route = OwnedDialogRoute<void>(
         context: context,
         barrierDismissible: false,
-        builder: (_) => _DeviceExitDialog(
-            session: session, scope: scope, target: target, deviceName: name));
+        builder: (_) => AnimatedBuilder(
+            animation: changes,
+            builder: (_, __) => scope.current
+                ? _DeviceExitDialog(
+                    session: session,
+                    scope: scope,
+                    changes: changes,
+                    route: route,
+                    target: target,
+                    deviceName: name,
+                    onWriteAttempt: () => attempted = true)
+                : const SizedBox.shrink()));
+    changes.addListener(observe);
+    await presentOwnedDialog(context, route);
+    return attempted;
   } finally {
+    changes.removeListener(observe);
     scope.dispose();
+    access.dispose();
+  }
+}
+
+/// Observe only explicit confirm/cancel calls. Existing journal entries and
+/// read-only history, preview and status requests do not count as new attempts.
+class _ReviewExitGateway implements ExitGateway {
+  final ExitGateway inner;
+  final bool Function() hasAccess;
+  final VoidCallback onWriteAttempt;
+  _ReviewExitGateway(this.inner,
+      {required this.hasAccess, required this.onWriteAttempt});
+
+  void _beforeWrite() {
+    if (!hasAccess()) {
+      throw const ExitFailure('SCOPE_DENIED', '当前窗口已失效，请重新打开设备操作。');
+    }
+    onWriteAttempt();
+  }
+
+  @override
+  Future<DeviceSnapshot> device(ExitScope scope) => inner.device(scope);
+  @override
+  Future<ExitPreview> preview(ExitScope scope, int deviceVersion) =>
+      inner.preview(scope, deviceVersion);
+  @override
+  Future<ExitOperation> operation(ExitScope scope, String operationId) =>
+      inner.operation(scope, operationId);
+  @override
+  Future<List<ExitOperation>> operations(ExitScope scope) =>
+      inner.operations(scope);
+
+  @override
+  Future<ExitOperation> confirm(ExitScope scope,
+      {required String previewId,
+      required String previewHash,
+      required int deviceVersion,
+      required String key}) {
+    _beforeWrite();
+    return inner.confirm(scope,
+        previewId: previewId,
+        previewHash: previewHash,
+        deviceVersion: deviceVersion,
+        key: key);
+  }
+
+  @override
+  Future<ExitOperation> cancel(ExitScope scope,
+      {required String operationId,
+      required int version,
+      required String key}) {
+    _beforeWrite();
+    return inner.cancel(scope,
+        operationId: operationId, version: version, key: key);
   }
 }
 
 class _DeviceExitDialog extends StatefulWidget {
   final Session session;
   final DeviceSubflowScope scope;
+  final Listenable changes;
+  final OwnedDialogRoute<void> route;
   final ExitScope target;
   final String deviceName;
+  final VoidCallback onWriteAttempt;
   const _DeviceExitDialog(
       {required this.session,
       required this.scope,
+      required this.changes,
+      required this.route,
       required this.target,
-      required this.deviceName});
+      required this.deviceName,
+      required this.onWriteAttempt});
   @override
   State<_DeviceExitDialog> createState() => _DeviceExitDialogState();
 }
@@ -64,13 +163,17 @@ class _DeviceExitDialogState extends State<_DeviceExitDialog> {
     super.initState();
     controller = ExitController(
         scope: widget.target,
-        gateway: DeviceOperationsClient(
-            apiRoot: Uri.parse(widget.scope.api.baseUrl),
-            clientFactory: widget.scope.api.client,
-            allowLoopbackHttp: const bool.fromEnvironment('ALLOW_LOCAL_HTTP',
-                defaultValue: true)),
+        gateway: _ReviewExitGateway(
+            DeviceOperationsClient(
+                apiRoot: Uri.parse(widget.scope.api.baseUrl),
+                clientFactory: widget.scope.api.scoped(
+                    () => widget.route.available && widget.scope.current).client,
+                allowLoopbackHttp: const bool.fromEnvironment('ALLOW_LOCAL_HTTP',
+                    defaultValue: true)),
+            hasAccess: () => widget.route.available && widget.scope.current,
+            onWriteAttempt: widget.onWriteAttempt),
         journal: PreferencesExitJournal());
-    widget.scope.addListener(checkScope);
+    widget.changes.addListener(checkScope);
     scopeLost = !widget.scope.current;
     if (scopeLost) {
       controller.dispose();
@@ -88,21 +191,14 @@ class _DeviceExitDialogState extends State<_DeviceExitDialog> {
 
   @override
   void dispose() {
-    widget.scope.removeListener(checkScope);
+    widget.changes.removeListener(checkScope);
     if (!scopeLost) controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => scopeLost || !widget.scope.current
-      ? AlertDialog(
-          title: const Text('账户或工作空间已变更'),
-          content: const Text('请关闭此窗口，从当前工作空间重新打开设备操作。'),
-          actions: [
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('关闭'))
-            ])
+      ? const SizedBox.shrink()
       : AnimatedBuilder(
           animation: controller,
           builder: (context, _) => PopScope(
@@ -117,7 +213,9 @@ class _DeviceExitDialogState extends State<_DeviceExitDialog> {
                                   controller: controller,
                                   deviceName: widget.deviceName,
                                   reauthenticate: () async {
-                                    if (widget.scope.current) {
+                                    if (widget.route.available &&
+                                        widget.route.isCurrent &&
+                                        widget.scope.current) {
                                       widget.session.login(stepUp: true);
                                     }
                                   }))),
@@ -128,7 +226,14 @@ class _DeviceExitDialogState extends State<_DeviceExitDialog> {
                               child: TextButton(
                                   onPressed: controller.busy
                                       ? null
-                                      : () => Navigator.pop(context),
+                                      : () {
+                                          if (widget.route.available &&
+                                              widget.route.isCurrent &&
+                                              widget.scope.current &&
+                                              !controller.busy) {
+                                            widget.route.finish();
+                                          }
+                                        },
                                   child: const Text('关闭')))),
                     ])),
               )));

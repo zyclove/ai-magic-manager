@@ -7,8 +7,9 @@ import 'design.dart';
 class AccessRequestDialog extends StatefulWidget {
   final Future<PageResult> Function(String path, String? cursor) load;
   final Future<Json> Function(Json body) submit;
+  final ValueChanged<Json?>? onComplete;
   const AccessRequestDialog(
-      {super.key, required this.load, required this.submit});
+      {super.key, required this.load, required this.submit, this.onComplete});
   @override
   State<AccessRequestDialog> createState() => _AccessRequestDialogState();
 }
@@ -37,6 +38,16 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
         'SCOPE_DENIED',
         'WORKSPACE_CHANGED'
       ].contains((error as ApiFailure).code);
+
+  void finish([Json? result]) {
+    if (!mounted) return;
+    final complete = widget.onComplete;
+    if (complete != null) {
+      complete(result);
+    } else {
+      Navigator.pop(context, result);
+    }
+  }
 
   @override
   void initState() {
@@ -192,7 +203,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
     });
     try {
       final result = await widget.submit(body);
-      if (mounted) Navigator.pop(context, result);
+      finish(result);
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -417,8 +428,8 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                   ))),
           actions: [
             TextButton(
-                onPressed: busy ? null : () => Navigator.pop(context),
-                child: const Text('关闭并刷新')),
+                onPressed: busy ? null : finish,
+                child: const Text('关闭')),
             FilledButton(
                 onPressed: busy || loadingOptions || loadingDevices || stale
                     ? null

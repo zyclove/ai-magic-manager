@@ -24,12 +24,23 @@ class MembersPage extends StatefulWidget {
 
 class _MembersPageState extends State<MembersPage> {
   bool invitations = false;
+  bool _busy = false;
+  int _viewGeneration = 0;
+  ModalRoute<dynamic>? _owner;
   bool _active = true, _rebuildPending = false, _pageClosed = false;
   bool _retirementQueued = false;
   final _ownerLost = ValueNotifier<bool>(false);
   late final DeviceSubflowScope _pageScope;
   Session get s => widget.session;
   bool get pageCurrent => mounted && _active && _pageScope.current;
+  bool get pageInteractive => pageCurrent &&
+      (_owner == null || (_owner!.isActive && _owner!.isCurrent));
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _owner ??= ModalRoute.of(context);
+  }
 
   @override
   void initState() {
@@ -107,6 +118,27 @@ class _MembersPageState extends State<MembersPage> {
     if (pageCurrent) s.login(stepUp: true);
   }
 
+  void selectView(Set<bool> selection, int view) {
+    if (!pageInteractive || _busy || view != _viewGeneration ||
+        selection.length != 1 || selection.single == invitations) return;
+    setState(() {
+      invitations = selection.single;
+      _viewGeneration++;
+    });
+  }
+
+  Future<bool> performListAction(ResourceActionLease lease, int view,
+      Future<bool> Function() callback) async {
+    if (!pageInteractive || _busy || !lease.current ||
+        view != _viewGeneration) return false;
+    setState(() => _busy = true);
+    try {
+      return await callback();
+    } finally {
+      if (pageCurrent) setState(() => _busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!pageCurrent) {
@@ -114,6 +146,7 @@ class _MembersPageState extends State<MembersPage> {
     }
     final root = s.root;
     final viewingInvitations = invitations;
+    final view = _viewGeneration;
     return ResourcePage(
       key: ValueKey('$root-$invitations-${s.role}'),
       title: '成员与邀请',
@@ -121,20 +154,27 @@ class _MembersPageState extends State<MembersPage> {
       path: '$root/${invitations ? 'invitations' : 'members'}',
       api: _pageScope.api,
       reauth: reauth,
-      create: () async {
-        final scope = capture(root);
+      canInteract: () => pageInteractive,
+      onCreateChanged: (lease) => performListAction(lease, view, () async {
+        final scope = capture(root, listLease: lease);
         try {
-          if (!current(scope)) return;
+          if (!current(scope)) return false;
           final reviewInvitations = await widget.invite(
-              accessChanges: flowChanges(scope),
+              accessChanges: flowChanges(scope, listLease: lease),
               hasAccess: () => current(scope));
-          if (current(scope) && reviewInvitations) {
-            setState(() => invitations = true);
+          if (!current(scope)) return false;
+          if (reviewInvitations && !viewingInvitations) {
+            setState(() {
+              invitations = true;
+              _viewGeneration++;
+            });
+            return false;
           }
+          return reviewInvitations;
         } finally {
           scope.dispose();
         }
-      },
+      }),
       createLabel: '邀请成员',
       toolbar: [
         SegmentedButton<bool>(segments: const [
@@ -142,11 +182,9 @@ class _MembersPageState extends State<MembersPage> {
           ButtonSegment(value: true, label: Text('邀请记录'))
         ], selected: {
           invitations
-        }, onSelectionChanged: (v) {
-          if (pageCurrent && v.isNotEmpty) {
-            setState(() => invitations = v.first);
-          }
-        })
+        }, onSelectionChanged: pageInteractive && !_busy
+            ? (selection) => selectView(selection, view)
+            : null)
       ],
       columns: invitations
           ? [
@@ -186,14 +224,14 @@ class _MembersPageState extends State<MembersPage> {
       emptyTitle: invitations ? '暂无邀请记录' : '暂无成员',
       emptyDescription:
           invitations ? '创建邀请后可在这里查看状态、取消未使用的邀请。' : '成员加入后将在这里显示。',
-      onOpenChanged: (row, lease) async {
+      onOpenChanged: (row, lease) => performListAction(lease, view, () async {
         if (!pageCurrent || !lease.current || viewingInvitations != invitations) {
           return false;
         }
         return viewingInvitations
             ? await openInvitation(root, row, listLease: lease)
             : await openMember(root, row, listLease: lease);
-      },
+      }),
     );
   }
 

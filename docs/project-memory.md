@@ -61,15 +61,17 @@ Flutter 回归优先稳定 Key／语义或类型谓词；`.icon` 按钮工厂可
 
 Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scripts/verification/README.md)。已证明的同 Job 成员保留只读句柄并持续核验创建身份，禁止在失败后按 PID 重开来补证；固定容量及原期限、分类器、终态标准保持。浏览器驱动须固定源码摘要，历史 NOT_ACCEPTED 不由新工具追认，清理缓存不能删除唯一工具源。
 
+DialogAccessBinding 同时观察父路由 popped 与 completed；当前 Flutter 下 raw removeRoute 未必完成 popped，父路由完成仍须永久退役原权限并通知自有窗口。通知沿既有帧后机制发布，不能对独立覆盖窗口执行通用 pop。
+
 管理台异步旅程可复用 [DeviceSubflowScope](../apps/guardian/lib/pages/device_subflow_scope.dart) 捕获账号、租户、角色和会话代际；名称虽源自设备流程，通知与工作台也采用此机制。旧响应与回调必须核对原捕获，不能仅比较当前租户/角色。普通网络失败可保留已读数据，服务端拒绝访问则隐藏私有摘要并作废捕获。
 
 [SettingsPage](../apps/guardian/lib/pages/settings_page.dart) 独立持有展示期的原始会话 scope，所有账号/工作空间入口共用交互门禁和防重；路由 key 包含账号、工作空间、角色与代际。页面捕获立即退役，编辑器则独立持有 scope/lifetime 至 formDialog 完整结束后释放；帧后退役通知避免晚建表单监听已释放对象，旧结果不触发当前工作空间重载。创建与接受邀请仍调用原已有认证捕获流程，不绕过服务端授权。
 
-[成员详情](../apps/guardian/lib/pages/members_page.dart)只以最新 access 读取决定角色、版本和获授编号；[MemberClassScope](../apps/guardian/lib/ui/member_class_scope.dart)仅在有获授班级时异步读取名称，绑定原详情 API 和租约，不阻塞核心资料或决定授权。目录失败保留完整编号并就地重试 GET；编辑仍走原有重新读取与版本保护。成员与邀请通过 ResourcePage.onOpenChanged 返回需核对信号，PATCH/DELETE 发出前置位，不能只看表单非空结果；只读返回保留列表。危险确认复用 [confirmLeasedAction](../apps/guardian/lib/ui/leased_dialog.dart)，页面同步退役、帧后通知租约并释放通知器，避免导航重入。应用分类存于独立资源，应用身份详情返回不重读身份目录，保留原分页和搜索。
+[成员详情](../apps/guardian/lib/pages/members_page.dart)只以最新 access 读取决定角色、版本和获授编号；[MemberClassScope](../apps/guardian/lib/ui/member_class_scope.dart)仅在有获授班级时异步读取名称，绑定原详情 API 和租约，不阻塞核心资料或决定授权。目录失败保留完整编号并就地重试 GET；编辑仍走原有重新读取与版本保护。成员邀请通过 onCreateChanged 返回需核对信号，普通取消保留列表，需核对时直接进入邀请记录，不先刷新退役的成员视图；筛选与操作同步防重并绑定原视图代次。成员与邀请通过 ResourcePage.onOpenChanged 返回需核对信号，PATCH/DELETE 发出前置位，不能只看表单非空结果；只读返回保留列表。危险确认复用 [confirmLeasedAction](../apps/guardian/lib/ui/leased_dialog.dart)，页面同步退役、帧后通知租约并释放通知器，避免导航重入。应用分类存于独立资源，应用身份详情返回不重读身份目录，保留原分页和搜索。
 
 [通用 API](../apps/guardian/lib/core/api.dart) 使用已锁定 `http 1.6.0` 的 Abortable 协议；[作用域包装层](../apps/guardian/lib/core/scoped_http_client.dart)必须透传中止信号，在实际发送/终结请求前同时检查原作用域和请求期限，借用的客户端不能被单次请求关闭。纯时限单元测试使用原生 `FakeAsync`；共享完成 Future 的取消续程可能在其区域外调度，正常重试须保留有界真实异步断言，参考[超时回归](../apps/guardian/test/api_deadline_test.dart)，不要用无限等待或删除完成断言掩盖问题。
 
-ApiWriteDispatch／Api.trackingWrites 仅保存带键写请求交给 HTTP 客户端的布尔事实；借用链保留父观察器、原作用域和共享待决写入，读取及无写键查询不标记。策略详情与其编辑、复制、回滚子流程共用同一观察器：原详情独立关闭后仍可返回列表核对信号，未派发或作用域失效不刷新；该信号不代表保存成功，也不替代原结果查询。
+ApiWriteDispatch／Api.trackingWrites 默认只保存带键写请求交给 HTTP 客户端的布尔事实；借用链保留父观察器、原作用域和共享待决写入，读取及无写键查询不标记。设备注册和设备管理仓储借用的专用观察器显式 includeUnkeyedWrites=true，覆盖其既有 Client-Request-Id 创建、确认／取消及云端撤销，不向请求补伪幂等键，不改变其他观察器或未知恢复语义。策略详情与其编辑、复制、回滚子流程共用同一观察器：原详情独立关闭后仍可返回列表核对信号，未派发或作用域失效不刷新；该信号不代表保存成功，也不替代原结果查询。
 
 [有界 JSON 读取](../apps/guardian/lib/core/bounded_json.dart)同时覆盖身份刷新、发送和正文读取，保留调用方原始作用域／预览异常。已知拒绝状态下正文不完整，只保留 HTTP 失败而不给完整拒绝证据；不要把超时或中止当成操作未执行，或解除原请求的持久化防重复保护。
 
@@ -93,9 +95,9 @@ ResourcePage 可由纯 `searchText` 提供领域格式化后的本地检索文�
 
 共用 [dateLabel](../apps/guardian/lib/core/labels.dart) 对数值先验证有限且为整毫秒，原生日期构造越界时显示“时间无效”；正常毫秒／ISO文本仍按本地分钟显示，null保持“—”，未解析文本保留原回退。显示失败不推断邀请过期或设备离线，也不替代策略版本等领域的严格准入；静态候选与待验证范围见[日期显示记录](reviews/shared-date-display-20261028.md)。
 
-访问审批的 [AccessRequestsPage](../apps/guardian/lib/pages/access_requests_page.dart) 接收宿主唯一持有的 pendingFilter 与筛选事件，编排待处理/全部视图及行摘要，不再另存本地筛选；复用 ResourcePage 的读取、分页及错误恢复；管理角色默认待处理，其他角色默认全部。消费实际返回的名称，不追加目录请求；审计视图只用核心编号。列表筛选后的空批次不等于后续页无待办，原详情与决定流程继续独立授权。[approval_decision](../apps/guardian/lib/core/approval_decision.dart) 集中七种状态、当前申请快照和精确秒数正文转换；列表名称先脱离原行，再以完整引用匹配，不能覆盖最新核心事实。通用 FieldSpec 可选整数范围由既有表单就近校验，跨字段合计在提交前验证；继续使用原未知结果与幂等保护。
+访问审批的 [AccessRequestsPage](../apps/guardian/lib/pages/access_requests_page.dart) 接收宿主唯一持有的 pendingFilter 与筛选事件，编排待处理/全部视图及行摘要，不再另存本地筛选；复用 ResourcePage 的读取、分页及错误恢复；管理角色默认待处理，其他角色默认全部。消费实际返回的名称，不追加目录请求；审计视图只用核心编号。详情／创建通过租约返回布尔核对信号；普通关闭不重读，已派发写入含未知结果需核对。交付及尝试历史绑定原父窗口、会话与借用 API，只退役自有 OwnedDialogRoute；AccessRequestDialog 的完成回调由宿主接管，覆盖通知不能被成功回调误关。列表筛选后的空批次不等于后续页无待办，原详情与决定流程继续独立授权。[approval_decision](../apps/guardian/lib/core/approval_decision.dart) 集中七种状态、当前申请快照和精确秒数正文转换；列表名称先脱离原行，再以完整引用匹配，不能覆盖最新核心事实。通用 FieldSpec 可选整数范围由既有表单就近校验，跨字段合计在提交前验证；继续使用原未知结果与幂等保护。
 
-[DevicesPage](../apps/guardian/lib/pages/devices_page.dart) 只编排受路由控制的全部/连接检查筛选，继续复用 ResourcePage 的分页和操作边界。`connection=NEEDS_CHECK` 由 FleetReads 在授权 SQL 内筛选 ACTIVE 与缺失/过期心跳，使用现有观察时限配置；客户端不按单页计算全局队列。工作台任务保留目标 section 的权限检查，再导航固定筛选位置；登录只允许明确列入目录的精确筛选回跳地址。注册查询复用同一操作锁且不自动刷新列表。
+[DevicesPage](../apps/guardian/lib/pages/devices_page.dart) 只编排受路由控制的全部/连接检查筛选，继续复用 ResourcePage 的分页和操作边界。`connection=NEEDS_CHECK` 由 FleetReads 在授权 SQL 内筛选 ACTIVE 与缺失/过期心跳，使用现有观察时限配置；客户端不按单页计算全局队列。工作台任务保留目标 section 的权限检查，再导航固定筛选位置；登录只允许明确列入目录的精确筛选回跳地址。详情、添加和注册查询使用 ResourceActionLease 与布尔核对回调，纯查看／取消保留分页和搜索；查询后真实确认／取消仍核对一次。筛选代次仅隔离页面事件与操作，实际列表读取仍由 ResourcePage 的 api/path 代次管理，宿主未接受筛选不能使原读取悬挂。注册详情衔接等待自有窗口和子详情结束后再释放原作用域。
 
 [HelpRequestsPage](../apps/guardian/lib/pages/help_requests_page.dart) 的服务端明确拒绝锁存为当前页面失权，清除私有列表并失效晚到读取；本地会话未变化也不能继续使用旧捕获。带目标信息的确认使用 [confirmLeasedAction](../apps/guardian/lib/ui/leased_dialog.dart)，沿用原路由与权限租约。未知确认的行内核对只发 GET，复用既有操作代次条件，不自动重发 POST。
 

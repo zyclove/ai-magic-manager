@@ -13,6 +13,7 @@ import 'package:guardian/pages/console_pages.dart';
 import 'package:guardian/pages/help_requests_page.dart';
 import 'package:guardian/ui/design.dart';
 import 'package:guardian/ui/owned_dialog_route.dart';
+import 'package:guardian/ui/resource_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,8 @@ import 'device_management_entry_test.dart' show EntrySession, settleReads;
 const _approvalId = '11111111-1111-4111-8111-111111111111';
 const _applicationId = '66666666-6666-4666-8666-666666666666';
 const _registrationId = '77777777-7777-4777-8777-777777777777';
+const _documentId = '88888888-8888-4888-8888-888888888888';
+const _olderDocumentId = '99999999-9999-4999-8999-999999999999';
 const _helpId = '22222222-2222-4222-8222-222222222222';
 
 http.Response _reply(Object body, [int status = 200]) => http.Response(
@@ -84,10 +87,13 @@ class _ApprovalFixture {
   final int requestedSeconds;
   final Json? listRow;
   int deliveryReads = 0;
+  final documentReads = <http.Request>[];
+  final attemptReads = <http.Request>[];
   final pending = Completer<http.Response>();
   final posts = <http.Request>[];
   late BuildContext host;
   bool detailsCompleted = false;
+  bool? needsReview;
   late final session = EntrySession((request) async {
     final path = request.url.path;
     if (request.method == 'GET' && path.endsWith('/$_approvalId')) {
@@ -103,6 +109,40 @@ class _ApprovalFixture {
         'deliveryState': 'NOT_ISSUED',
         'deliveryAttempt': null,
         'receivedAt': null,
+      });
+    }
+    if (request.method == 'GET' && path.endsWith('/documents')) {
+      documentReads.add(request);
+      final first = !request.url.queryParameters.containsKey('cursor');
+      if (!first) {
+        expect(request.url.queryParameters['cursor'], _documentId);
+      }
+      return _reply({
+        'items': [{
+          'documentId': first ? _documentId : _olderDocumentId,
+          'approvalVersion': first ? 3 : 2,
+          'action': 'CONFIGURE_ONLY',
+          'deliveryState': 'NOT_ISSUED',
+          'deliveryAttempt': null,
+          'current': first,
+          'documentIssuedAt': 1700000000000,
+          'receivedAt': null,
+        }],
+        'nextCursor': first ? _documentId : null,
+      });
+    }
+    if (request.method == 'GET' && path.endsWith('/attempts')) {
+      attemptReads.add(request);
+      return _reply({
+        'items': [{
+          'deliveryAttempt': 1,
+          'deliveryState': 'NOT_FETCHED',
+          'reasonCode': null,
+          'current': true,
+          'createdAt': 1700000000000,
+          'receivedAt': null,
+        }],
+        'nextCursor': null,
       });
     }
     if (request.method == 'POST' &&
@@ -127,8 +167,11 @@ class _ApprovalFixture {
           host = context;
           return TextButton(
               onPressed: () => ConsoleActions(context, session)
-                  .approvalDetails(listRow ?? {'id': _approvalId})
-                  .then((_) => detailsCompleted = true),
+                  .approvalDetailsChanged(listRow ?? {'id': _approvalId})
+                  .then((changed) {
+                    needsReview = changed;
+                    detailsCompleted = true;
+                  }),
               child: const Text('打开申请'));
         }))));
     await tester.tap(find.text('打开申请'));
@@ -165,6 +208,88 @@ class _ApprovalFixture {
                 ? 'DENIED'
                 : 'REVOKED',
       }));
+}
+
+Future<void> _checkApprovalHistoryRetirement(
+    WidgetTester tester, _ApprovalFixture original) async {
+  for (final reason in ['parent close', 'actor ABA']) {
+    final fixture = reason == 'parent close'
+        ? original : _ApprovalFixture('撤销批准');
+    if (reason == 'actor ABA') {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await settleReads(tester);
+      await fixture.open(tester, openAction: false);
+    }
+    final details = ModalRoute.of(
+        tester.element(find.text('临时访问申请')))! as OwnedDialogRoute<void>;
+    await tester.tap(_helpButton('交付历史'));
+    await settleReads(tester);
+    final history = find.byKey(const Key('approval-delivery-history'));
+    final resource = find.descendant(
+        of: history, matching: find.byType(ResourcePage));
+    final state = tester.state<ResourcePageState>(resource);
+    final more = find.descendant(of: history, matching: _helpButton('加载更多'));
+    await tester.ensureVisible(more);
+    await tester.tap(more);
+    await settleReads(tester);
+    expect(fixture.documentReads, hasLength(2));
+    final search = find.descendant(
+        of: history, matching: find.byType(TextField));
+    await tester.enterText(search, _documentId);
+    await tester.pump();
+
+    Future<void> openAttempt() async {
+      final view = find.descendant(
+          of: history, matching: _helpButton('查看详情'));
+      await tester.ensureVisible(view);
+      await tester.tap(view);
+      await settleReads(tester);
+    }
+
+    await openAttempt();
+    final attempts = find.byKey(const Key('approval-attempt-history'));
+    final close = find.descendant(of: attempts, matching: _helpButton('关闭'));
+    await tester.ensureVisible(close);
+    await tester.tap(close);
+    await settleReads(tester);
+    expect(fixture.documentReads, hasLength(2),
+        reason: 'A read-only attempt history must retain document pages.');
+    expect(tester.state<ResourcePageState>(resource), same(state));
+    expect(tester.widget<TextField>(search).controller!.text, _documentId);
+    expect(find.text('已加载 2 条 · 匹配 1 条'), findsOneWidget);
+    await openAttempt();
+    final cover = DialogRoute<void>(
+        context: fixture.host,
+        builder: (_) => const AlertDialog(title: Text('独立通知')));
+    unawaited(Navigator.of(fixture.host, rootNavigator: true).push<void>(cover));
+    await _flushPending(tester);
+    if (reason == 'parent close') {
+      details.finish();
+    } else {
+      final actor = fixture.session.profile;
+      fixture.session.profile = {'subject': 'other-adult'};
+      fixture.session.changed();
+      fixture.session.profile = actor;
+      fixture.session.changed();
+    }
+    await _flushPending(tester);
+    expect(cover.isCurrent, isTrue);
+    expect(find.text('独立通知'), findsOneWidget);
+    expect(find.byKey(const Key('approval-delivery-history'),
+        skipOffstage: false), findsNothing);
+    expect(find.byKey(const Key('approval-attempt-history'),
+        skipOffstage: false), findsNothing);
+    expect(find.text(_approvalId, skipOffstage: false), findsNothing);
+    expect(fixture.documentReads, hasLength(2));
+    expect(fixture.attemptReads, hasLength(2));
+    expect(fixture.posts, isEmpty);
+    details.finish();
+    await _flushPending(tester);
+    expect(fixture.needsReview, isFalse);
+    Navigator.of(fixture.host, rootNavigator: true).removeRoute(cover);
+    await settleReads(tester);
+    expect(tester.takeException(), isNull);
+  }
 }
 
 class _HelpFixture {
@@ -219,6 +344,129 @@ class _HelpFixture {
 }
 
 void main() {
+  for (final retireScope in [false, true]) {
+    testWidgets('access creation preserves an independent cover on '
+        '${retireScope ? 'actor retirement' : 'success'}', (tester) async {
+      const deviceId = '33333333-3333-4333-8333-333333333333';
+      const policyId = '55555555-5555-4555-8555-555555555555';
+      const versionId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+      const ruleId = 'draw-rule';
+      final pending = Completer<http.Response>();
+      final reads = <http.Request>[];
+      final posts = <http.Request>[];
+      final session = EntrySession((request) async {
+        final path = request.url.path;
+        if (request.method == 'GET' && path.endsWith('/devices')) {
+          reads.add(request);
+          return _reply({
+            'items': [{
+              'id': deviceId,
+              'displayName': '学习平板',
+              'state': 'ACTIVE',
+            }],
+            'nextCursor': null,
+          });
+        }
+        if (request.method == 'GET' &&
+            path.endsWith('/access-requests/options')) {
+          reads.add(request);
+          expect(request.url.queryParameters['deviceId'], deviceId);
+          return _reply({
+            'items': [{
+              'id': policyId,
+              'name': '学习策略',
+              'baseVersionId': versionId,
+              'commonRules': [],
+              'applications': [{
+                'id': _applicationId,
+                'displayName': '绘画应用',
+                'rules': [{'id': ruleId, 'kind': 'APP_LAUNCH'}],
+              }],
+            }],
+            'nextCursor': null,
+          });
+        }
+        if (request.method == 'POST' && path.endsWith('/access-requests')) {
+          posts.add(request);
+          return pending.future;
+        }
+        throw StateError('Unexpected access creation request.');
+      })..role = 'CHILD';
+      late BuildContext host;
+      bool? needsReview;
+      addTearDown(() async {
+        if (!pending.isCompleted) pending.complete(_reply({'id': _approvalId}));
+        await tester.pumpWidget(const SizedBox.shrink());
+        await settleReads(tester);
+        session.transport.close();
+        session.dispose();
+      });
+      await tester.pumpWidget(MaterialApp(
+          theme: consoleTheme(),
+          home: Scaffold(body: Builder(builder: (context) {
+            host = context;
+            return TextButton(
+                onPressed: () => ConsoleActions(context, session)
+                    .createAccessRequestChanged()
+                    .then((changed) => needsReview = changed),
+                child: const Text('打开申请'));
+          }))));
+      await tester.tap(find.text('打开申请'));
+      await settleReads(tester);
+      Future<void> choose(Key key, String text) async {
+        final field = find.byKey(key);
+        await tester.ensureVisible(field);
+        await tester.tap(field);
+        await settleReads(tester);
+        await tester.tap(find.text(text).last);
+        await settleReads(tester);
+      }
+      await choose(const Key('request-device'), '学习平板 · 33333333…');
+      await choose(const ValueKey('option-$deviceId'), '绘画应用 · 学习策略');
+      await tester.enterText(find.byKey(const Key('request-minutes')), '2');
+      final submit = _helpButton('提交申请');
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await _flushPending(tester);
+      expect(reads, hasLength(2));
+      expect(posts, hasLength(1));
+      expect(posts.single.headers['idempotency-key'], isNotEmpty);
+      expect(jsonDecode(posts.single.body), {
+        'deviceId': deviceId,
+        'policyId': policyId,
+        'baseVersionId': versionId,
+        'applicationId': _applicationId,
+        'ruleIds': [ruleId],
+        'requestedWindowSeconds': 120,
+        'reason': null,
+      });
+      expect(needsReview, isNull);
+      final cover = DialogRoute<void>(context: host,
+          builder: (_) => const AlertDialog(title: Text('独立通知')));
+      unawaited(Navigator.of(host, rootNavigator: true).push<void>(cover));
+      await _flushPending(tester);
+      if (retireScope) {
+        final actor = session.profile;
+        session.profile = {'subject': 'other-child'};
+        session.changed();
+        session.profile = actor;
+        session.changed();
+        await _flushPending(tester);
+      }
+      pending.complete(_reply({'id': _approvalId}));
+      await settleReads(tester);
+      expect(cover.isCurrent, isTrue);
+      expect(find.text('独立通知'), findsOneWidget);
+      expect(find.text('申请临时访问', skipOffstage: false), findsNothing);
+      expect(needsReview, !retireScope);
+      expect(posts, hasLength(1));
+      expect(reads, hasLength(2));
+      Navigator.of(host, rootNavigator: true).removeRoute(cover);
+      await settleReads(tester);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('approval keeps named context and validates exact total before POST',
       (tester) async {
     final fixture = _ApprovalFixture('批准', requestedSeconds: 90, listRow: {
@@ -277,6 +525,13 @@ void main() {
       expect(fixture.detailsCompleted, isFalse);
       expect(find.text('临时访问申请'), findsOneWidget);
       expect(find.widgetWithText(OutlinedButton, action), findsOneWidget);
+      if (action == '撤销批准') {
+        await _checkApprovalHistoryRetirement(tester, fixture);
+      } else {
+        await tester.tap(_helpButton('关闭'));
+        await settleReads(tester);
+        expect(fixture.needsReview, isFalse);
+      }
       expect(tester.takeException(), isNull);
     });
 
@@ -288,6 +543,7 @@ void main() {
       await settleReads(tester);
 
       expect(fixture.detailsCompleted, isTrue);
+      expect(fixture.needsReview, isTrue);
       expect(find.text('临时访问申请'), findsNothing);
       expect(find.byType(EditDialog), findsNothing);
       expect(fixture.posts, hasLength(1));
@@ -328,13 +584,19 @@ void main() {
       expect(find.text('临时访问申请', skipOffstage: false), findsOneWidget);
       expect(find.byType(FailureView), findsOneWidget);
       if (action != '撤销批准') {
-        await tester.tap(find.widgetWithText(TextButton, '取消'));
+        await tester.tap(find.widgetWithText(TextButton, '暂时关闭'));
+        await settleReads(tester);
+        await tester.tap(find.byKey(const Key('edit-dialog-confirm-close')));
         await settleReads(tester);
         expect(find.byType(EditDialog), findsNothing);
         expect(find.text('临时访问申请'), findsOneWidget);
       }
       expect(fixture.posts, hasLength(1));
       expect(fixture.detailsCompleted, isFalse);
+      await tester.tap(_helpButton('关闭'));
+      await settleReads(tester);
+      expect(fixture.needsReview, isTrue,
+          reason: 'A dispatched write still needs review after an unknown result.');
       expect(tester.takeException(), isNull);
     });
   }

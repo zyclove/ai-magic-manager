@@ -294,6 +294,49 @@ void main() {
     expect(transport.closed, isFalse);
   });
 
+  test('unkeyed observation is explicit and retained through borrowed scopes',
+      () async {
+    final transport = _ImmediateTransport();
+    for (final method in ['POST', 'PUT', 'PATCH', 'DELETE']) {
+      final keyed = ApiWriteDispatch();
+      final unkeyed = ApiWriteDispatch(includeUnkeyedWrites: true);
+      final api = Api(() async => transport).trackingWrites(keyed)
+          .scoped(() => true).trackingWrites(unkeyed).scoped(() => true);
+      await api.send('GET', '/devices').timeout(const Duration(seconds: 2));
+      expect(keyed.dispatched, isFalse);
+      expect(unkeyed.dispatched, isFalse);
+      final before = transport.sends;
+      await api.send(method, '/devices/revoke')
+          .timeout(const Duration(seconds: 2));
+      expect(transport.sends, before + 1);
+      expect(keyed.dispatched, isFalse,
+          reason: 'A child opt-in cannot change its ancestor observer.');
+      expect(unkeyed.dispatched, isTrue);
+    }
+    expect(transport.closed, isFalse);
+  });
+
+  test('unkeyed observation stays false when authentication outlives scope', () {
+    fake.fakeAsync((clock) {
+      final authenticated = Completer<http.Client>();
+      final transport = _ImmediateTransport();
+      final dispatch = ApiWriteDispatch(includeUnkeyedWrites: true);
+      var current = true;
+      final api = Api(() => authenticated.future).trackingWrites(dispatch)
+          .scoped(() => current);
+      final write = _Outcome(api.send('DELETE', '/enrollments/original'));
+      clock.flushMicrotasks();
+      current = false;
+      authenticated.complete(transport);
+      clock.flushMicrotasks();
+      _expectFailure(write, isA<ApiFailure>()
+          .having((error) => error.code, 'code', 'WORKSPACE_CHANGED'));
+      expect(transport.sends, 0);
+      expect(dispatch.dispatched, isFalse);
+      expect(transport.closed, isFalse);
+    });
+  });
+
   test('a scope lost while waiting for the client never marks dispatch', () {
     fake.fakeAsync((clock) {
       final authenticated = Completer<http.Client>();

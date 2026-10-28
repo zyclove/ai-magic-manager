@@ -19,8 +19,8 @@ class AccessRequestsPage extends StatefulWidget {
   final Api api;
   final String path, role;
   final bool Function() isCurrent;
-  final Future<void> Function(Json) onOpen;
-  final Future<void> Function()? create;
+  final Future<bool> Function(Json, ResourceActionLease) onOpenChanged;
+  final Future<bool> Function(ResourceActionLease)? createChanged;
   final VoidCallback? reauth;
   final bool pendingFilter;
   final ValueChanged<bool> onFilterChanged;
@@ -31,10 +31,10 @@ class AccessRequestsPage extends StatefulWidget {
       required this.path,
       required this.role,
       required this.isCurrent,
-      required this.onOpen,
+      required this.onOpenChanged,
       required this.pendingFilter,
       required this.onFilterChanged,
-      this.create,
+      this.createChanged,
       this.reauth});
 
   @override
@@ -44,11 +44,13 @@ class AccessRequestsPage extends StatefulWidget {
 class _AccessRequestsPageState extends State<AccessRequestsPage> {
   bool get pending => widget.pendingFilter;
   bool busy = false;
+  bool active = true;
+  int viewGeneration = 0;
   ModalRoute<dynamic>? owner;
 
   bool get requester => const ['CHILD', 'TEACHER'].contains(widget.role);
   bool get ownerInteractive =>
-      mounted &&
+      mounted && active &&
       widget.isCurrent() &&
       (owner == null || (owner!.isActive && owner!.isCurrent));
   bool get interactive => ownerInteractive && !busy;
@@ -56,36 +58,60 @@ class _AccessRequestsPageState extends State<AccessRequestsPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    owner ??= ModalRoute.of(context);
+    owner = ModalRoute.of(context);
   }
 
-  void select(Set<bool> selection) {
-    if (!interactive || selection.length != 1 || selection.single == pending) {
+  @override
+  void didUpdateWidget(AccessRequestsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.api, widget.api) || oldWidget.path != widget.path ||
+        oldWidget.role != widget.role || oldWidget.pendingFilter != pending) {
+      viewGeneration++;
+      busy = false;
+    }
+  }
+
+  @override
+  void deactivate() {
+    active = false;
+    viewGeneration++;
+    busy = false;
+    super.deactivate();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    active = true;
+  }
+
+  void select(Set<bool> selection, int view) {
+    if (!interactive || viewGeneration != view ||
+        selection.length != 1 || selection.single == pending) {
       return;
     }
+    setState(() => viewGeneration++);
     widget.onFilterChanged(selection.single);
   }
 
-  Future<void> perform(Future<void> Function() callback) async {
-    if (!interactive) return;
+  Future<bool> perform(Future<bool> Function() callback,
+      ResourceActionLease lease, int view) async {
+    if (!interactive || !lease.current || viewGeneration != view) return false;
     setState(() => busy = true);
     try {
-      await callback();
+      final changed = await callback();
+      return changed && lease.current && viewGeneration == view;
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted && viewGeneration == view) setState(() => busy = false);
     }
-  }
-
-  Future<void> open(Json row) => perform(() => widget.onOpen(row));
-
-  Future<void> create() async {
-    final callback = widget.create;
-    if (requester && callback != null) await perform(callback);
   }
 
   @override
   Widget build(BuildContext context) {
     final auditor = widget.role == 'AUDITOR';
+    final view = viewGeneration;
+    final open = widget.onOpenChanged;
+    final create = widget.createChanged;
     return ResourcePage(
         api: widget.api,
         path: pending ? '${widget.path}?state=PENDING' : widget.path,
@@ -106,7 +132,8 @@ class _AccessRequestsPageState extends State<AccessRequestsPage> {
                 ButtonSegment(value: false, label: Text('全部')),
               ],
               selected: {pending},
-              onSelectionChanged: interactive ? select : null),
+              onSelectionChanged: interactive
+                  ? (selection) => select(selection, view) : null),
         ],
         columns: [
           ColumnSpec('对象',
@@ -118,8 +145,10 @@ class _AccessRequestsPageState extends State<AccessRequestsPage> {
               : const Text('状态未提供')),
           ColumnSpec('创建时间', (row) => Text(_createdAt(row['createdAt']))),
         ],
-        onOpen: open,
-        create: requester && widget.create != null ? create : null,
+        onOpenChanged: (row, lease) =>
+            perform(() => open(row, lease), lease, view),
+        onCreateChanged: requester && create != null ? (lease) =>
+            perform(() => create(lease), lease, view) : null,
         createLabel: '申请临时访问',
         reauth: widget.reauth,
         emptyTitle: pending ? '已加载记录中暂无待处理申请' : '暂无访问申请',

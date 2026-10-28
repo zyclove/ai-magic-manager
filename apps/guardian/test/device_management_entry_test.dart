@@ -57,14 +57,20 @@ class EntrySession extends Session {
   }
 }
 
-Future<void> mount(WidgetTester tester, EntrySession session) async {
+Future<void> mount(WidgetTester tester, EntrySession session,
+    {ValueChanged<bool>? onResult, Listenable? accessChanges,
+    bool Function()? hasAccess}) async {
   await tester.pumpWidget(MaterialApp(
       theme: consoleTheme(),
       home: Scaffold(
           body: Builder(
               builder: (context) => TextButton(
-                  onPressed: () => ConsoleActions(context, session)
-                      .deviceDetails({'id': deviceId}),
+                  onPressed: () async {
+                    final changed = await ConsoleActions(context, session)
+                        .deviceDetailsChanged({'id': deviceId},
+                            accessChanges: accessChanges, hasAccess: hasAccess);
+                    onResult?.call(changed);
+                  },
                   child: const Text('打开设备'))))));
   await tester.tap(find.text('打开设备'));
   await tester.pump();
@@ -93,7 +99,8 @@ void main() {
       return pending.future;
     });
     addTearDown(session.dispose);
-    await mount(tester, session);
+    final results = <bool>[];
+    await mount(tester, session, onResult: results.add);
     expect(find.byType(DeviceManagementDialog), findsOneWidget);
     expect(requests, 1);
     pending.complete(reply());
@@ -104,6 +111,10 @@ void main() {
             .controller
             .error
             .toString());
+    await tester.tap(find.byKey(const Key('device-management-close')));
+    await settleReads(tester);
+    expect(results, [false], reason: 'Viewing a device does not change the list.');
+    expect(requests, 1);
   });
   testWidgets('unauthenticated device entry dispatches no GET', (tester) async {
     var requests = 0;
@@ -137,7 +148,7 @@ void main() {
     await settleReads(tester);
     expect(requests, 1);
     expect(find.text('学习平板'), findsNothing);
-    expect(find.text('工作空间已变化'), findsOneWidget);
+    expect(find.byType(DeviceManagementDialog), findsNothing);
   });
   testWidgets(
       'scope change hides loaded private details and cannot revive them',
@@ -155,6 +166,47 @@ void main() {
     session.changed();
     await settleReads(tester);
     expect(find.text('学习平板'), findsNothing);
-    expect(find.text('工作空间已变化'), findsOneWidget);
+    expect(find.byType(DeviceManagementDialog), findsNothing);
   });
+  for (final rawParentRemoval in [false, true]) {
+  testWidgets('device parent retirement preserves a cover: raw=$rawParentRemoval',
+      (tester) async {
+    final session = EntrySession((_) async => reply());
+    final access = ValueNotifier<bool>(true);
+    addTearDown(session.dispose);
+    addTearDown(access.dispose);
+    final results = <bool>[];
+    await mount(tester, session, onResult: results.add,
+        accessChanges: access, hasAccess: () => access.value);
+    await settleReads(tester);
+    final close = tester.widget<IconButton>(
+        find.byKey(const Key('device-management-close'))).onPressed!;
+    final parent = ModalRoute.of(tester.element(
+        find.text('打开设备', skipOffstage: false)))!;
+    final dialogContext = tester.element(find.byType(DeviceManagementDialog));
+    unawaited(showDialog<void>(context: dialogContext,
+        builder: (_) => const AlertDialog(
+            key: Key('independent-device-cover'), title: Text('独立通知'))));
+    await tester.pumpAndSettle();
+    close();
+    await tester.pump();
+    expect(find.byKey(const Key('independent-device-cover')), findsOneWidget);
+    if (rawParentRemoval) {
+      parent.navigator!.removeRoute(parent);
+    } else {
+      access.value = false;
+    }
+    await settleReads(tester);
+    expect(results, [false]);
+    expect(find.byType(DeviceManagementDialog), findsNothing);
+    expect(find.text('学习平板'), findsNothing);
+    expect(find.byKey(const Key('independent-device-cover')), findsOneWidget);
+    access.value = true;
+    close();
+    await tester.pump();
+    expect(find.byKey(const Key('independent-device-cover')), findsOneWidget);
+    expect(results, [false]);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+  }
 }
