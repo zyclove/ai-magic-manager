@@ -204,7 +204,8 @@ class FakeDeviceManagementController extends DeviceManagementController {
 
   @override
   Future<void> runAction(
-      Future<void> Function(DeviceManagementRecord) action) async {
+      Future<void> Function(DeviceManagementRecord) action,
+      {bool refreshAfter = true}) async {
     actionDispatches++;
     if (!hasAccess || busy || value == null) return;
     busyValue = true;
@@ -215,7 +216,7 @@ class FakeDeviceManagementController extends DeviceManagementController {
       busyValue = false;
       publish();
     }
-    if (hasAccess) await refresh();
+    if (hasAccess && refreshAfter) await refresh();
   }
 
   @override
@@ -294,6 +295,7 @@ class Fixture {
               onClose: () => closeCalls++,
               onReauth: () => reauthCalls++,
               onDiagnostic: (value) => open(context, 'diagnostic', value),
+              onExecutions: (value) => open(context, 'executions', value),
               onExport: (value) => open(context, 'export', value),
               onSupport: (value) => open(context, 'support', value),
               onPrivacy: (value) => open(context, 'privacy', value),
@@ -341,7 +343,8 @@ DeviceManagementRecord namedDevice(String name) {
 }
 
 Widget controlledHost(ValueNotifier<FakeDeviceManagementController?> selection,
-        GlobalKey<NavigatorState> navigatorKey) =>
+        GlobalKey<NavigatorState> navigatorKey,
+        {Future<void> Function(DeviceManagementRecord)? onDiagnostic}) =>
     MaterialApp(
       navigatorKey: navigatorKey,
       theme: consoleTheme(),
@@ -353,6 +356,7 @@ Widget controlledHost(ValueNotifier<FakeDeviceManagementController?> selection,
               : DeviceManagementDialog(
                   key: const Key('controlled-device-window'),
                   controller: controller,
+                  onDiagnostic: onDiagnostic,
                   onClose: () {},
                 ),
         ),
@@ -427,7 +431,8 @@ void main() {
       (tester) async {
     final f = Fixture();
     await mount(tester, f);
-    const actions = ['diagnostic', 'privacy', 'export', 'support', 'exit'];
+    const actions = ['diagnostic', 'executions', 'privacy', 'export', 'support', 'exit'];
+    var refreshes = 0;
     for (var index = 0; index < actions.length; index++) {
       final action = actions[index];
       await press(tester, 'device-management-$action');
@@ -438,7 +443,8 @@ void main() {
       expect(find.byKey(const Key('device-management-dialog')), findsOneWidget);
       expect(find.text(deviceName), findsOneWidget);
       expect(f.closeCalls, 0);
-      expect(f.controller.refreshCalls, index + 1);
+      if (action != 'diagnostic') refreshes++;
+      expect(f.controller.refreshCalls, refreshes);
     }
     expect(f.opened, actions);
   });
@@ -666,8 +672,12 @@ void main() {
         if (controller.disposalCalls == 0) controller.dispose();
       }
     });
-    await tester.pumpWidget(controlledHost(selection, navigatorKey));
+    var opened = 0;
+    await tester.pumpWidget(controlledHost(selection, navigatorKey,
+        onDiagnostic: (_) async { opened++; }));
     await tester.pumpAndSettle();
+    final queuedDiagnostic = tester.widget<ButtonStyleButton>(find.byKey(
+        const Key('device-management-diagnostic'))).onPressed!;
     await press(tester, 'device-management-revoke');
     final queuedAcceptance = tester
         .widget<FilledButton>(find.widgetWithText(FilledButton, '确认撤销云端访问'))
@@ -692,6 +702,22 @@ void main() {
     }
     expect(original.confirmedMutations, 0);
     expect(replacement.confirmedMutations, 0);
+    if (find.text('返回设备管理').evaluate().isNotEmpty) {
+      await tester.tap(find.text('返回设备管理'));
+      await tester.pumpAndSettle();
+    }
+    expect(ModalRoute.of(tester.element(find.byType(DeviceManagementDialog)))!
+        .isCurrent, isTrue);
+    queuedDiagnostic();
+    await tester.pumpAndSettle();
+    expect(opened, 0);
+    expect(original.actionDispatches, 0);
+    expect(replacement.actionDispatches, 0,
+        reason: 'A queued old button must not silently target the new device.');
+    await press(tester, 'device-management-diagnostic');
+    expect(opened, 1);
+    expect(replacement.actionDispatches, 1);
+    expect(replacement.refreshCalls, 0);
     expect(targetStillVisible, isFalse);
     expect(confirmationStillVisible, isFalse);
     expect(tester.takeException(), isNull);

@@ -585,7 +585,8 @@ class DeviceManagementController extends ChangeNotifier {
   }
 
   Future<void> runAction(
-      Future<void> Function(DeviceManagementRecord) action) async {
+      Future<void> Function(DeviceManagementRecord) action,
+      {bool refreshAfter = true}) async {
     if (!hasAccess ||
         _device == null ||
         _busy ||
@@ -598,7 +599,7 @@ class DeviceManagementController extends ChangeNotifier {
     try {
       await action(target);
       if (!_current(generation)) return;
-      await _load(generation);
+      if (refreshAfter) await _load(generation);
     } catch (failure) {
       if (_current(generation)) {
         if (failure is ApiFailure && failure.code == 'REAUTH_REQUIRED') {

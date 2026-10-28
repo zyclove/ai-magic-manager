@@ -8,12 +8,13 @@
 - 设备详情、添加、注册查询与访问申请创建／详情使用既有资源租约和布尔核对信号。纯查看／普通取消不重读；实际修改或未知结果需要核对，信号不证明保存成功。注册查询后仍可确认／取消，因此保留这类操作后的单次核对。
 - ApiWriteDispatch 默认语义保持，设备专用借用观察器显式接收未带 Idempotency-Key 的变更派发，覆盖原注册和云端撤销接口；不改变请求头、正文、日志或防重复策略。退出操作专用 Gateway 只观察本窗口交给客户端的确认／取消尝试，不能当作物理发送或执行证据。
 - 创建、设备管理、注册、退出及两层审批历史绑定原父窗口和权限范围，只结束所属路由，保留独立覆盖通知。共用父绑定同时观察 popped/completed，覆盖 raw removeRoute 不完成 popped 的既有 SDK 行为。访问申请完成由宿主回调接管；注册查看设备等待原窗口结束及详情完成后再释放范围。
-- 保留设备管理控制器子流程返回后读取当前详情的既有行为；本阶段减少的是无变化的列表刷新，不声称消除所有详情读取。
+- `7ecdf04` 后继续收敛设备详情重复读取：runAction 默认保留返回核对，仅经源码确认纯 GET 的“设备诊断”显式免重读，原设备／栏目／快照及读取时间保持。执行记录默认可为 OWNER/ORG_ADMIN 提供重新检查／取消 POST，故保留原核对；未把整个执行记录入口视为只读。
+- 子操作按钮捕获原控制器，并在入口核对当前设备与原窗口状态；替换设备后旧按钮不能借新控制器执行。旧子流程 finally 也不能清除新控制器的进行中展示。
 
 ## 静态核对与待运行范围
 
 已定点核对调用签名、租约／窗口归属、派发标记位置、接口路径和回归源；最终提交前核对差异空白与文件范围。没有运行 SDK、格式化器、分析、测试、构建、资源轮询或服务维护；运行验收为 **NOT_RUN**，静态审查不能证明整体稳定。
 
-资源和排期恢复后，仅先运行受影响的既有文件：`access_requests_page_test.dart`、`devices_page_test.dart`、`members_page_workflow_browser_test.dart`、`approval_help_flow_browser_test.dart`、`device_management_entry_test.dart`、`api_deadline_test.dart`，以及设备注册／管理／退出受影响边界；前五份新增或扩展列表保留、单次核对、过期筛选和覆盖窗口旅程，最后一份覆盖显式未带键观察及认证晚到失权。不重复构建未变更组件；若共享 API 检查发现失败，再依具体影响扩展验证。
+资源和排期恢复后，仅先运行受影响的既有文件：`access_requests_page_test.dart`、`devices_page_test.dart`、`members_page_workflow_browser_test.dart`、`approval_help_flow_browser_test.dart`、`device_management_entry_test.dart`、`api_deadline_test.dart`，以及设备注册／管理／退出受影响边界；前五份新增或扩展列表保留、单次核对、过期筛选和覆盖窗口旅程，最后一份覆盖显式未带键观察及认证晚到失权。续改还涉及 `device_management_test.dart` 与 `device_management_dialog_test.dart`：前者保留默认重读并新增只读保留／pending失权边界，后者在既有子流程和控制器替换旅程中核对真实刷新策略与旧按钮隔离。上述均为回归源准备，仍为 NOT_RUN。不重复构建未变更组件；若共享 API 检查发现失败，再依具体影响扩展验证。
 
 按原门槛等待可用内存及 C/D 盘空间、SDK 空闲窗口，不降低准入条件。临时文件、缓存、源码副本和历史大取证文件不在提交范围。

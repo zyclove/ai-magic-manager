@@ -70,6 +70,8 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
     }
     if (oldWidget.controller != c) {
       invalidateConfirmation();
+      showingSubflow = false;
+      closeRequested = false;
       oldWidget.controller.removeListener(changed);
       search.clear();
       c.addListener(changed);
@@ -564,34 +566,45 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
 
   Widget actionButton(String key, String title, IconData icon,
       Future<void> Function(DeviceManagementRecord) action,
-      {bool primary = false}) {
-    final enabled = !c.busy && !checkingRevoke && c.hasAccess;
+      {bool primary = false, bool refreshAfter = true}) {
+    final controller = c;
+    final enabled = !controller.busy && !checkingRevoke && controller.hasAccess;
     return primary
         ? FilledButton.icon(
             key: Key(key),
-            onPressed: enabled ? () => runAction(action) : null,
+            onPressed: enabled
+                ? () => runAction(controller, action, refreshAfter: refreshAfter) : null,
             icon: Icon(icon, size: 18),
             label: Text(title),
           )
         : OutlinedButton.icon(
             key: Key(key),
-            onPressed: enabled ? () => runAction(action) : null,
+            onPressed: enabled
+                ? () => runAction(controller, action, refreshAfter: refreshAfter) : null,
             icon: Icon(icon, size: 18),
             label: Text(title),
           );
   }
 
-  Future<void> runAction(
-          Future<void> Function(DeviceManagementRecord) action) =>
-      c.runAction((device) async {
-        if (!mounted || !c.hasAccess) return;
-        setState(() => showingSubflow = true);
-        try {
-          await action(device);
-        } finally {
-          if (mounted) setState(() => showingSubflow = false);
+  Future<void> runAction(DeviceManagementController controller,
+      Future<void> Function(DeviceManagementRecord) action,
+      {bool refreshAfter = true}) async {
+    if (!mounted || closeRequested || !identical(c, controller) ||
+        !controller.hasAccess) return;
+    final route = ModalRoute.of(context);
+    if (route != null && (!route.isActive || !route.isCurrent)) return;
+    await controller.runAction((device) async {
+      if (!mounted || !identical(c, controller) || !controller.hasAccess) return;
+      setState(() => showingSubflow = true);
+      try {
+        await action(device);
+      } finally {
+        if (mounted && identical(c, controller)) {
+          setState(() => showingSubflow = false);
         }
-      });
+      }
+    }, refreshAfter: refreshAfter);
+  }
 
   Widget actions(DeviceManagementRecord device) {
     if (checkingRevoke) return const SizedBox.shrink();
@@ -606,7 +619,8 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
             primary: true),
       if (widget.onDiagnostic != null)
         actionButton('device-management-diagnostic', '设备诊断',
-            Icons.health_and_safety_outlined, widget.onDiagnostic!),
+            Icons.health_and_safety_outlined, widget.onDiagnostic!,
+            refreshAfter: false),
       if (widget.onExecutions != null)
         actionButton('device-management-executions', '执行记录',
             Icons.history_outlined, widget.onExecutions!),

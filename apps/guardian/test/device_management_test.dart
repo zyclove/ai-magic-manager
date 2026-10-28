@@ -316,6 +316,105 @@ void main() {
     expect(f.requests.length, 2);
     expect(f.controller.device, isNotNull);
   });
+  test('read-only nested actions retain section facts and last read times',
+      () async {
+    for (final section in [
+      DeviceManagementSection.capabilities,
+      DeviceManagementSection.applications
+    ]) {
+      final f = Fixture();
+      addTearDown(f.controller.dispose);
+      await f.controller.initialize();
+      await f.controller.selectSection(section);
+      final device = f.controller.device;
+      final capabilities = f.controller.capabilities;
+      final inventory = f.controller.inventory;
+      final updatedAt = f.controller.updatedAt;
+      final sectionUpdatedAt = f.controller.sectionUpdatedAt;
+      final readCount = f.requests.length;
+      var opened = 0;
+      expect(sectionUpdatedAt, isNotNull);
+      expect(
+          section == DeviceManagementSection.capabilities
+              ? capabilities
+              : inventory,
+          isNotNull);
+
+      await f.controller.runAction((value) async {
+        expect(value, same(device));
+        opened++;
+      }, refreshAfter: false);
+
+      expect(opened, 1);
+      expect(f.controller.device, same(device));
+      expect(f.controller.section, section);
+      expect(f.controller.capabilities, same(capabilities));
+      expect(f.controller.inventory, same(inventory));
+      expect(f.controller.updatedAt, same(updatedAt));
+      expect(f.controller.sectionUpdatedAt, same(sectionUpdatedAt));
+      expect(f.requests.length, readCount);
+      expect(f.controller.busy, isFalse);
+      expect(f.controller.error, isNull);
+    }
+  });
+  test('read-only action locks pending work and ignores late scope return',
+      () async {
+    final f = Fixture();
+    addTearDown(f.controller.dispose);
+    await f.controller.initialize();
+    final readCount = f.requests.length;
+    final pending = Completer<void>();
+    var opened = 0, confirmations = 0;
+    final action = f.controller.runAction((value) {
+      expect(value.id, deviceId);
+      opened++;
+      return pending.future;
+    }, refreshAfter: false);
+    try {
+      expect(f.controller.busy, isTrue);
+      expect(f.controller.canRevoke, isFalse);
+      await f.controller.runAction((_) async {
+        opened++;
+      }, refreshAfter: false);
+      await f.controller.refresh();
+      await f.controller.selectSection(DeviceManagementSection.capabilities);
+      await f.controller.revoke((_) async {
+        confirmations++;
+        return true;
+      });
+      expect(opened, 1);
+      expect(confirmations, 0);
+      expect(f.controller.section, DeviceManagementSection.overview);
+      expect(f.requests.length, readCount);
+
+      f.current = false;
+      f.controller.checkScope();
+      f.current = true;
+      f.controller.checkScope();
+      expect(f.controller.hasAccess, isFalse);
+      expect(f.controller.busy, isFalse);
+    } finally {
+      if (!pending.isCompleted) pending.complete();
+      await action.timeout(const Duration(seconds: 1));
+    }
+
+    expect(f.controller.hasAccess, isFalse);
+    expect(f.controller.device, isNull);
+    expect(f.controller.capabilities, isNull);
+    expect(f.controller.inventory, isNull);
+    expect(f.controller.updatedAt, isNull);
+    expect(f.controller.sectionUpdatedAt, isNull);
+    expect(f.controller.canRevoke, isFalse);
+    expect(
+        f.controller.error,
+        isA<ApiFailure>().having(
+            (failure) => failure.code, 'code', 'WORKSPACE_CHANGED'));
+    await f.controller.runAction((_) async {
+      opened++;
+    }, refreshAfter: false);
+    expect(opened, 1);
+    expect(f.requests.length, readCount);
+  });
   test('read 401 removes private facts and stays denied after token changes',
       () async {
     final f = Fixture();
