@@ -1828,12 +1828,23 @@ class ConsoleActions {
       final r = raw as Json;
       final grantedSeconds = request.grantedSeconds;
       final reason = r['reason'];
+      final requestReason = reason is String && reason.trim().isNotEmpty
+          ? reason : '未填写';
+      final packageName = request.applicationPackageName;
+      final identifiers = <String, String>{
+        '申请编号': request.id,
+        '对象编号': request.subjectId,
+        '设备编号': request.deviceId,
+        '应用编号': request.applicationId,
+        if (packageName != null) '应用包名': packageName,
+        '申请版本': '${request.version}',
+      };
       final decisionContext =
           '对象：${request.subjectName ?? request.subjectId}\n'
           '设备：${request.deviceName ?? request.deviceId}\n'
           '应用：${request.applicationName ?? request.applicationId}\n'
           '申请时长：${approvalDuration(request.requestedSeconds)}\n'
-          '申请理由：${reason is String && reason.trim().isNotEmpty ? reason : '未填写'}';
+          '申请理由：$requestReason';
       if (!context.mounted) return false;
       if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
       Api? deliveryApi;
@@ -1841,23 +1852,18 @@ class ConsoleActions {
           context,
           '临时访问申请',
           {
-            '申请编号': request.id,
             '申请对象': request.subjectName ?? request.subjectId,
-            if (request.subjectName != null) '对象编号': request.subjectId,
             '设备': request.deviceName ?? request.deviceId,
-            if (request.deviceName != null) '设备编号': request.deviceId,
             '应用': request.applicationName ?? request.applicationId,
-            if (request.applicationName != null) '应用编号': request.applicationId,
-            if (request.applicationPackageName != null)
-              '应用包名': request.applicationPackageName,
             '状态': label(request.state),
             if (r['reasonCode'] != null) '状态说明': label(r['reasonCode']),
             '申请时长': approvalDuration(request.requestedSeconds),
             if (grantedSeconds != null)
               '批准时长': approvalDuration(grantedSeconds),
-            '申请理由': r['reason'],
+            '申请理由': requestReason,
             '申请有效期': dateLabel(r['requestExpiresAt']),
-            '批准截止': dateLabel(r['absoluteNotAfter']),
+            if (r['absoluteNotAfter'] != null)
+              '批准截止': dateLabel(r['absoluteNotAfter']),
             if (request.state == 'PENDING') '当前文档': '尚未批准，暂无文档',
             '执行状态': label(r['executionState']),
             '回执说明': '当前尚未接入设备例外执行。接收或保存回执仅表示文档状态；下载与重试不会延长原批准截止时间。'
@@ -1866,22 +1872,50 @@ class ConsoleActions {
           hasAccess: current,
           closeOnAccessLost: true,
           reauth: reauth,
-          extraContent: request.state == 'PENDING' ? null : Builder(builder: (dialog) {
-            final route = ModalRoute.of(dialog);
-            bool available() => current() && dialog.mounted &&
-                route?.isActive == true &&
-                (route is! OwnedDialogRoute<dynamic> || route.available);
-            return ApprovalDeliverySummary(
-                key: ValueKey('approval-delivery-${request.id}-${request.version}'),
-                api: deliveryApi ??= api.scoped(available),
-                path: '$workspace/access-requests/${request.id}/delivery',
-                request: request,
-                accessChanges: changes,
-                isCurrent: available,
-                onReadDenied: rejectRequestRead,
-                onReviewNeeded: () { if (current()) needsReview = true; },
-                reauth: reauth);
-          }),
+          extraContent: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (request.state != 'PENDING') ...[
+                  Builder(builder: (dialog) {
+                    final route = ModalRoute.of(dialog);
+                    bool available() => current() && dialog.mounted &&
+                        route?.isActive == true &&
+                        (route is! OwnedDialogRoute<dynamic> || route.available);
+                    return ApprovalDeliverySummary(
+                        key: ValueKey('approval-delivery-${request.id}-${request.version}'),
+                        api: deliveryApi ??= api.scoped(available),
+                        path: '$workspace/access-requests/${request.id}/delivery',
+                        request: request,
+                        accessChanges: changes,
+                        isCurrent: available,
+                        onReadDenied: rejectRequestRead,
+                        onReviewNeeded: () { if (current()) needsReview = true; },
+                        reauth: reauth);
+                  }),
+                  const SizedBox(height: 16),
+                ],
+                ExpansionTile(
+                    key: const Key('approval-request-identifiers'),
+                    tilePadding: EdgeInsets.zero,
+                    title: const Text('编号与关联信息'),
+                    childrenPadding: const EdgeInsets.only(bottom: 12),
+                    children: [
+                      for (final entry in identifiers.entries)
+                        Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(entry.key,
+                                          style: const TextStyle(
+                                              fontSize: 12, color: muted)),
+                                      const SizedBox(height: 4),
+                                      SelectableText(entry.value),
+                                    ]))),
+                    ]),
+              ]),
           actions: [
             if (['TEACHER', 'CHILD'].contains(s.role) && request.state == 'PENDING')
               DetailAction('取消我的申请', (ctx) async {

@@ -550,16 +550,42 @@ void main() {
       'applicationPackageName': 'com.example.draw',
     });
     await fixture.open(tester, openAction: false);
-    for (final value in ['示例儿童', '学习平板', '绘画应用',
-      'com.example.draw', _applicationId,
-      '33333333-3333-4333-8333-333333333333',
-      '44444444-4444-4444-8444-444444444444']) {
-      expect(find.byWidgetPredicate(
-          (widget) => widget is SelectableText && widget.data == value),
-          findsOneWidget);
+    Finder fact(String value) => find.byWidgetPredicate(
+        (widget) => widget is SelectableText && widget.data == value);
+    for (final value in ['示例儿童', '学习平板', '绘画应用']) {
+      expect(fact(value), findsOneWidget);
     }
-    expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
-        widget.data == '1 分钟 30 秒'), findsOneWidget);
+    const identifiers = [_approvalId, _applicationId,
+      '33333333-3333-4333-8333-333333333333',
+      '44444444-4444-4444-8444-444444444444', 'com.example.draw', '3'];
+    for (final value in identifiers) {
+      expect(fact(value), findsNothing,
+          reason: 'Technical references start folded below the request facts.');
+    }
+    expect(fact('1 分钟 30 秒'), findsOneWidget);
+    final reads = (fixture.coreReads, fixture.listReads, fixture.deliveryReads);
+    final metadata = find.descendant(
+        of: find.byKey(const Key('approval-request-identifiers')),
+        matching: find.text('编号与关联信息'));
+    await tester.ensureVisible(metadata);
+    await tester.tap(metadata);
+    await _waitUntil(tester, () => identifiers.every(
+        (value) => fact(value).evaluate().length == 1));
+    for (final value in identifiers) {
+      expect(fact(value), findsOneWidget,
+          reason: 'Expanded references retain the complete selectable values.');
+    }
+    await tester.ensureVisible(metadata);
+    await tester.tap(metadata);
+    await _waitUntil(tester, () => identifiers.every(
+        (value) => fact(value).evaluate().isEmpty));
+    expect((fixture.coreReads, fixture.listReads, fixture.deliveryReads), reads);
+    expect(fixture.documentReads, isEmpty);
+    expect(fixture.attemptReads, isEmpty);
+    expect(fixture.posts, isEmpty);
+    for (final value in ['示例儿童', '学习平板', '绘画应用']) {
+      expect(fact(value), findsOneWidget);
+    }
     await tester.tap(find.widgetWithText(OutlinedButton, '批准'));
     await settleReads(tester);
     final minutes = find.byWidgetPredicate((widget) => widget is TextField &&

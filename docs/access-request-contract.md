@@ -84,6 +84,8 @@ AccessRequest 包含 id、subjectId、deviceId、registrationId、policyId、bas
 
 管理台快照要求grantedWindowSeconds明确存在：非null为1秒至原申请值的精确整数；APPROVED_PENDING_DELIVERY／REVOKED必有，PENDING／DENIED／CANCELLED／INVALIDATED为null；EXPIRED可以来自未批准或已批准，保留相应null／原授予时长。INVALIDATED只用于待处理失效，已批准失效转REVOKED。版本限制为0～9007199254740991的精确整数。详情以该快照分别显示申请与实际批准时长，不从交付摘要或表单草稿推断。
 
+审批详情先展示原申请对象、设备、应用、状态、时长和理由；申请／对象／设备／应用编号、申请版本及有权限的应用包名放入默认折叠的“编号与关联信息”，完整值可选取复制。展示名称仍只借用匹配当前请求及完整关联的原上下文；缺失名称直接回退完整编号，审计权限不变。展开／收起仅在本地展示，不追加目录或交付请求、不触发写入／列表核对；未批准仍零delivery读取，原渐进摘要及路由退役保持。无批准截止时省略空行，未填理由明确说明。
+
 批准与拒绝确认都展示原申请对象、设备、应用、时长和理由，按钮明确为“确认批准”／“确认拒绝”；拒绝说明结束当前申请，原原因选项及权限／版本／幂等／未知结果处理保持。其他通用表单默认按钮不变。
 
 管理侧 `GET /access-requests` 列表在原授权范围内可额外返回 `subjectName`、`deviceName`、`applicationName`、`applicationPackageName` 四个可选展示字段；审计角色不获得这些名称。单条查询、写入响应和设备侧仍只返回核心字段。名称与包名是目录资料，不能当作安装证据、应用安全评级或规则执行证明。
