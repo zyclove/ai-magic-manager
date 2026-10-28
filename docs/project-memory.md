@@ -81,7 +81,9 @@ ApiWriteDispatch／Api.trackingWrites 仅保存带键写请求交给 HTTP 客户
 
 [policy_draft_branch.dart](../apps/guardian/lib/core/policy_draft_branch.dart) 复用完整草稿／规则解析，匹配模板复制和历史回滚的原回执；[策略详情](../apps/guardian/lib/pages/policy_details_entry.dart) 共用一个名称表单与恢复流程。首次写入固定 UUID，未知后仅查询 copy-results 或 rollback-draft-results，保留原 If-Match／名称且不带写入幂等头。PolicyService 从原日志区分 committed/current，重新检查当前写权限，无新写入或查询 MFA；旧 creationResult 仍供其现有调用方使用。回滚默认当前名称，只产生草稿；完整核对来源规则与修订，不能用当前较新草稿代替原操作证明。
 
-策略版本历史在原 OwnedDialogRoute 内复用 ResourcePage 分页与操作租约，先开窗再取首批，不用 api.all 预读全部；API及逐页校验谓词在本窗口保持稳定。每页通过完整版本解析再接收，打开详情前冻结原快照；只读返回不重读，回滚变更沿原核对信号关闭旧详情。网络／坏页保留已读记录，原范围内明确失权则隐藏私有历史；不能把服务端403当作普通游标过期。
+ResourcePage 可由纯 `searchText` 提供领域格式化后的本地检索文本，并用 `searchHint` 说明可查字段；未配置时沿用原字段和状态标签搜索。它只处理已接收记录，不改变分页、权限、操作租约或发起网络请求；展示投影变化不重读列表。
+
+策略版本历史在原 OwnedDialogRoute 内复用 ResourcePage 分页与操作租约，先开窗再取首批，不用 api.all 预读全部；API及逐页校验谓词在本窗口保持稳定；搜索仅投影显示版本、格式化日期和完整编号，避免逐键遍历完整快照。每页通过完整版本解析再接收，打开详情前冻结原快照；只读返回不重读，回滚变更沿原核对信号关闭旧详情。网络／坏页保留已读记录，原范围内明确失权则隐藏私有历史；不能把服务端403当作普通游标过期。
 
 工作台的 [OverviewAttention](../apps/guardian/lib/core/overview_attention.dart) 只从既有授权摘要选择求助、申请、连接中的一个优先入口，角色文案不授予操作权；教师/儿童仅跟进本人申请，审计仅只读查看。管理与只读工作台复用 [WorkbenchTaskCard](../apps/guardian/lib/ui/workbench_task_card.dart)，宿主负责原范围复核及导航。刷新或错误时不展示下一步，旧摘要与读取时间仍可明确显示；不新增轮询、目录或计数请求。
 

@@ -456,6 +456,9 @@ Future<bool> _policyVersions(
     _readPolicyVersion(value, policyId);
     return true;
   }
+  String versionLabel(Json value) => '版本 ${value['sequence']}';
+  String searchVersion(Json value) =>
+      '${versionLabel(value)}\n${dateLabel(value['createdAt'])}\n${value['id']}';
 
   final changed = await _scopedDialog<bool>(context, scope,
       builder: (dialog, route, access) {
@@ -479,6 +482,8 @@ Future<bool> _policyVersions(
                 isCurrent: accepted,
                 canInteract: () => route.isCurrent,
                 includeRow: includeVersion,
+                searchText: searchVersion,
+                searchHint: '搜索版本、日期或编号',
                 onReadDenied: (failure) {
                   if (accepted() && _policyAccessDenied(failure)) {
                     scope._revoke();
@@ -488,7 +493,7 @@ Future<bool> _policyVersions(
                   if (accepted() && route.isCurrent) scope.reauthenticate();
                 },
                 columns: [
-                  ColumnSpec('版本', (r) => Text('版本 ${r['sequence']}')),
+                  ColumnSpec('版本', (r) => Text(versionLabel(r))),
                   ColumnSpec('发布时间', (r) => Text(dateLabel(r['createdAt']))),
                 ],
                 onOpenChanged: (row, lease) async {

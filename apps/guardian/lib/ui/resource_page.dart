@@ -5,7 +5,7 @@ import 'design.dart';
 import 'resource_action_lease.dart';
 export 'resource_action_lease.dart' show ResourceActionLease;
 
-// Search server values and the same localized labels displayed by status cells.
+// Default search includes server values and localized status labels.
 // JSON rows are acyclic; traverse nested values without constructing widgets.
 String _resourceSearchText(Object? value) {
   if (value == null) return '';
@@ -31,6 +31,9 @@ class ResourcePage extends StatefulWidget {
   /// Pure admission of accepted page rows; never replaces server authorization.
   /// Keep the callback stable. A changed predicate starts a new list lifecycle.
   final bool Function(Json)? includeRow;
+  /// Pure local text for domain-formatted values; never reads more records.
+  final String Function(Json)? searchText;
+  final String searchHint;
   final Future<void> Function(Json)? onOpen;
   /// Explicit write outcomes request refresh, including unresolved writes
   /// closed with user confirmation; true does not imply a successful save.
@@ -58,6 +61,8 @@ class ResourcePage extends StatefulWidget {
       required this.api,
       required this.columns,
       this.includeRow,
+      this.searchText,
+      this.searchHint = '搜索已加载记录',
       this.onOpen,
       this.onOpenChanged,
       this.refreshAfterOpen = true,
@@ -359,10 +364,13 @@ class ResourcePageState extends State<ResourcePage> {
         .split(RegExp(r'\s+'))
         .where((term) => term.isNotEmpty)
         .toList();
+    final searchText = widget.searchText;
     final filtered = terms.isEmpty
         ? rows
         : rows.where((row) {
-            final text = _resourceSearchText(row);
+            final text = searchText == null
+                ? _resourceSearchText(row)
+                : searchText(row).toLowerCase();
             return terms.every((term) => text.contains(term));
           }).toList();
     final narrow = MediaQuery.sizeOf(context).width < 760;
@@ -404,7 +412,7 @@ class ResourcePageState extends State<ResourcePage> {
                                 if (viewCurrent()) setState(() => query = v.trim());
                               },
                               decoration: InputDecoration(
-                                  hintText: '搜索已加载记录',
+                                  hintText: widget.searchHint,
                                   prefixIcon: const Icon(Icons.search, size: 20),
                                   suffixIcon: search.text.isEmpty
                                       ? null

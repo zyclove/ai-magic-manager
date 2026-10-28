@@ -543,6 +543,33 @@ void main() {
     expect(fixture.versionReads, hasLength(1),
         reason: 'A next cursor must not start another read automatically.');
 
+    final historySearch = find.descendant(
+        of: historyWidget, matching: find.byType(TextField));
+    expect(historySearch, findsOneWidget);
+    final firstVersion = find.descendant(
+        of: historyWidget,
+        matching: find.byWidgetPredicate(
+            (widget) => widget is Text && widget.data == '版本 98731'));
+    final displayedDates = tester
+        .widgetList<Text>(find.descendant(
+            of: historyWidget, matching: find.byType(Text)))
+        .map((widget) => widget.data)
+        .whereType<String>()
+        .where((text) => text.contains('2024'))
+        .toList(growable: false);
+    expect(displayedDates, hasLength(1));
+    for (final query in ['版本 98731', displayedDates.single]) {
+      await tester.enterText(historySearch, query);
+      await tester.pump();
+      expect(firstVersion, findsOneWidget);
+      expect(fixture.versionReads, hasLength(1));
+      expect(fixture.writes, isEmpty);
+    }
+    await tester.enterText(historySearch, '');
+    await tester.pump();
+    expect(firstVersion, findsOneWidget);
+    expect(fixture.versionReads, hasLength(1));
+
     await tester.ensureVisible(_button('加载更多'));
     await tester.tap(_button('加载更多'));
     await _waitUntil(
