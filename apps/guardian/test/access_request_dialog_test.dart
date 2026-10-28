@@ -334,7 +334,7 @@ void main() {
     expect(dropdown.items!.map((item) => item.value), [replacement]);
     expect(dropdown.onChanged, isNotNull);
     expect(find.text('当前选择的设备已失效，已保留时长和理由。请重新选择设备。'), findsOneWidget);
-    oldRules.completeError(const ApiFailure(503, 'TEMPORARY_FAILURE'));
+    oldRules.completeError(const ApiFailure(403, 'SCOPE_DENIED'));
     await tester.pumpAndSettle();
     expect(find.text(targetChanged.message), findsOneWidget,
         reason:
@@ -525,35 +525,207 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('ordinary device load failure retries the same cursor',
+  testWidgets(
+      'directory read denials erase the private draft and retire saved controls',
       (tester) async {
-    final selectedDevice = (await load('devices', null)).items.first;
-    final cursors = <String?>[];
-    await open(tester, (body) async => body, loader: (path, cursor) async {
-      if (path != 'devices') return load(path, cursor);
-      cursors.add(cursor);
-      return switch (cursors.length) {
-        1 => PageResult([selectedDevice], 'retry-page'),
-        2 => throw const ApiFailure(503, 'TEMPORARY_FAILURE'),
-        _ => PageResult([
-            {'id': 'next-device', 'displayName': '后续设备', 'state': 'ACTIVE'},
-          ], null),
-      };
-    });
-    await tester.ensureVisible(find.text('加载更多设备'));
-    await tester.tap(find.text('加载更多设备'));
-    await tester.pumpAndSettle();
-    expect(find.text('从首页重新加载设备'), findsNothing);
-    await tester.ensureVisible(find.text('重试加载设备'));
-    await tester.tap(find.text('重试加载设备'));
-    await tester.pumpAndSettle();
-    expect(cursors, [null, 'retry-page', 'retry-page']);
-    final deviceField = find.byKey(const Key('request-device'));
-    expect(
-        _deviceDropdown(tester, deviceField).items!.map((item) => item.value),
-        unorderedEquals([deviceId, 'next-device']));
-    expect(find.text('加载更多设备'), findsNothing);
-    expect(tester.takeException(), isNull);
+    for (final directory in ['devices', 'options']) {
+      for (final status in [401, 403]) {
+        final reads = <(String, String?)>[];
+        final writes = <Json>[];
+        final results = <Json?>[];
+        final latePage = Completer<PageResult>();
+        var denyReads = true;
+        addTearDown(() async {
+          await tester.pumpWidget(const SizedBox.shrink());
+          if (!latePage.isCompleted) latePage.complete(PageResult([], null));
+          await tester.pumpAndSettle();
+        });
+        await open(tester, (body) async {
+          writes.add(body);
+          return body;
+        }, onResult: results.add, loader: (path, cursor) async {
+          reads.add((path, cursor));
+          final kind = path == 'devices' ? 'devices' : 'options';
+          if (cursor == null || !denyReads) {
+            final page = await load(path, cursor);
+            return PageResult(page.items, 'more-$kind');
+          }
+          if (kind == directory) {
+            throw ApiFailure(status, 'READ_DENIED');
+          }
+          return latePage.future;
+        });
+        await selectDevice(tester);
+        await selectApp(tester);
+        await tester.enterText(find.byKey(const Key('request-minutes')), '6');
+        await tester.enterText(find.byKey(const Key('request-seconds')), '19');
+        await tester.enterText(
+            find.byKey(const Key('request-reason')), '需隐藏的私有申请理由');
+        final textControllers = [
+          for (final key in [
+            'request-minutes',
+            'request-seconds',
+            'request-reason',
+          ])
+            tester.widget<TextFormField>(find.byKey(Key(key))).controller!,
+        ];
+        final oldDevice = tester
+            .widget<DropdownButtonFormField<String>>(
+                find.byKey(const Key('request-device')))
+            .onChanged!;
+        final oldOption = tester
+            .widget<DropdownButtonFormField<String>>(
+                find.byKey(const ValueKey('option-$deviceId')))
+            .onChanged!;
+        final oldRule = tester
+            .widget<CheckboxListTile>(find.byType(CheckboxListTile).first)
+            .onChanged!;
+        VoidCallback button(String label) => tester
+            .widget<TextButton>(find.widgetWithText(TextButton, label))
+            .onPressed!;
+        final moreDevices = button('加载更多设备');
+        final moreRules = button('加载更多规则');
+        final refresh = button('刷新可申请规则');
+        final send = tester
+            .widget<FilledButton>(find.widgetWithText(FilledButton, '提交申请'))
+            .onPressed!;
+        void invokeSavedControls() {
+          oldDevice(null);
+          oldOption(null);
+          oldRule(false);
+          moreDevices();
+          moreRules();
+          refresh();
+          send();
+        }
+
+        // Keep the other directory in flight when this directory denies access.
+        (directory == 'devices' ? moreRules : moreDevices)();
+        await tester.pump();
+        button(directory == 'devices' ? '加载更多设备' : '加载更多规则')();
+        await tester.pumpAndSettle();
+        final deniedReads = List<(String, String?)>.of(reads);
+        expect(deniedReads, hasLength(4));
+        expect(deniedReads.last.$2, 'more-$directory');
+
+        void expectHidden() {
+          expect(find.text('读取权限已变化'), findsOneWidget);
+          expect(find.text('原申请资料已隐藏。请关闭窗口，在当前工作空间重新打开申请。'),
+              findsOneWidget);
+          expect(find.byType(Form, skipOffstage: false), findsNothing);
+          expect(find.byType(TextFormField, skipOffstage: false), findsNothing);
+          expect(find.byType(CheckboxListTile, skipOffstage: false), findsNothing);
+          for (final privateText in [
+            '教室平板 · 11111111…',
+            '课堂练习 · 课堂策略',
+            '规则 lesson_0',
+            '规则 window',
+            '需隐藏的私有申请理由',
+          ]) {
+            expect(find.text(privateText, skipOffstage: false), findsNothing);
+          }
+          expect(textControllers.map((controller) => controller.text),
+              ['', '', '']);
+          final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
+          expect(dialog.actions, hasLength(1));
+          expect(button('关闭'), isNotNull);
+          expect(reads, deniedReads);
+          expect(writes, isEmpty);
+          expect(results, isEmpty);
+        }
+
+        expectHidden();
+        invokeSavedControls();
+        await tester.pump();
+        expectHidden();
+        latePage.complete(await load(
+            directory == 'devices'
+                ? 'access-requests/options?deviceId=$deviceId'
+                : 'devices',
+            null));
+        await tester.pumpAndSettle();
+        expectHidden();
+        denyReads = false;
+        invokeSavedControls();
+        await tester.pumpAndSettle();
+        expectHidden();
+        await tester.tap(find.widgetWithText(TextButton, '关闭'));
+        await tester.pumpAndSettle();
+        expect(find.byType(AccessRequestDialog), findsNothing);
+        expect(results, [null]);
+        expect(tester.takeException(), isNull);
+      }
+    }
+  });
+
+  testWidgets('ordinary and reauthentication device failures preserve the draft',
+      (tester) async {
+    for (final failure in [
+      const ApiFailure(503, 'TEMPORARY_FAILURE'),
+      const ApiFailure(401, 'REAUTH_REQUIRED'),
+    ]) {
+      final selectedDevice = (await load('devices', null)).items.first;
+      final cursors = <String?>[];
+      await open(tester, (body) async => body, loader: (path, cursor) async {
+        if (path != 'devices') return load(path, cursor);
+        cursors.add(cursor);
+        return switch (cursors.length) {
+          1 => PageResult([selectedDevice], 'retry-page'),
+          2 => throw failure,
+          _ => PageResult([
+              {'id': 'next-device', 'displayName': '后续设备', 'state': 'ACTIVE'},
+            ], null),
+        };
+      });
+      await selectDevice(tester);
+      await selectApp(tester);
+      await tester.enterText(find.byKey(const Key('request-minutes')), '7');
+      await tester.enterText(find.byKey(const Key('request-seconds')), '12');
+      await tester.enterText(find.byKey(const Key('request-reason')), '保留的申请理由');
+      void expectDraft() {
+        expect(find.text('读取权限已变化'), findsNothing);
+        expect(
+            tester
+                .state<FormFieldState<String>>(
+                    find.byKey(const Key('request-device')))
+                .value,
+            deviceId);
+        expect(
+            tester
+                .state<FormFieldState<String>>(
+                    find.byKey(const ValueKey('option-$deviceId')))
+                .value,
+            'policy-1/app-1');
+        expect(find.text('申请放宽的规则（2/20）'), findsOneWidget);
+        expect([
+          for (final key in [
+            'request-minutes',
+            'request-seconds',
+            'request-reason',
+          ])
+            tester.widget<TextFormField>(find.byKey(Key(key))).controller!.text,
+        ], ['7', '12', '保留的申请理由']);
+      }
+
+      await tester.ensureVisible(find.text('加载更多设备'));
+      await tester.tap(find.text('加载更多设备'));
+      await tester.pumpAndSettle();
+      expect(find.text('从首页重新加载设备'), findsNothing);
+      expectDraft();
+      await tester.ensureVisible(find.text('重试加载设备'));
+      await tester.tap(find.text('重试加载设备'));
+      await tester.pumpAndSettle();
+      expect(cursors, [null, 'retry-page', 'retry-page']);
+      final deviceField = find.byKey(const Key('request-device'));
+      expect(
+          _deviceDropdown(tester, deviceField).items!.map((item) => item.value),
+          unorderedEquals([deviceId, 'next-device']));
+      expect(find.text('加载更多设备'), findsNothing);
+      expectDraft();
+      await tester.tap(find.widgetWithText(TextButton, '关闭'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    }
   });
 
   testWidgets('unknown retries preserve the immutable body through refusals',

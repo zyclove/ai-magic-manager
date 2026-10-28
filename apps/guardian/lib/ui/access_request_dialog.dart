@@ -29,22 +29,23 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
   bool deviceFailed = false, deviceCursorExpired = false, optionFailed = false;
   Object? error;
   Json? pending;
-  bool stopped = false, active = true, finished = false;
+  bool stopped = false, active = true, finished = false, readDenied = false;
   DialogAccessBinding? access;
   bool initialized = false;
   ModalRoute<dynamic>? get owner => access?.parent;
   int generation = 0;
   bool get windowCurrent => mounted && active && !finished &&
       access?.permitted() != false;
+  bool get dataCurrent => windowCurrent && !readDenied;
   bool get interactive => windowCurrent &&
       (owner == null || (owner!.isActive && owner!.isCurrent));
   bool editing(int view) => interactive && !locked && !loadingOptions &&
       generation == view;
 
   VoidCallback viewAction(VoidCallback callback, int view) => () {
-    if (interactive && generation == view) callback();
+    if (interactive && !readDenied && generation == view) callback();
   };
-  bool get locked => busy || pending != null || stopped;
+  bool get locked => busy || pending != null || stopped || readDenied;
 
   int? get requestedSeconds {
     final minute = int.tryParse(minutes.text.trim());
@@ -119,6 +120,34 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
     super.dispose();
   }
 
+  bool rejectPrivateRead(Object failure) {
+    if (!dataCurrent || failure is! ApiFailure ||
+        !((failure.code != 'REAUTH_REQUIRED' &&
+                (failure.status == 401 || failure.status == 403)) ||
+            failure.code == 'WORKSPACE_CHANGED')) return false;
+    setState(() {
+      readDenied = true;
+      generation++;
+      devices.clear();
+      options.clear();
+      selectedRules.clear();
+      device = null;
+      option = null;
+      deviceCursor = null;
+      optionCursor = null;
+      deviceFailed = false;
+      deviceCursorExpired = false;
+      optionFailed = false;
+      loadingDevices = false;
+      loadingOptions = false;
+      minutes.clear();
+      seconds.clear();
+      reason.clear();
+      error = failure;
+    });
+    return true;
+  }
+
   Future<void> loadDevices() async {
     if (!interactive || locked || loadingDevices) return;
     final restarting = deviceCursorExpired;
@@ -129,7 +158,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
     });
     try {
       final page = await widget.load('devices', requestCursor);
-      if (!windowCurrent) return;
+      if (!dataCurrent) return;
       setState(() {
         final selectionReturned = restarting &&
             device != null &&
@@ -166,7 +195,8 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
         }
       });
     } catch (e) {
-      if (windowCurrent) {
+      if (dataCurrent) {
+        if (rejectPrivateRead(e)) return;
         setState(() {
           error = e;
           deviceFailed = true;
@@ -176,7 +206,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
         });
       }
     } finally {
-      if (windowCurrent) setState(() => loadingDevices = false);
+      if (dataCurrent) setState(() => loadingDevices = false);
     }
   }
 
@@ -197,7 +227,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
     try {
       final page = await widget.load(
           'access-requests/options?deviceId=$current', optionCursor);
-      if (!windowCurrent || epoch != generation) return;
+      if (!dataCurrent || epoch != generation) return;
       setState(() {
         for (final policy in page.items) {
           for (final app in policy['applications'] as List) {
@@ -218,14 +248,15 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
         optionFailed = false;
       });
     } catch (e) {
-      if (windowCurrent && epoch == generation) {
+      if (dataCurrent && epoch == generation) {
+        if (rejectPrivateRead(e)) return;
         setState(() {
           error = e;
           optionFailed = true;
         });
       }
     } finally {
-      if (windowCurrent && epoch == generation) {
+      if (dataCurrent && epoch == generation) {
         setState(() => loadingOptions = false);
       }
     }
@@ -277,7 +308,8 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
   }
 
   Future<void> send() async {
-    if (!interactive || busy || stopped || loadingOptions || loadingDevices || stale) {
+    if (!interactive || readDenied || busy || stopped ||
+        loadingOptions || loadingDevices || stale) {
       return;
     }
     final retryingUnknown = pending != null;
@@ -340,6 +372,17 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
   @override
   Widget build(BuildContext context) {
     if (!windowCurrent) return const SizedBox.shrink();
+    if (readDenied) {
+      return PopScope(
+          canPop: !busy,
+          child: AlertDialog(
+              title: const Text('读取权限已变化'),
+              content: const Text('原申请资料已隐藏。请关闭窗口，在当前工作空间重新打开申请。'),
+              actions: [
+                TextButton(onPressed: busy ? null : close,
+                    child: const Text('关闭')),
+              ]));
+    }
     final view = generation;
     final selectedDevice = device, selectedOption = option;
     return PopScope(

@@ -16,10 +16,12 @@
 
 - `779264c` 后继续收口申请窗口旧事件：复用既有 DialogAccessBinding 区分新交互与原请求续程；首批设备读取在捕获路由后一次启动。设备／应用／规则、目录加载和提交同步检查原窗口／代次，规则加载同步防重；应用切换或刷新后旧事件不复活，设备分页仍保留响应时较新的选择。完成和停用永久退役，默认 showDialog 完成也只结束原路由，不关闭独立通知。
 
+- `1f4c3b6` 后补目录读取失权边界：当前GET明确拒绝或工作空间失效时永久锁存本窗口readDenied，清私有目录及可见草稿，只留泛化说明和关闭。dataCurrent拦住所有晚回；规则拒绝先核原gen，设备分页保持当前选择语义。网络／MFA／游标失败与POST拒绝仍按原语义，不误清未知正文或停止状态。
+
 ## 静态核对与待运行范围
 
 已定点核对调用签名、租约／窗口归属、派发标记位置、接口路径和回归源；最终提交前核对差异空白与文件范围。没有运行 SDK、格式化器、分析、测试、构建、资源轮询或服务维护；运行验收为 **NOT_RUN**，静态审查不能证明整体稳定。
 
-资源和排期恢复后，仅先运行受影响的既有文件：`access_requests_page_test.dart`、`devices_page_test.dart`、`members_page_workflow_browser_test.dart`、`approval_help_flow_browser_test.dart`、`device_management_entry_test.dart`、`api_deadline_test.dart`，以及设备注册／管理／退出受影响边界；前五份新增或扩展列表保留、单次核对、过期筛选和覆盖窗口旅程，最后一份覆盖显式未带键观察及认证晚到失权。续改还涉及 `device_management_test.dart` 与 `device_management_dialog_test.dart`：前者保留默认重读并新增只读保留／pending失权边界，后者在既有子流程和控制器替换旅程中核对真实刷新策略与旧按钮隔离。访问申请创建另更新 `access_request_dialog_test.dart` 的时长边界、余秒／短时／空秒、原正文不可变和拒绝后恢复／停止断言；继续在既有设备／规则恢复旅程检查同步防重与旧选项失效，新增一条有界组合旅程覆盖通知置顶、pending POST、默认路由完成和卸载后旧入口无副作用。上述均为回归源准备，仍为 NOT_RUN。不重复构建未变更组件；若共享 API 检查发现失败，再依具体影响扩展验证。
+资源和排期恢复后，仅先运行受影响的既有文件：`access_requests_page_test.dart`、`devices_page_test.dart`、`members_page_workflow_browser_test.dart`、`approval_help_flow_browser_test.dart`、`device_management_entry_test.dart`、`api_deadline_test.dart`，以及设备注册／管理／退出受影响边界；前五份新增或扩展列表保留、单次核对、过期筛选和覆盖窗口旅程，最后一份覆盖显式未带键观察及认证晚到失权。续改还涉及 `device_management_test.dart` 与 `device_management_dialog_test.dart`：前者保留默认重读并新增只读保留／pending失权边界，后者在既有子流程和控制器替换旅程中核对真实刷新策略与旧按钮隔离。访问申请创建另更新 `access_request_dialog_test.dart` 的时长边界、余秒／短时／空秒、原正文不可变和拒绝后恢复／停止断言；继续在既有设备／规则恢复旅程检查同步防重与旧选项失效，新增一条有界组合旅程覆盖通知置顶、pending POST、默认路由完成和卸载后旧入口无副作用。读取失权续改还在同一测试文件循环覆盖设备／规则目录×401/403、另一目录晚成功不复活、旧回调退役与关闭可用；普通设备失败加入401 REAUTH_REQUIRED，保留草稿和同游标重试；旧目标晚规则403保持新目标可用。上述均为回归源准备，仍为 NOT_RUN。不重复构建未变更组件；若共享 API 检查发现失败，再依具体影响扩展验证。
 
 按原门槛等待可用内存及 C/D 盘空间、SDK 空闲窗口，不降低准入条件。临时文件、缓存、源码副本和历史大取证文件不在提交范围。
