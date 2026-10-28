@@ -58,7 +58,7 @@ class ApprovalListContext {
 
 /// Fresh core facts stay authoritative even when matching list labels exist.
 class ApprovalRequestSnapshot {
-  final String id, subjectId, deviceId, applicationId, state;
+  final String id, subjectId, deviceId, applicationId, registrationId, state;
   final int requestedSeconds, version;
   final int? grantedSeconds;
   final String? subjectName, deviceName, applicationName, applicationPackageName;
@@ -68,6 +68,7 @@ class ApprovalRequestSnapshot {
       required this.subjectId,
       required this.deviceId,
       required this.applicationId,
+      required this.registrationId,
       required this.state,
       required this.requestedSeconds,
       required this.grantedSeconds,
@@ -84,6 +85,7 @@ class ApprovalRequestSnapshot {
     final subject = _requiredIdentity(raw['subjectId']);
     final device = _requiredIdentity(raw['deviceId']);
     final application = _requiredIdentity(raw['applicationId']);
+    final registration = _requiredIdentity(raw['registrationId']);
     final state = raw['state'];
     final requested = raw['requestedWindowSeconds'];
     final granted = raw['grantedWindowSeconds'];
@@ -106,7 +108,7 @@ class ApprovalRequestSnapshot {
       throw const ApiFailure(502, 'INVALID_RESPONSE');
     }
     final labels = context != null &&
-            context._matches(id, subject, device, application, raw['registrationId'])
+            context._matches(id, subject, device, application, registration)
         ? context
         : null;
     return ApprovalRequestSnapshot._(
@@ -114,6 +116,7 @@ class ApprovalRequestSnapshot {
         subjectId: subject,
         deviceId: device,
         applicationId: application,
+        registrationId: registration,
         state: state,
         requestedSeconds: requested,
         grantedSeconds: granted as int?,
@@ -123,7 +126,64 @@ class ApprovalRequestSnapshot {
         applicationName: labels?.applicationName,
         applicationPackageName: labels?.applicationPackageName);
   }
+
+  /// A decision response is the current reconciled request, not a cached receipt.
+  ApprovalRequestSnapshot verifyDecision(Object? raw, {required Json body}) {
+    if (state != 'PENDING' || raw is! Json || !const {
+      'issuedAt', 'absoluteNotAfter', 'reasonCode', 'executionState',
+    }.every(raw.containsKey)) {
+      throw const ApiFailure(502, 'INVALID_RESPONSE');
+    }
+    final result = ApprovalRequestSnapshot.read(raw, expectedId: id);
+    if (result.subjectId != subjectId || result.deviceId != deviceId ||
+        result.applicationId != applicationId ||
+        result.registrationId != registrationId ||
+        result.requestedSeconds != requestedSeconds ||
+        raw['executionState'] != 'NOT_ENFORCED') {
+      throw const ApiFailure(502, 'INVALID_RESPONSE');
+    }
+    final issued = raw['issuedAt'], until = raw['absoluteNotAfter'];
+    final reason = raw['reasonCode'];
+    var accepted = false;
+    if (body['decision'] == 'APPROVE') {
+      final granted = body['grantedWindowSeconds'];
+      accepted = body.length == 2 &&
+          body.keys.every(const {'decision', 'grantedWindowSeconds'}.contains) &&
+          _safeApprovalInteger(granted) && granted >= 1 &&
+          granted <= requestedSeconds && result.grantedSeconds == granted &&
+          _safeApprovalInteger(issued) && _safeApprovalInteger(until) &&
+          until - issued == granted * 1000 &&
+          (switch (result.state) {
+            'APPROVED_PENDING_DELIVERY' => result.version == version + 1 &&
+                reason == null,
+            'EXPIRED' => result.version == version + 2 &&
+                reason == 'TIME_EXPIRED',
+            'REVOKED' => result.version == version + 2 && reason is String &&
+                reason.trim().isNotEmpty && reason.length <= 60 &&
+                !RegExp(r'[\x00-\x1f\x7f-\x9f]').hasMatch(reason),
+            _ => false,
+          });
+    } else if (body['decision'] == 'DENY') {
+      final submittedReason = body['reasonCode'];
+      accepted = body.keys.every(const {'decision', 'reasonCode'}.contains) &&
+          (submittedReason == null ||
+              const {'NOT_NOW', 'NOT_ALLOWED', 'OTHER'}.contains(submittedReason)) &&
+          result.state == 'DENIED' && result.version == version + 1 &&
+          result.grantedSeconds == null && issued == null && until == null &&
+          reason == submittedReason;
+    }
+    if (!accepted) throw const ApiFailure(502, 'INVALID_RESPONSE');
+    return result;
+  }
 }
+
+String approvalDecisionFeedback(String state) => switch (state) {
+      'APPROVED_PENDING_DELIVERY' => '批准已记录，可查看交付状态。',
+      'DENIED' => '申请已拒绝。',
+      'EXPIRED' => '原批准已到期，请核对当前记录。',
+      'REVOKED' => '原批准已撤销，请核对当前记录。',
+      _ => throw const ApiFailure(502, 'INVALID_RESPONSE'),
+    };
 
 /// Delivery metadata never replaces the captured request or proves execution.
 class ApprovalDeliverySnapshot {

@@ -1835,6 +1835,7 @@ class ConsoleActions {
         '申请编号': request.id,
         '对象编号': request.subjectId,
         '设备编号': request.deviceId,
+        '注册编号': request.registrationId,
         '应用编号': request.applicationId,
         if (packageName != null) '应用包名': packageName,
         '申请版本': '${request.version}',
@@ -1940,6 +1941,7 @@ class ConsoleActions {
                   closeOnSuccess: false),
             if (s.canWrite && request.state == 'PENDING') ...[
               DetailAction('批准', (ctx) async {
+                ApprovalRequestSnapshot? completedDecision;
                 final finish = captureDialogCompletion(ctx);
                 final key = requestId();
                 final result = await _tenantForm(
@@ -1966,13 +1968,22 @@ class ConsoleActions {
                     onSubmit: (api, v) async {
                       final body = approvalGrantBody(v,
                           requestedSeconds: request.requestedSeconds);
-                      return await api.trackingWrites(writes).send('POST',
+                      final reply = await api.trackingWrites(writes).send('POST',
                           '$root/access-requests/${request.id}/decisions',
-                          version: request.version, key: key, body: body) as Json;
+                          version: request.version, key: key, body: body);
+                      completedDecision = request.verifyDecision(reply, body: body);
+                      return reply as Json;
                     });
-                if (result != null && current()) finish();
+                final confirmed = completedDecision;
+                if (result != null && current()) {
+                  finish();
+                  if (confirmed != null && context.mounted && current()) {
+                    toast(context, approvalDecisionFeedback(confirmed.state));
+                  }
+                }
               }, closeOnSuccess: false),
               DetailAction('拒绝', (ctx) async {
+                ApprovalRequestSnapshot? completedDecision;
                 final finish = captureDialogCompletion(ctx);
                 final key = requestId();
                 final result = await _tenantForm(
@@ -1991,12 +2002,24 @@ class ConsoleActions {
                         'OTHER': '其他原因'
                       })
                     ],
-                    onSubmit: (api, v) async => await api.trackingWrites(writes).send(
-                        'POST', '$root/access-requests/${request.id}/decisions',
-                        version: request.version,
-                        key: key,
-                        body: {'decision': 'DENY', ...v}) as Json);
-                if (result != null && current()) finish();
+                    onSubmit: (api, v) async {
+                      final body = Map<String, dynamic>.unmodifiable({
+                        'decision': 'DENY',
+                        if (v['reasonCode'] != null) 'reasonCode': v['reasonCode'],
+                      });
+                      final reply = await api.trackingWrites(writes).send(
+                          'POST', '$root/access-requests/${request.id}/decisions',
+                          version: request.version, key: key, body: body);
+                      completedDecision = request.verifyDecision(reply, body: body);
+                      return reply as Json;
+                    });
+                final confirmed = completedDecision;
+                if (result != null && current()) {
+                  finish();
+                  if (confirmed != null && context.mounted && current()) {
+                    toast(context, approvalDecisionFeedback(confirmed.state));
+                  }
+                }
               }, destructive: true, closeOnSuccess: false)
             ],
             if (s.canWrite && request.state == 'APPROVED_PENDING_DELIVERY')

@@ -43,9 +43,17 @@ Json _approval(String state, {int requestedSeconds = 60, int? grantedSeconds}) =
       'subjectId': '44444444-4444-4444-8444-444444444444',
       'applicationId': _applicationId,
       'registrationId': _registrationId,
-      'absoluteNotAfter': null,
+      'policyId': 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      'baseVersionId': 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      'ruleIds': ['cccccccc-cccc-4ccc-8ccc-cccccccccccc'],
+      'issuedAt': const {'APPROVED_PENDING_DELIVERY', 'REVOKED'}.contains(state)
+          ? 1700000000000 : null,
+      'absoluteNotAfter': const {'APPROVED_PENDING_DELIVERY', 'REVOKED'}.contains(state)
+          ? 1700000000000 + (grantedSeconds ?? requestedSeconds) * 1000 : null,
+      'reasonCode': state == 'REVOKED' ? 'ADMIN_REVOKED' : null,
       'executionState': 'NOT_ENFORCED',
       'version': 3,
+      'createdAt': 1699999999000,
     };
 
 Json _delivery({int version = 3,
@@ -111,13 +119,13 @@ Future<void> _openHelpConfirmation(WidgetTester tester) async {
 class _ApprovalFixture {
   _ApprovalFixture(this.action,
       {this.requestedSeconds = 60, this.grantedSeconds, this.listRow,
-      this.documentAppend, this.attemptRead, this.deliveryOverride});
+      this.documentAppend, this.attemptRead, this.deliveryOverride, this.retryDecision});
 
   final String action;
   final int requestedSeconds;
   final int? grantedSeconds;
   final Json? listRow;
-  final Future<http.Response>? documentAppend, attemptRead;
+  final Future<http.Response>? documentAppend, attemptRead, retryDecision;
   final FutureOr<http.Response?> Function(int)? deliveryOverride;
   int listReads = 0, coreReads = 0, deliveryReads = 0;
   final documentReads = <http.Request>[];
@@ -188,6 +196,7 @@ class _ApprovalFixture {
         path.endsWith('/$_approvalId/${action == '撤销批准' ? 'revoke' :
             action == '取消我的申请' ? 'cancel' : 'decisions'}')) {
       posts.add(request);
+      if (posts.length > 1 && retryDecision != null) return retryDecision!;
       return pending.future;
     }
     throw StateError('Unexpected approval fixture request.');
@@ -259,15 +268,30 @@ class _ApprovalFixture {
     expect(posts.single.headers['idempotency-key'], isNotEmpty);
   }
 
-  void succeed() => pending.complete(_reply({
-        'id': _approvalId,
-        'version': 4,
-        'state': action == '批准'
-            ? 'APPROVED_PENDING_DELIVERY'
-            : action == '拒绝'
-                ? 'DENIED'
-                : 'REVOKED',
-      }));
+  Json decisionResult({String? state, Json overrides = const {}}) {
+    final next = state ?? (action == '批准' ? 'APPROVED_PENDING_DELIVERY'
+        : action == '拒绝' ? 'DENIED'
+        : action == '取消我的申请' ? 'CANCELLED' : 'REVOKED');
+    if (action != '批准' && action != '拒绝') {
+      return {..._approval(next, requestedSeconds: requestedSeconds,
+        grantedSeconds: grantedSeconds), 'version': 4, ...overrides};
+    }
+    final body = jsonDecode(posts.last.body) as Json;
+    final grant = action == '批准' ? body['grantedWindowSeconds'] as int : null;
+    const issued = 1700000000000;
+    return {..._approval(next, requestedSeconds: requestedSeconds),
+      'grantedWindowSeconds': grant,
+      'issuedAt': grant == null ? null : issued,
+      'absoluteNotAfter': grant == null ? null : issued + grant * 1000,
+      'reasonCode': action == '拒绝' ? body['reasonCode']
+          : next == 'EXPIRED' ? 'TIME_EXPIRED'
+          : next == 'REVOKED' ? 'ADMIN_REVOKED' : null,
+      'version': action == '批准' && const {'EXPIRED', 'REVOKED'}.contains(next)
+          ? 5 : 4,
+      ...overrides};
+  }
+
+  void succeed({String? state}) => pending.complete(_reply(decisionResult(state: state)));
 }
 
 Future<void> _cancelRevoke(WidgetTester tester) async {
@@ -555,7 +579,7 @@ void main() {
     for (final value in ['示例儿童', '学习平板', '绘画应用']) {
       expect(fact(value), findsOneWidget);
     }
-    const identifiers = [_approvalId, _applicationId,
+    const identifiers = [_approvalId, _applicationId, _registrationId,
       '33333333-3333-4333-8333-333333333333',
       '44444444-4444-4444-8444-444444444444', 'com.example.draw', '3'];
     for (final value in identifiers) {
@@ -610,6 +634,105 @@ void main() {
     await settleReads(tester);
     expect(fixture.detailsCompleted, isTrue);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('replayed approvals show their reconciled expiry or revocation without another decision',
+      (tester) async {
+    for (final scenario in <({String state, String feedback})>[
+      (state: 'EXPIRED', feedback: '原批准已到期，请核对当前记录。'),
+      (state: 'REVOKED', feedback: '原批准已撤销，请核对当前记录。'),
+    ]) {
+      final fixture = _ApprovalFixture('批准', requestedSeconds: 90);
+      await fixture.open(tester);
+      final minutes = find.byWidgetPredicate((widget) => widget is TextField &&
+          widget.decoration?.labelText == '分钟');
+      final seconds = find.byWidgetPredicate((widget) => widget is TextField &&
+          widget.decoration?.labelText == '秒');
+      await tester.enterText(minutes, '0');
+      await tester.enterText(seconds, '37');
+      await fixture.submit(tester);
+      fixture.succeed(state: scenario.state);
+      await _waitUntil(tester, () => fixture.detailsCompleted &&
+          find.text(scenario.feedback).evaluate().length == 1);
+      expect(find.byType(EditDialog), findsNothing);
+      expect(find.text('临时访问申请'), findsNothing);
+      expect(find.text('批准已记录，可查看交付状态。'), findsNothing);
+      expect(fixture.needsReview, isTrue);
+      expect(fixture.posts, hasLength(1));
+      expect(jsonDecode(fixture.posts.single.body),
+          {'decision': 'APPROVE', 'grantedWindowSeconds': 37});
+      expect(fixture.coreReads, 1);
+      expect(fixture.deliveryReads, 0);
+      expect(fixture.listReads, 0);
+      expect(tester.takeException(), isNull, reason: scenario.state);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await settleReads(tester);
+    }
+  });
+
+  testWidgets('unverified decision receipts keep the original inputs and retry the same decision',
+      (tester) async {
+    for (final action in ['批准', '拒绝']) {
+      final retry = Completer<http.Response>();
+      final fixture = _ApprovalFixture(action, requestedSeconds: 90,
+          retryDecision: retry.future);
+      addTearDown(() {
+        if (!retry.isCompleted) retry.complete(_reply(fixture.posts.isEmpty
+            ? _approval('DENIED') : fixture.decisionResult()));
+      });
+      await fixture.open(tester);
+      final minutes = find.byWidgetPredicate((widget) => widget is TextField &&
+          widget.decoration?.labelText == '分钟');
+      final seconds = find.byWidgetPredicate((widget) => widget is TextField &&
+          widget.decoration?.labelText == '秒');
+      if (action == '批准') {
+        await tester.enterText(minutes, '0');
+        await tester.enterText(seconds, '45');
+      }
+      await fixture.submit(tester);
+      final original = fixture.posts.single;
+      fixture.pending.complete(_reply(fixture.decisionResult(overrides:
+          action == '批准' ? {'registrationId': _olderDocumentId}
+              : {'reasonCode': 'OTHER'})));
+      final retryButton = find.widgetWithText(FilledButton, '重试原提交');
+      final invalid = find.byWidgetPredicate((widget) => widget is FailureView &&
+          widget.error is ApiFailure && (widget.error as ApiFailure).code == 'INVALID_RESPONSE');
+      await _waitUntil(tester, () => invalid.evaluate().length == 1 &&
+          retryButton.evaluate().length == 1 &&
+          tester.widget<FilledButton>(retryButton).onPressed != null);
+      expect(find.byType(EditDialog), findsOneWidget);
+      expect(find.text('临时访问申请', skipOffstage: false), findsOneWidget);
+      expect(fixture.detailsCompleted, isFalse);
+      if (action == '批准') {
+        expect(tester.widget<TextField>(minutes).enabled, isFalse);
+        expect(tester.widget<TextField>(seconds).enabled, isFalse);
+        expect(tester.widget<TextField>(minutes).controller!.text, '0');
+        expect(tester.widget<TextField>(seconds).controller!.text, '45');
+      } else {
+        expect(tester.widget<DropdownButtonFormField<String>>(
+            find.byType(DropdownButtonFormField<String>)).onChanged, isNull);
+      }
+      expect(fixture.posts, hasLength(1));
+      await tester.tap(retryButton);
+      await _waitUntil(tester, () => fixture.posts.length == 2);
+      final repeated = fixture.posts.last;
+      expect(repeated.body, original.body);
+      expect(repeated.headers['if-match'], original.headers['if-match']);
+      expect(repeated.headers['idempotency-key'], original.headers['idempotency-key']);
+      retry.complete(_reply(fixture.decisionResult()));
+      final feedback = action == '批准' ? '批准已记录，可查看交付状态。' : '申请已拒绝。';
+      await _waitUntil(tester, () => fixture.detailsCompleted &&
+          find.text(feedback).evaluate().length == 1);
+      expect(find.byType(EditDialog), findsNothing);
+      expect(find.text('临时访问申请'), findsNothing);
+      expect(fixture.needsReview, isTrue);
+      expect(fixture.posts, hasLength(2));
+      expect(fixture.coreReads, 1);
+      expect(fixture.deliveryReads, 0);
+      expect(tester.takeException(), isNull, reason: action);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await settleReads(tester);
+    }
   });
 
   testWidgets('pending delivery leaves core actions usable and late results cannot affect a new window',
@@ -1032,6 +1155,8 @@ void main() {
       await settleReads(tester);
       expect(fixture.needsReview, isTrue,
           reason: 'A dispatched write still needs review after an unknown result.');
+      expect(find.text('批准已记录，可查看交付状态。'), findsNothing);
+      expect(find.text('申请已拒绝。'), findsNothing);
       expect(tester.takeException(), isNull);
     });
   }

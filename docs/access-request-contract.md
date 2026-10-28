@@ -42,6 +42,10 @@ TEACHER 不获得审批权限、策略修改或设备管理权限。教师仅提
 
 创建和审批的幂等回放在复核当前权限后重新读取申请状态，已到期或撤回时返回当前事实及版本，不重放过时的有效批准。原始决定及绝对截止时间不改变。
 
+管理台决策回执以原PENDING快照核对id、subjectId、deviceId、applicationId、必传registrationId及原申请秒数，不能只凭200或任意Json结束。以原版本n为基准，APPROVE仍有效为APPROVED_PENDING_DELIVERY／n+1，已到期或撤销为EXPIRED／REVOKED、n+2；原授予秒数必须等规范提交值，issuedAt和absoluteNotAfter明确且为安全整数，差值等授予秒数×1000。有效批准reasonCode为null，到期为TIME_EXPIRED，撤销原因按现行String形状保留开放值。DENY仅DENIED／n+1，授予秒数和两个时间为null，理由精确匹配原正文；所有回执executionState仍固定NOT_ENFORCED。200 PENDING或批准回执缺原grant都不合法。
+
+原正文只发当前决定白名单字段；回执缺失或不一致按502 INVALID_RESPONSE交由既有未知结果保护，不解释为未写入，不替换原键、If-Match或内容。仅已核验结果按“批准已记录／已拒绝／原批准已到期／已撤销”提示当前事实，不称设备已解锁，不增加确认或自动重放。用户关闭未知／冲突表单只核对列表，不显示成功反馈；原路由／范围失效或独立通知覆盖的完成规则保持。
+
 ### 3.1 创建示例
 
 ```json

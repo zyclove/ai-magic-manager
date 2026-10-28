@@ -56,6 +56,7 @@ void main() {
     expect(snapshot.subjectId, 'subject-1');
     expect(snapshot.deviceId, 'device-1');
     expect(snapshot.applicationId, 'application-1');
+    expect(snapshot.registrationId, 'registration-1');
     expect(snapshot.version, 8);
     expect(snapshot.state, 'DENIED');
     expect(snapshot.requestedSeconds, 37);
@@ -77,7 +78,6 @@ void main() {
       {'deviceId': 'device-2'},
       {'applicationId': 'application-2'},
       {'registrationId': 'registration-2'},
-      {'registrationId': null},
     ]) {
       final current = {..._fresh(), ...changed};
       final result = ApprovalRequestSnapshot.read(current,
@@ -101,6 +101,8 @@ void main() {
       {..._fresh(), 'subjectId': ''},
       {..._fresh(), 'deviceId': {'private': 'raw'}},
       {..._fresh(), 'applicationId': 1},
+      {..._fresh(), 'registrationId': null},
+      _fresh()..remove('registrationId'),
       {..._fresh(), 'state': 'PRIVATE_UNKNOWN'},
       {..._fresh(), 'requestedWindowSeconds': 0},
       {..._fresh(), 'requestedWindowSeconds': 3601},
@@ -148,6 +150,97 @@ void main() {
       expect(() => ApprovalRequestSnapshot.read(invalid, expectedId: 'request-1'),
           _failure(502, 'INVALID_RESPONSE'));
     }
+  });
+
+  test('decision receipts match the original write and reconciled lifecycle', () {
+    final request = ApprovalRequestSnapshot.read(_fresh(), expectedId: 'request-1');
+    const approval = <String, dynamic>{
+      'decision': 'APPROVE', 'grantedWindowSeconds': 45,
+    };
+    const denial = <String, dynamic>{'decision': 'DENY', 'reasonCode': 'NOT_NOW'};
+    const issued = 1700000000000;
+    Json receipt(String state) => {
+      ..._fresh(), 'state': state, 'grantedWindowSeconds': state == 'DENIED' ? null : 45,
+      'version': state == 'EXPIRED' || state == 'REVOKED' ? 5 : 4,
+      'issuedAt': state == 'DENIED' ? null : issued,
+      'absoluteNotAfter': state == 'DENIED' ? null : issued + 45000,
+      'reasonCode': switch (state) {
+        'DENIED' => 'NOT_NOW', 'EXPIRED' => 'TIME_EXPIRED',
+        'REVOKED' => 'ADMIN_REVOKED', _ => null,
+      },
+      'executionState': 'NOT_ENFORCED',
+    };
+    for (final state in ['APPROVED_PENDING_DELIVERY', 'EXPIRED', 'REVOKED', 'DENIED']) {
+      final raw = receipt(state);
+      final result = request.verifyDecision(raw, body: state == 'DENIED' ? denial : approval);
+      raw.clear();
+      expect(result.state, state);
+      expect(result.grantedSeconds, state == 'DENIED' ? null : 45);
+      expect(result.registrationId, request.registrationId);
+      expect(approvalDecisionFeedback(result.state), switch (state) {
+        'APPROVED_PENDING_DELIVERY' => contains('批准已记录'),
+        'EXPIRED' => contains('已到期'), 'REVOKED' => contains('已撤销'),
+        _ => contains('已拒绝'),
+      });
+    }
+    final futureReason = receipt('REVOKED')..['reasonCode'] = 'NEW_LIFECYCLE_REASON';
+    expect(request.verifyDecision(futureReason, body: approval).state, 'REVOKED');
+    final noReason = receipt('DENIED')..['reasonCode'] = null;
+    expect(request.verifyDecision(noReason, body: {'decision': 'DENY'}).state, 'DENIED');
+    for (final invalid in <Object?>[
+      null, 'private-receipt',
+      for (final key in ['id', 'subjectId', 'deviceId', 'applicationId', 'registrationId'])
+        {...receipt('APPROVED_PENDING_DELIVERY'), key: 'private-other-target'},
+      {...receipt('APPROVED_PENDING_DELIVERY'), 'requestedWindowSeconds': 96},
+      {...receipt('APPROVED_PENDING_DELIVERY'), 'version': 3},
+      {...receipt('APPROVED_PENDING_DELIVERY'), 'version': 5},
+      {...receipt('APPROVED_PENDING_DELIVERY'), 'version': 9007199254740992},
+      {...receipt('APPROVED_PENDING_DELIVERY'), 'grantedWindowSeconds': 44},
+      {...receipt('APPROVED_PENDING_DELIVERY'), 'issuedAt': null},
+      {...receipt('APPROVED_PENDING_DELIVERY'), 'issuedAt': -1},
+      {...receipt('APPROVED_PENDING_DELIVERY'), 'absoluteNotAfter': issued + 45001},
+      {...receipt('APPROVED_PENDING_DELIVERY'), 'reasonCode': 'NOT_NOW'},
+      {...receipt('APPROVED_PENDING_DELIVERY'), 'executionState': 'APPLIED'},
+      {...receipt('EXPIRED'), 'version': 4},
+      {...receipt('EXPIRED'), 'grantedWindowSeconds': null},
+      {...receipt('EXPIRED'), 'reasonCode': null},
+      {...receipt('REVOKED'), 'version': 6},
+      {...receipt('REVOKED'), 'reasonCode': null},
+      {...receipt('REVOKED'), 'reasonCode': '   '},
+      {...receipt('REVOKED'), 'reasonCode': 'R' * 61},
+      {...receipt('REVOKED'), 'reasonCode': 'PRIVATE\nREASON'},
+      {..._fresh(), 'issuedAt': null, 'absoluteNotAfter': null,
+        'reasonCode': null, 'executionState': 'NOT_ENFORCED'},
+      for (final key in ['issuedAt', 'absoluteNotAfter', 'reasonCode', 'executionState'])
+        receipt('APPROVED_PENDING_DELIVERY')..remove(key),
+    ]) {
+      expect(() => request.verifyDecision(invalid, body: approval),
+          _failure(502, 'INVALID_RESPONSE'));
+    }
+    for (final invalid in <Json>[
+      {...receipt('DENIED'), 'reasonCode': 'NOT_ALLOWED'},
+      {...receipt('DENIED'), 'issuedAt': issued},
+      {...receipt('DENIED'), 'absoluteNotAfter': issued + 45000},
+      {...receipt('DENIED'), 'grantedWindowSeconds': 45},
+      {...receipt('DENIED'), 'version': 5},
+    ]) {
+      expect(() => request.verifyDecision(invalid, body: denial),
+          _failure(502, 'INVALID_RESPONSE'));
+    }
+    for (final body in <Json>[
+      {...approval, 'private': 'extra'}, {...approval, 'reasonCode': null},
+      {...approval, 'grantedWindowSeconds': 0},
+      {...approval, 'grantedWindowSeconds': 96},
+      {...denial, 'grantedWindowSeconds': null},
+      {...denial, 'reasonCode': 'PRIVATE_REASON'}, {'decision': 'PENDING'}, {},
+    ]) {
+      expect(() => request.verifyDecision(receipt('APPROVED_PENDING_DELIVERY'), body: body),
+          _failure(502, 'INVALID_RESPONSE'));
+    }
+    final terminal = ApprovalRequestSnapshot.read(receipt('DENIED'), expectedId: 'request-1');
+    expect(() => terminal.verifyDecision(receipt('DENIED'), body: denial),
+        _failure(502, 'INVALID_RESPONSE'));
+    expect(() => approvalDecisionFeedback('PENDING'), _failure(502, 'INVALID_RESPONSE'));
   });
 
   test('delivery snapshots preserve empty documents and device report facts', () {
