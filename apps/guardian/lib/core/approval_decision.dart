@@ -60,6 +60,7 @@ class ApprovalListContext {
 class ApprovalRequestSnapshot {
   final String id, subjectId, deviceId, applicationId, state;
   final int requestedSeconds, version;
+  final int? grantedSeconds;
   final String? subjectName, deviceName, applicationName, applicationPackageName;
 
   const ApprovalRequestSnapshot._(
@@ -69,6 +70,7 @@ class ApprovalRequestSnapshot {
       required this.applicationId,
       required this.state,
       required this.requestedSeconds,
+      required this.grantedSeconds,
       required this.version,
       this.subjectName,
       this.deviceName,
@@ -84,15 +86,23 @@ class ApprovalRequestSnapshot {
     final application = _requiredIdentity(raw['applicationId']);
     final state = raw['state'];
     final requested = raw['requestedWindowSeconds'];
+    final granted = raw['grantedWindowSeconds'];
     final version = raw['version'];
+    // Expiry can preserve a grant; invalidation is only for a pending request.
     if (id != expectedId ||
         state is! String ||
         !accessRequestStates.contains(state) ||
         requested is! int ||
         requested < 1 ||
         requested > 3600 ||
-        version is! int ||
-        version < 0) {
+        !_safeApprovalInteger(version) ||
+        !raw.containsKey('grantedWindowSeconds') ||
+        (granted != null && (!_safeApprovalInteger(granted) ||
+            granted < 1 || granted > requested)) ||
+        (const {'APPROVED_PENDING_DELIVERY', 'REVOKED'}.contains(state) &&
+            granted == null) ||
+        (const {'PENDING', 'DENIED', 'CANCELLED', 'INVALIDATED'}.contains(state) &&
+            granted != null)) {
       throw const ApiFailure(502, 'INVALID_RESPONSE');
     }
     final labels = context != null &&
@@ -106,7 +116,8 @@ class ApprovalRequestSnapshot {
         applicationId: application,
         state: state,
         requestedSeconds: requested,
-        version: version,
+        grantedSeconds: granted as int?,
+        version: version as int,
         subjectName: labels?.subjectName,
         deviceName: labels?.deviceName,
         applicationName: labels?.applicationName,

@@ -82,6 +82,10 @@ TEACHER 不获得审批权限、策略修改或设备管理权限。教师仅提
 
 AccessRequest 包含 id、subjectId、deviceId、registrationId、policyId、baseVersionId、applicationId、ruleIds、requestedWindowSeconds、reason、state、requestExpiresAt、grantedWindowSeconds、issuedAt、absoluteNotAfter、reasonCode、executionState、version 和 createdAt。
 
+管理台快照要求grantedWindowSeconds明确存在：非null为1秒至原申请值的精确整数；APPROVED_PENDING_DELIVERY／REVOKED必有，PENDING／DENIED／CANCELLED／INVALIDATED为null；EXPIRED可以来自未批准或已批准，保留相应null／原授予时长。INVALIDATED只用于待处理失效，已批准失效转REVOKED。版本限制为0～9007199254740991的精确整数。详情以该快照分别显示申请与实际批准时长，不从交付摘要或表单草稿推断。
+
+批准与拒绝确认都展示原申请对象、设备、应用、时长和理由，按钮明确为“确认批准”／“确认拒绝”；拒绝说明结束当前申请，原原因选项及权限／版本／幂等／未知结果处理保持。其他通用表单默认按钮不变。
+
 管理侧 `GET /access-requests` 列表在原授权范围内可额外返回 `subjectName`、`deviceName`、`applicationName`、`applicationPackageName` 四个可选展示字段；审计角色不获得这些名称。单条查询、写入响应和设备侧仍只返回核心字段。名称与包名是目录资料，不能当作安装证据、应用安全评级或规则执行证明。
 
 管理台工作台提供“待处理 / 全部”切换。所有者、监护人和机构管理员默认优先待处理；儿童、教师与审计员默认查看全部。待处理模式调用既有 `state=PENDING` 服务端筛选，再按响应的实际状态接收待办；读取时已协调为过期或失效的记录不继续显示为待办，未知状态使该页失败，不把坏响应当成空列表。筛选后空页仍保留服务端下一页游标，由用户继续加载，不自动遍历所有页。切换筛选重建列表范围，旧页、旧游标及晚到结果不进入新范围。

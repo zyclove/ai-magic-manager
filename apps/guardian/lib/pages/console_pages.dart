@@ -522,6 +522,7 @@ class ConsoleActions {
       required List<FieldSpec> fields,
       Json initial = const {},
       String? description,
+      String submit = '保存',
       Future<Json> Function(Api, Json)? onRecoverUnknown,
       Listenable? accessChanges,
       bool Function()? hasAccess,
@@ -541,6 +542,7 @@ class ConsoleActions {
           fields: fields,
           initial: initial,
           description: description,
+          submit: submit,
           recoverLabel: recoverLabel,
           accessChanges: Listenable.merge([scope, if (accessChanges != null) accessChanges]),
           hasAccess: () => scope.current,
@@ -1824,6 +1826,14 @@ class ConsoleActions {
       final request = ApprovalRequestSnapshot.read(raw,
           expectedId: listContext.requestId, context: listContext);
       final r = raw as Json;
+      final grantedSeconds = request.grantedSeconds;
+      final reason = r['reason'];
+      final decisionContext =
+          '对象：${request.subjectName ?? request.subjectId}\n'
+          '设备：${request.deviceName ?? request.deviceId}\n'
+          '应用：${request.applicationName ?? request.applicationId}\n'
+          '申请时长：${approvalDuration(request.requestedSeconds)}\n'
+          '申请理由：${reason is String && reason.trim().isNotEmpty ? reason : '未填写'}';
       if (!context.mounted) return false;
       if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
       Api? deliveryApi;
@@ -1843,6 +1853,8 @@ class ConsoleActions {
             '状态': label(request.state),
             if (r['reasonCode'] != null) '状态说明': label(r['reasonCode']),
             '申请时长': approvalDuration(request.requestedSeconds),
+            if (grantedSeconds != null)
+              '批准时长': approvalDuration(grantedSeconds),
             '申请理由': r['reason'],
             '申请有效期': dateLabel(r['requestExpiresAt']),
             '批准截止': dateLabel(r['absoluteNotAfter']),
@@ -1899,14 +1911,12 @@ class ConsoleActions {
                 final result = await _tenantForm(
                     parent: ctx,
                     title: '批准临时访问',
+                    submit: '确认批准',
                     section: 'approvals',
                     accessChanges: changes,
                     hasAccess: current,
-                    description: '对象：${request.subjectName ?? request.subjectId}\n'
-                        '设备：${request.deviceName ?? request.deviceId}\n'
-                        '应用：${request.applicationName ?? request.applicationId}\n'
-                        '申请 ${approvalDuration(request.requestedSeconds)}，批准总时长不能超过申请值。'
-                        '填写分钟和秒；当前只保存限时窗口，不直接解锁设备。',
+                    description: '$decisionContext\n\n'
+                        '批准总时长不能超过申请值。填写分钟和秒；当前只保存限时窗口，不直接解锁设备。',
                     fields: [
                       FieldSpec('minutes', '分钟', numeric: true, maxLength: 2,
                           minValue: 0, maxValue: request.requestedSeconds ~/ 60),
@@ -1934,6 +1944,9 @@ class ConsoleActions {
                 final result = await _tenantForm(
                     parent: ctx,
                     title: '拒绝申请',
+                    submit: '确认拒绝',
+                    description: '$decisionContext\n\n'
+                        '拒绝后此申请将结束，申请人可按需要重新申请。',
                     section: 'approvals',
                     accessChanges: changes,
                     hasAccess: current,

@@ -10,6 +10,7 @@ Json _fresh() => {
       'registrationId': 'registration-1',
       'state': 'PENDING',
       'requestedWindowSeconds': 95,
+      'grantedWindowSeconds': null,
       'version': 3,
     };
 
@@ -105,7 +106,44 @@ void main() {
       {..._fresh(), 'requestedWindowSeconds': 3601},
       {..._fresh(), 'requestedWindowSeconds': 1.5},
       {..._fresh(), 'version': -1},
+      {..._fresh(), 'version': 3.0},
+      {..._fresh(), 'version': 9007199254740992},
       {..._fresh(), 'version': 'private-version'},
+    ]) {
+      expect(() => ApprovalRequestSnapshot.read(invalid, expectedId: 'request-1'),
+          _failure(502, 'INVALID_RESPONSE'));
+    }
+  });
+
+  test('request grants distinguish never approved and previously approved states', () {
+    for (final example in <({String state, int? grant})>[
+      (state: 'PENDING', grant: null),
+      (state: 'DENIED', grant: null),
+      (state: 'CANCELLED', grant: null),
+      (state: 'INVALIDATED', grant: null),
+      (state: 'APPROVED_PENDING_DELIVERY', grant: 1),
+      (state: 'APPROVED_PENDING_DELIVERY', grant: 95),
+      (state: 'REVOKED', grant: 45),
+      (state: 'EXPIRED', grant: null),
+      (state: 'EXPIRED', grant: 45),
+    ]) {
+      final raw = {..._fresh(), 'state': example.state,
+        'grantedWindowSeconds': example.grant, 'version': 9007199254740991};
+      final snapshot = ApprovalRequestSnapshot.read(raw, expectedId: 'request-1');
+      raw.clear();
+      expect(snapshot.state, example.state);
+      expect(snapshot.grantedSeconds, example.grant);
+      expect(snapshot.requestedSeconds, 95);
+      expect(snapshot.version, 9007199254740991);
+    }
+    for (final invalid in <Json>[
+      _fresh()..remove('grantedWindowSeconds'),
+      for (final state in ['APPROVED_PENDING_DELIVERY', 'REVOKED'])
+        {..._fresh(), 'state': state},
+      for (final state in ['PENDING', 'DENIED', 'CANCELLED', 'INVALIDATED'])
+        {..._fresh(), 'state': state, 'grantedWindowSeconds': 1},
+      for (final grant in <Object>[0, -1, 96, 1.5, '45', true])
+        {..._fresh(), 'state': 'EXPIRED', 'grantedWindowSeconds': grant},
     ]) {
       expect(() => ApprovalRequestSnapshot.read(invalid, expectedId: 'request-1'),
           _failure(502, 'INVALID_RESPONSE'));
@@ -114,7 +152,8 @@ void main() {
 
   test('delivery snapshots preserve empty documents and device report facts', () {
     final request = ApprovalRequestSnapshot.read(
-        {..._fresh(), 'state': 'APPROVED_PENDING_DELIVERY'},
+        {..._fresh(), 'state': 'APPROVED_PENDING_DELIVERY',
+          'grantedWindowSeconds': 95},
         expectedId: 'request-1');
     final raw = _delivery();
     final empty = ApprovalDeliverySnapshot.read(raw, request: request);
@@ -171,7 +210,8 @@ void main() {
 
   test('delivery binds its target and exact version without replacing the request', () {
     final request = ApprovalRequestSnapshot.read(
-        {..._fresh(), 'state': 'APPROVED_PENDING_DELIVERY'},
+        {..._fresh(), 'state': 'APPROVED_PENDING_DELIVERY',
+          'grantedWindowSeconds': 95},
         expectedId: 'request-1');
     final newer = ApprovalDeliverySnapshot.read({
       ..._delivery(), 'approvalVersion': 4, 'approvalState': 'REVOKED',
@@ -205,7 +245,8 @@ void main() {
 
   test('delivery rejects fabricated execution and inconsistent transport facts', () {
     final request = ApprovalRequestSnapshot.read(
-        {..._fresh(), 'state': 'APPROVED_PENDING_DELIVERY'},
+        {..._fresh(), 'state': 'APPROVED_PENDING_DELIVERY',
+          'grantedWindowSeconds': 95},
         expectedId: 'request-1');
     for (final changed in <Json>[
       {'executionState': 'APPLIED'},
