@@ -1033,6 +1033,7 @@ IconData _policyRuleIcon(String type) => switch (type) {
 /// It never means that an unknown write has been confirmed successful.
 Future<bool> policyEditor(BuildContext context, Session session,
     {Json? draft,
+    ApiWriteDispatch? writeDispatch,
     Listenable? accessChanges,
     bool Function()? hasAccess}) async {
   if (!session.authenticated) {
@@ -1064,6 +1065,7 @@ Future<bool> policyEditor(BuildContext context, Session session,
             session: session,
             root: root,
             draft: draft,
+            writeDispatch: writeDispatch,
             accessChanges: access.changes,
             operationScope: scope));
     final needsRefresh = await presentOwnedDialog(context, route);
@@ -1118,6 +1120,9 @@ class PolicyEditor extends StatefulWidget {
   /// Null loads on demand; an explicit list (including empty) is already read.
   final List<Json>? applications, schedules;
   final Json? draft;
+  /// Reports an attempted HTTP handoff to the owning details journey.
+  /// It does not confirm that the server saved the draft.
+  final ApiWriteDispatch? writeDispatch;
   final DeviceSubflowScope? operationScope;
   final Listenable? accessChanges;
   const PolicyEditor(
@@ -1127,6 +1132,7 @@ class PolicyEditor extends StatefulWidget {
       this.applications,
       this.schedules,
       this.draft,
+      this.writeDispatch,
       this.accessChanges,
       this.operationScope});
   @override
@@ -1198,7 +1204,10 @@ class _PolicyEditorState extends State<PolicyEditor> {
                 widget.session.root == widget.root &&
                 widget.session.canWrite &&
                 widget.session.canOpen('policies'));
-    api = scope.api.scoped(() => current);
+    final source = widget.writeDispatch == null
+        ? scope.api
+        : scope.api.trackingWrites(widget.writeDispatch!);
+    api = source.scoped(() => current);
     directories = PolicyRuleDirectories(
         api: api,
         root: widget.root,

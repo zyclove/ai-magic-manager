@@ -174,17 +174,20 @@ void main() {
     fake.fakeAsync((clock) {
       final authenticated = Completer<http.Client>();
       final transport = _ImmediateTransport();
-      final api = Api(() => authenticated.future);
+      final dispatch = ApiWriteDispatch();
+      final api = Api(() => authenticated.future).trackingWrites(dispatch);
       final outcome = _Outcome(api.send('POST', '/copies',
           body: {'name': 'original'}, key: 'late-auth'));
       clock.flushMicrotasks();
       expect(outcome.completed, isFalse);
+      expect(dispatch.dispatched, isFalse);
       clock.elapse(const Duration(seconds: 25));
       clock.flushMicrotasks();
       _expectFailure(outcome, _networkFailure);
       authenticated.complete(transport);
       clock.flushMicrotasks();
       expect(transport.sends, 0);
+      expect(dispatch.dispatched, isFalse);
       expect(transport.closed, isFalse);
       _expectChangedPending(clock, api, 'late-auth');
       expect(transport.sends, 0);
@@ -197,11 +200,19 @@ void main() {
     fake.fakeAsync((clock) {
       transport = _StreamingTransport();
       final binding = _ObservedBindingClient(transport);
-      api = Api(() async => binding).scoped(() => true).scoped(() => true);
+      final parentDispatch = ApiWriteDispatch();
+      final childDispatch = ApiWriteDispatch();
+      final parent = Api(() async => binding).trackingWrites(parentDispatch);
+      api = parent
+          .scoped(() => true)
+          .trackingWrites(childDispatch)
+          .scoped(() => true);
       final outcome = _Outcome(api.send('POST', '/copies',
           body: {'name': 'original'}, key: 'stream-key'));
       clock.flushMicrotasks();
       expect(transport.sends, 1);
+      expect(parentDispatch.dispatched, isTrue);
+      expect(childDispatch.dispatched, isTrue);
       expect(transport.trigger, same(binding.trigger));
       expect(transport.abortSignals, 0);
       expect(outcome.completed, isFalse);
@@ -211,7 +222,12 @@ void main() {
       expect(transport.abortSignals, 1);
       expect(transport.cancellations, 1);
       expect(transport.closed, isFalse);
-      _expectChangedPending(clock, api, 'stream-key');
+      final siblingDispatch = ApiWriteDispatch();
+      _expectChangedPending(
+          clock, parent.trackingWrites(siblingDispatch), 'stream-key');
+      expect(siblingDispatch.dispatched, isFalse);
+      expect(parentDispatch.dispatched, isTrue);
+      expect(childDispatch.dispatched, isTrue);
       expect(transport.sends, 1);
     });
     // Normal stream completion may await an SDK shared cancellation Future
@@ -240,6 +256,72 @@ void main() {
       clock.flushMicrotasks();
       expect(_value(next)['id'], 'original-result');
       expect(transport.sends, 2);
+    });
+  });
+
+  test('only keyed writes mark dispatch and preserve every ancestor observation',
+      () async {
+    final transport = _ImmediateTransport();
+    for (final method in ['POST', 'PUT', 'PATCH', 'DELETE']) {
+      final parent = ApiWriteDispatch(), child = ApiWriteDispatch();
+      final api = Api(() async => transport)
+          .trackingWrites(parent)
+          .scoped(() => true)
+          .trackingWrites(child)
+          .scoped(() => true);
+      // Normal scoped-stream completion can use the SDK's shared cancellation
+      // Future outside FakeAsync; keep these successful responses bounded.
+      final query = await api
+          .send('POST', '/copy-results/query', body: {'name': 'original'})
+          .timeout(const Duration(seconds: 2));
+      expect(query['id'], 'original-result');
+      final read = await api
+          .send('GET', '/copies', key: 'read-$method')
+          .timeout(const Duration(seconds: 2));
+      expect(read['id'], 'original-result');
+      expect(parent.dispatched, isFalse);
+      expect(child.dispatched, isFalse);
+      final before = transport.sends;
+      final write = await api
+          .send(method, '/copies',
+              body: {'name': 'original'}, key: 'write-$method')
+          .timeout(const Duration(seconds: 2));
+      expect(write['id'], 'original-result');
+      expect(transport.sends, before + 1);
+      expect(parent.dispatched, isTrue);
+      expect(child.dispatched, isTrue);
+    }
+    expect(transport.closed, isFalse);
+  });
+
+  test('a scope lost while waiting for the client never marks dispatch', () {
+    fake.fakeAsync((clock) {
+      final authenticated = Completer<http.Client>();
+      final transport = _ImmediateTransport();
+      final parent = ApiWriteDispatch(), child = ApiWriteDispatch();
+      var current = true;
+      final api = Api(() => authenticated.future)
+          .trackingWrites(parent)
+          .scoped(() => current)
+          .trackingWrites(child)
+          .scoped(() => true);
+      final write = _Outcome(api.send('POST', '/copies',
+          body: {'name': 'original'}, key: 'lost-scope'));
+      clock.flushMicrotasks();
+      expect(write.completed, isFalse);
+      expect(parent.dispatched, isFalse);
+      expect(child.dispatched, isFalse);
+      current = false;
+      authenticated.complete(transport);
+      clock.flushMicrotasks();
+      _expectFailure(
+          write,
+          isA<ApiFailure>()
+              .having((error) => error.code, 'code', 'WORKSPACE_CHANGED'));
+      expect(transport.sends, 0);
+      expect(parent.dispatched, isFalse);
+      expect(child.dispatched, isFalse);
+      expect(transport.closed, isFalse);
     });
   });
 

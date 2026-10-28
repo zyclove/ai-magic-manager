@@ -915,6 +915,10 @@ class _GroupDialogApi extends Api {
   }
 
   @override
+  Api trackingWrites(ApiWriteDispatch observation) =>
+      _GroupDialogApi(source.trackingWrites(observation), rejected);
+
+  @override
   Api scoped(bool Function() isCurrent) =>
       _GroupDialogApi(source.scoped(isCurrent), (failure) {
         if (isCurrent()) rejected(failure);

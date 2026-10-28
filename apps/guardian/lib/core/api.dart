@@ -248,18 +248,35 @@ class PageResult {
   PageResult(this.items, this.nextCursor);
 }
 
+/// Records handoff to the authenticated client, not server execution.
+class ApiWriteDispatch {
+  bool _dispatched = false;
+  bool get dispatched => _dispatched;
+}
+
 class Api {
   final Map<String, String> _pendingWrites;
   final bool Function()? _boundScope;
+  final List<ApiWriteDispatch> _writeDispatches;
   final Future<http.Client> Function() client;
   final String baseUrl;
   Api(this.client,
       {this.baseUrl = const String.fromEnvironment('API_URL',
           defaultValue: 'http://localhost:8082/api/v1')})
       : _pendingWrites = <String, String>{},
-        _boundScope = null;
+        _boundScope = null,
+        _writeDispatches = const [];
 
-  Api._bound(this.client, this.baseUrl, this._pendingWrites, this._boundScope);
+  Api._bound(this.client, this.baseUrl, this._pendingWrites, this._boundScope,
+      this._writeDispatches);
+
+  /// A borrowed view retains ancestor observations without callbacks or payloads.
+  Api trackingWrites(ApiWriteDispatch observation) => Api._bound(
+      client,
+      baseUrl,
+      _pendingWrites,
+      _boundScope,
+      List<ApiWriteDispatch>.unmodifiable([..._writeDispatches, observation]));
 
   /// A borrowed API view shares pending writes and retains every parent guard.
   Api scoped(bool Function() isCurrent) {
@@ -271,7 +288,8 @@ class Api {
       return ScopeBindingClient(authenticated, isCurrent: current);
     }
 
-    return Api._bound(boundClient, baseUrl, _pendingWrites, current);
+    return Api._bound(
+        boundClient, baseUrl, _pendingWrites, current, _writeDispatches);
   }
 
   bool Function()? _withScope(bool Function()? isCurrent) {
@@ -330,6 +348,12 @@ class Api {
         // Never dispatch a new write after that deadline.
         if (abort.isCompleted) {
           throw TimeoutException('Request deadline elapsed');
+        }
+        if (key != null &&
+            const {'POST', 'PUT', 'PATCH', 'DELETE'}.contains(req.method)) {
+          for (final observation in _writeDispatches) {
+            observation._dispatched = true;
+          }
         }
         final streamed = await authenticated.send(req);
         if (abort.isCompleted) {

@@ -92,6 +92,7 @@ class _PolicyDetailsScope extends ChangeNotifier {
   final Session session;
   final String root;
   final bool readOnly;
+  final writeDispatch = ApiWriteDispatch();
   late final DeviceSubflowScope _scope;
   late final DialogAccessBinding _parentAccess;
   bool _lost = false, _disposed = false;
@@ -144,8 +145,9 @@ class _PolicyDetailsScope extends ChangeNotifier {
 
     try {
       requireAvailable();
-      final result = await operation(_scope.api.scoped(
-          () => current && (!write || writable) && hasAccess?.call() != false));
+      final api = _scope.api.trackingWrites(writeDispatch).scoped(
+          () => current && (!write || writable) && hasAccess?.call() != false);
+      final result = await operation(api);
       requireAvailable();
       return result;
     } catch (failure) {
@@ -242,6 +244,7 @@ Future<bool> openPolicyDetails(BuildContext context, Session session,
               final owner = ModalRoute.of(dialog);
               final changed = await policyEditor(dialog, session,
                   draft: draft,
+                  writeDispatch: scope.writeDispatch,
                   accessChanges: scope,
                   hasAccess: () =>
                       scope.writable && _policyRouteAvailable(owner));
@@ -271,7 +274,9 @@ Future<bool> openPolicyDetails(BuildContext context, Session session,
             }
           }, closeOnSuccess: false)
         ]);
-    return needsRefresh && scope.current;
+    // A child can still be awaiting its response when this route is removed.
+    // The original dispatch fact survives that child's unfinished result.
+    return (needsRefresh || scope.writeDispatch.dispatched) && scope.current;
   } finally {
     scope.dispose();
   }

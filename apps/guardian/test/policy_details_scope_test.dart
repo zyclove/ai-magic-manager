@@ -868,6 +868,199 @@ void main() {
   });
 
   testWidgets(
+      'dispatched policy writes review once on close and actor loss blocks stale review under a cover',
+      (tester) async {
+    void expectOldDialogsRedacted() {
+      final dialogs = find.byType(AlertDialog, skipOffstage: false);
+      for (final secret in [_name, _domain, _policy, _version, '版本 98731']) {
+        expect(
+            find.descendant(
+                of: dialogs,
+                matching: find.textContaining(secret, skipOffstage: false),
+                skipOffstage: false),
+            findsNothing);
+        for (final field in tester.widgetList<TextFormField>(
+            find.byType(TextFormField, skipOffstage: false))) {
+          expect(field.controller?.text ?? '', isNot(contains(secret)));
+        }
+      }
+    }
+
+    for (final operation in [
+      'template-copy',
+      'rollback',
+      'edit',
+      'template-copy-actor-aba'
+    ]) {
+      final copying = operation.startsWith('template-copy');
+      final editing = operation == 'edit';
+      final actorABA = operation == 'template-copy-actor-aba';
+      final expectedListReads = actorABA ? 1 : 2;
+      final fixture = _Fixture(template: copying);
+      final response = Completer<http.Response>();
+      Json? lateReceipt;
+      var transportReturned = false, coverClosed = false;
+      fixture.respond = (request) async {
+        if (request.method != 'POST' ||
+            !(editing
+                ? request.url.path.endsWith('/policy-draft-changes')
+                : request.url.path
+                    .endsWith(copying ? '/copies' : '/rollback-drafts'))) {
+          return null;
+        }
+        final body = jsonDecode(request.body) as Json;
+        final committed = editing
+            ? {
+                ...fixture.draft(),
+                'name': body['name'],
+                'revision': (body['revision'] as int) + 1,
+                'rules': body['rules'],
+              }
+            : fixture.branchReceipt(request);
+        lateReceipt = committed;
+        if (copying) {
+          fixture.copied = committed;
+        } else {
+          fixture.currentName = committed['name'] as String;
+          fixture.revision = committed['revision'] as int;
+          fixture.sourceVersionId = committed['sourceVersionId'] as String?;
+        }
+        final result = await response.future;
+        transportReturned = true;
+        return result;
+      };
+      addTearDown(() {
+        if (!response.isCompleted) {
+          response.complete(reply(lateReceipt ?? fixture.draft()));
+        }
+      });
+      final details = await _openFromList(tester, fixture);
+      if (editing) {
+        _capture(tester, '编辑草稿')();
+        await _waitUntil(
+            tester, () => find.byType(PolicyEditor).evaluate().isNotEmpty);
+      } else if (copying) {
+        _capture(tester, '从模板创建策略')();
+        await _waitUntil(
+            tester,
+            () => find
+                .byKey(const Key('policy-copy-form'))
+                .evaluate()
+                .isNotEmpty);
+      } else {
+        _capture(tester, '版本历史')();
+        await _waitUntil(
+            tester, () => find.text('版本 98731').evaluate().length == 1);
+        await tester.tap(find.text('版本 98731'));
+        await _waitUntil(tester, () => _ready(tester, '回滚为草稿'));
+        _capture(tester, '回滚为草稿')();
+        await _waitUntil(
+            tester,
+            () => find
+                .byKey(const Key('policy-rollback-form'))
+                .evaluate()
+                .isNotEmpty);
+      }
+      final field = editing
+          ? find.widgetWithText(TextFormField, '策略名称')
+          : find.byType(TextFormField);
+      final name = '派发后需核对的${operation}草稿';
+      await tester.enterText(field, name);
+      final submit = editing
+          ? '保存草稿'
+          : copying
+              ? '保存'
+              : '确认';
+      await _waitUntil(tester, () => _ready(tester, submit));
+      _capture(tester, submit)();
+      await _waitUntil(
+          tester, () => fixture.writes.length == 1 && lateReceipt != null);
+      expect(response.isCompleted, isFalse,
+          reason: 'The write has entered transport and still has no response.');
+      final sent = fixture.writes.single;
+      final body = jsonDecode(sent.body) as Json;
+      expect(sent.headers['Idempotency-Key'], matches(_v4Key));
+      if (editing) {
+        expect(body, {
+          'operation': 'UPDATE',
+          'policyId': _policy,
+          'revision': 7,
+          'name': name,
+          'rules': fixture.draft()['rules'],
+        });
+        expect(sent.headers['If-Match'], isNull);
+      } else {
+        expect(body, {'name': name});
+        expect(sent.headers['If-Match'], '"7"');
+      }
+      unawaited(showDialog<void>(
+              context: tester.element(field),
+              builder: (context) => AlertDialog(
+                      title: const Text('独立核对提示'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('关闭独立提示'))
+                      ]))
+          .then<void>((_) {
+        coverClosed = true;
+      }));
+      await _waitUntil(
+          tester, () => find.text('独立核对提示').evaluate().isNotEmpty);
+      final cover = ModalRoute.of(tester.element(find.text('独立核对提示')))!;
+      if (actorABA) {
+        fixture.session.awayAndBack('actor');
+      }
+      details.finish();
+      await _waitUntil(
+          tester,
+          () =>
+              !details.available &&
+              fixture.listReads.length == expectedListReads);
+      _expectSameScopeValues(fixture);
+      expect(response.isCompleted, isFalse);
+      expect(fixture.writes, hasLength(1));
+      if (actorABA) {
+        expectOldDialogsRedacted();
+        expect(find.textContaining(name, skipOffstage: false), findsNothing);
+      } else {
+        final list = find.byType(ResourcePage, skipOffstage: false);
+        expect(
+            find.descendant(
+                of: list,
+                matching: find.text(name, skipOffstage: false),
+                skipOffstage: false),
+            findsOneWidget);
+        expect(
+            find.descendant(
+                of: list,
+                matching:
+                    find.text(copying ? 'v0' : 'v8', skipOffstage: false),
+                skipOffstage: false),
+            findsOneWidget);
+      }
+      expect(coverClosed, isFalse);
+      expect(cover.isCurrent, isTrue);
+
+      response.complete(reply(lateReceipt!));
+      await _waitUntil(tester, () => transportReturned);
+      await flush(tester);
+      expect(fixture.writes, hasLength(1));
+      expect(fixture.listReads, hasLength(expectedListReads),
+          reason: 'The late response must not request another list review.');
+      expect(coverClosed, isFalse);
+      expect(cover.isCurrent, isTrue);
+      expect(find.text('独立核对提示'), findsOneWidget);
+      expect(find.textContaining('保存成功', skipOffstage: false), findsNothing);
+      if (actorABA) {
+        expectOldDialogsRedacted();
+        expect(find.textContaining(name, skipOffstage: false), findsNothing);
+      }
+      expect(tester.takeException(), isNull);
+    }
+  }, tags: 'policy-dispatch-review');
+
+  testWidgets(
       'policy-return stopped edit preserves input and closes for refresh',
       (tester) async {
     const stoppedName = '并发后应保留的私有草稿';

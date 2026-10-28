@@ -69,6 +69,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 [通用 API](../apps/guardian/lib/core/api.dart) 使用已锁定 `http 1.6.0` 的 Abortable 协议；[作用域包装层](../apps/guardian/lib/core/scoped_http_client.dart)必须透传中止信号，在实际发送/终结请求前同时检查原作用域和请求期限，借用的客户端不能被单次请求关闭。纯时限单元测试使用原生 `FakeAsync`；共享完成 Future 的取消续程可能在其区域外调度，正常重试须保留有界真实异步断言，参考[超时回归](../apps/guardian/test/api_deadline_test.dart)，不要用无限等待或删除完成断言掩盖问题。
 
+ApiWriteDispatch／Api.trackingWrites 仅保存带键写请求交给 HTTP 客户端的布尔事实；借用链保留父观察器、原作用域和共享待决写入，读取及无写键查询不标记。策略详情与其编辑、复制、回滚子流程共用同一观察器：原详情独立关闭后仍可返回列表核对信号，未派发或作用域失效不刷新；该信号不代表保存成功，也不替代原结果查询。
+
 [有界 JSON 读取](../apps/guardian/lib/core/bounded_json.dart)同时覆盖身份刷新、发送和正文读取，保留调用方原始作用域／预览异常。已知拒绝状态下正文不完整，只保留 HTTP 失败而不给完整拒绝证据；不要把超时或中止当成操作未执行，或解除原请求的持久化防重复保护。
 
 时间计划副本通过 [ScheduleCopy](../apps/guardian/lib/core/schedule_copy.dart) 隔离来源，保留原时区、空每周定义、跨午夜与全部日期例外；创建副本不替换策略引用。[ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 的 `onOpenChanged` 只接收是否需要核对列表的信号：保存或明确关闭未知写入时重读，普通取消和只读返回不刷新；不能把子窗口正常返回或需重读推断成已保存。具体流程见[时间计划契约](policy-application-schedule-contract.md)。 停止旧提交后仍可只读核对已有策略；查询时清除临时错误不能解除原写入停止状态。原提交输入与停止原因分别保存，作用域失效一并清空；核对失败或不匹配不恢复旧 POST。
