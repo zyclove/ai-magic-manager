@@ -1,6 +1,6 @@
 # 成员、设备与审批核心流程
 
-实现范围：`4a8a069` 后的管理台流程改进，源码阶段至 `9d8009bf`，当前冻结待验。各阶段验证分开记录，不继承历史通过。不推送、不部署，当前服务不自动使用这些提交。
+实现范围：`4a8a069` 后的管理台流程改进；本批基于 `fc4844a2`（产品源码 `9d8009bf`）及下述唯一测试规范修正完成补验。下文历史NOT_RUN表示当时状态，本批列明项已补验，其他范围不继承通过。不推送、不部署，当前服务不自动使用这些提交。
 
 ## 已实现行为
 
@@ -14,12 +14,13 @@
 | 渐进交付摘要 | 核心详情先开，原授权历史／撤销不等待摘要；原窗口局部读取与重试。Summary只补交付事实，不覆盖原核心版本；新版、结果未知或读取中关闭需要核对原列表，已核验同版普通关闭不重读。新DTO及边界详见渐进交付摘要小节与审批合同。 |
 | 共用窗口 | DialogAccessBinding同时观察父路由popped/completed，覆盖既有SDK raw removeRoute不完成popped的情况；同步停止旧入口、帧后发布退役。详情仅按显式closeOnAccessLost结束所属OwnedDialogRoute，其他默认隐藏语义保持，不关闭独立通知。 |
 
-## 当前验证阻塞
+## 本批合并验证
 
-- 源码基线为 `9d8009bf`，必要代码与规格均已本地提交；本次只更新本记录。前阶段已有静态复核和差异检查，本批SDK分析／测试仍未运行，不能据此认定功能通过。
-- 准备补验时一次实测RAM1,386,606,592字节，低于原2GiB门槛；C盘10,418,995,200、D盘15,016,464,384字节达标，未发现活跃构建／测试，没有本任务活SDK句柄。未启动SDK、未停止共享服务或清理缓存；此前同一资源条件已连续阻止验证，后续仅在明确恢复信号及共享窗口可用后重查。
-- 合并待验：15个Dart文件分析。源码为lib/core/approval_decision.dart、lib/pages/console_pages.dart、lib/ui/design.dart、lib/ui/member_editor.dart、lib/core/device_management.dart、lib/ui/device_management_dialog.dart、lib/pages/scoped_overview_page.dart，加下述八个测试文件；均相对apps/guardian。普通测试为test/下approval_decision_test.dart、dialog_submit_guard_test.dart、member_editor_test.dart、device_management_test.dart、device_management_dialog_test.dart；HTML浏览器为同目录approval_help_flow_browser_test.dart、dashboard_read_authority_test.dart、scoped_overview_page_test.dart。串行使用既有依赖与HTML目标，不重跑未改模块或构建发布包。
-- 资源恢复后先分析上述文件，再运行受影响普通／浏览器测试并记录原运行句柄的实际终态。真实账号MFA、完整后端／设备联调及各平台安装验收仍需各自证据；本记录及局部测试均不能替代整个产品目标的验收。
+- 窗口明确释放后一次准入：RAM3,950,211,072、C盘10,327,932,928、D盘10,637,402,112字节，均满足原2GiB门槛，未见活跃构建／测试。checkout干净，复用当前源码和依赖，不复制源树；本批串行结束后已释放窗口。
+- 原55278自然exit1：15个受影响Dart文件分析仅发现approval_help_flow_browser_test.dart一处花括号规范info，普通／浏览器测试未启动。只补该if的花括号，不改变业务或断言；原78726复验该文件No issues，另14个未改文件不重复分析，最终15文件均无分析问题。
+- 原78726自然exit0：普通5文件116/116（approval_decision7、dialog_submit_guard23、member_editor17、device_management41、device_management_dialog28），HTML浏览器3文件51/51（approval_help_flow_browser34、dashboard_read_authority7、scoped_overview_page10），共167个唯一测试，sourceDrift0。不把普通／浏览器的重复业务分支另计实例，不叠加历史运行。
+- 分析源码为lib/core/approval_decision.dart、lib/pages/console_pages.dart、lib/ui/design.dart、lib/ui/member_editor.dart、lib/core/device_management.dart、lib/ui/device_management_dialog.dart、lib/pages/scoped_overview_page.dart，加上述八个既有测试文件，均相对apps/guardian；测试位于test/并使用_test.dart后缀。未跑未改模块的全量套件或构建发布包。
+- 原忽略目录.cache/guardian-flow-validation-20261028保留frozen-scope-20261029-analyze、lint-analyze、ordinary、browser四份.log，保留首轮提示和实际终态，不建立新副本／清理共享缓存。未更新当前服务；真实账号MFA、完整后端／设备联调及各平台安装验收仍需各自证据，本批结果不能替代整个产品目标的验收。
 
 ## 工作台验证恢复（9d8009bf）
 

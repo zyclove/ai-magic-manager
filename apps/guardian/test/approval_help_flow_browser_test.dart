@@ -677,8 +677,10 @@ void main() {
       final fixture = _ApprovalFixture(action, requestedSeconds: 90,
           retryDecision: retry.future);
       addTearDown(() {
-        if (!retry.isCompleted) retry.complete(_reply(fixture.posts.isEmpty
-            ? _approval('DENIED') : fixture.decisionResult()));
+        if (!retry.isCompleted) {
+          retry.complete(_reply(fixture.posts.isEmpty
+              ? _approval('DENIED') : fixture.decisionResult()));
+        }
       });
       await fixture.open(tester);
       final minutes = find.byWidgetPredicate((widget) => widget is TextField &&
