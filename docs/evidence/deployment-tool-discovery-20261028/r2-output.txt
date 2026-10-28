@@ -1,0 +1,26 @@
+test_doctor_discovers_real_literal_script_paths_without_executing_them (test_manager_entry.ManagerEntryTest.test_doctor_discovers_real_literal_script_paths_without_executing_them) ... ok
+test_doctor_treats_special_paths_and_wildcard_command_names_literally (test_manager_entry.ManagerEntryTest.test_doctor_treats_special_paths_and_wildcard_command_names_literally) ... 
+  test_doctor_treats_special_paths_and_wildcard_command_names_literally (test_manager_entry.ManagerEntryTest.test_doctor_treats_special_paths_and_wildcard_command_names_literally) (available_command='configured-[stable]') ... FAIL
+test_doctor_runtime_does_not_require_source_build_commands (test_manager_entry.ManagerEntryTest.test_doctor_runtime_does_not_require_source_build_commands) ... ok
+test_doctor_checks_explicit_build_tools_as_file_commands_without_invocation (test_manager_entry.ManagerEntryTest.test_doctor_checks_explicit_build_tools_as_file_commands_without_invocation) ... ok
+
+======================================================================
+FAIL: test_doctor_treats_special_paths_and_wildcard_command_names_literally (test_manager_entry.ManagerEntryTest.test_doctor_treats_special_paths_and_wildcard_command_names_literally) (available_command='configured-[stable]')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_manager_entry.py", line 320, in test_doctor_treats_special_paths_and_wildcard_command_names_literally
+    self.assertEqual(inventory["missingTools"], expected_missing)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['flutter'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'flutter'
+
+- ['flutter']
++ []
+
+----------------------------------------------------------------------
+Ran 4 tests in 8.077s
+
+FAILED (failures=1)

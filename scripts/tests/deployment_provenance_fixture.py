@@ -14,6 +14,7 @@ RECIPE_PATHS = (
     "deploy/edge/nginx.conf", "deploy/edge/http.conf", "deploy/edge/tls.conf",
     "deploy/edge/routes.conf", "deploy/edge/routes.external-tls.conf",
     "scripts/build-deployment.ps1", "scripts/start-deployment.ps1",
+    "scripts/tool-discovery.ps1",
     "scripts/verify-deployment.ps1", "scripts/deployment-common.ps1",
     "scripts/family-identity-release-common.ps1", "scripts/initialize-erasure-ledger.ps1",
     "scripts/deployment-provenance.ps1", "scripts/deployment-runtime-provenance.ps1",

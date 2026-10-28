@@ -1,0 +1,16 @@
+test_doctor_discovers_real_literal_script_paths_without_executing_them (test_manager_entry.ManagerEntryTest.test_doctor_discovers_real_literal_script_paths_without_executing_them) ... FAIL
+test_doctor_treats_special_paths_and_wildcard_command_names_literally (test_manager_entry.ManagerEntryTest.test_doctor_treats_special_paths_and_wildcard_command_names_literally) ... ok
+
+======================================================================
+FAIL: test_doctor_discovers_real_literal_script_paths_without_executing_them (test_manager_entry.ManagerEntryTest.test_doctor_discovers_real_literal_script_paths_without_executing_them)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_manager_entry.py", line 387, in test_doctor_discovers_real_literal_script_paths_without_executing_them
+    self.assertTrue(tools[tool]["available"])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 2 tests in 3.600s
+
+FAILED (failures=1)

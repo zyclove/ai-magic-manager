@@ -1,0 +1,76 @@
+{
+  "kind": "DIAGNOSTIC_ONLY",
+  "resources": {
+    "ram": 2635526144,
+    "cFree": 5461409792,
+    "dFree": 11476377600
+  },
+  "sdkBefore": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "sourcePins": {
+    "scripts/tool-discovery.ps1": "af063b498203688189ad925d7ff482afd9979a56749aa17166bde2585ef95244",
+    "scripts/manager.ps1": "3816d86a37fdd28e8da2a2c2f80999724f7e57116406a0379035672e84f3665a",
+    "scripts/tests/test_manager_entry.py": "568d2f8561e2f03b83f7856c2ab328a9d0543cf2a5d5607e91b0dcd31a5ade52"
+  },
+  "result": {
+    "inventory": {
+      "powershell": "7.6.5",
+      "toolset": "Build",
+      "tools": [
+        {
+          "tool": "docker",
+          "command": "docker",
+          "available": false,
+          "purpose": "Run the selected Compose deployment"
+        },
+        {
+          "tool": "git",
+          "command": "git",
+          "available": false,
+          "purpose": "Bind the source revision when building release artifacts"
+        },
+        {
+          "tool": "java",
+          "command": "java",
+          "available": false,
+          "purpose": "Build backend artifacts"
+        },
+        {
+          "tool": "mvn",
+          "command": "mvn",
+          "available": false,
+          "purpose": "Build backend artifacts"
+        },
+        {
+          "tool": "flutter",
+          "command": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-combination-240d1cf344b349218b0ef930e9f85973\\SDK [stable] tools\\flutter[stable].ps1",
+          "available": false,
+          "purpose": "Build Flutter applications"
+        }
+      ],
+      "missingTools": [
+        "docker",
+        "git",
+        "java",
+        "mvn",
+        "flutter"
+      ],
+      "scope": "Command availability only; versions, Compose support, daemon health, and platform compatibility are not verified.",
+      "next": "Resolve missing commands: docker, git, java, mvn, flutter. Make them available on PATH. Existing build tools can instead be selected with -MavenCommand, -FlutterCommand. Run doctor -Toolset Build again; see docs/deployment-quickstart.md."
+    },
+    "metadata": [],
+    "diagnostic": {
+      "file": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-combination-240d1cf344b349218b0ef930e9f85973\\SDK [stable] tools\\flutter[stable].ps1",
+      "entryFullName": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-combination-240d1cf344b349218b0ef930e9f85973\\SDK [stable] tools\\flutter[stable].ps1",
+      "pattern": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-combination-240d1cf344b349218b0ef930e9f85973\\SDK `[stable`] tools\\flutter*",
+      "candidates": [],
+      "allCandidates": [],
+      "rawFullSource": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-combination-240d1cf344b349218b0ef930e9f85973\\SDK s tools\\flutters.ps1",
+      "factory": {
+        "error": "Cannot find an overload for \"new\" and the argument count: \"2\"."
+      }
+    }
+  }
+}

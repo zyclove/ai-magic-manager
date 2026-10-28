@@ -1,0 +1,26 @@
+{
+  "startedUtc": "2026-10-28T04:22:16.697708+00:00",
+  "sourcePins": {
+    "scripts/tool-discovery.ps1": "bc03b9cac11960ea49655c566653687aca8bbbe1e24f56351efea9747acd3cf5",
+    "scripts/manager.ps1": "3816d86a37fdd28e8da2a2c2f80999724f7e57116406a0379035672e84f3665a",
+    "scripts/build-deployment.ps1": "859967e9f3d8322ca86c8611cc88d6e166b82d59046f4f2faea09c3e8482af6f",
+    "scripts/tests/test_manager_entry.py": "568d2f8561e2f03b83f7856c2ab328a9d0543cf2a5d5607e91b0dcd31a5ade52"
+  },
+  "scope": "Two affected native metadata regressions only; no SDK/build/service commands",
+  "resources": {
+    "ram": 1736978432,
+    "cFree": 5303390208,
+    "dFree": 10520002560
+  },
+  "sdkBefore": {
+    "powershell": "7.6.5",
+    "sdk": [
+      "go",
+      "platform.test"
+    ],
+    "unknown": 0
+  },
+  "status": "NO_START",
+  "sourceUnchanged": true,
+  "completedUtc": "2026-10-28T04:22:17.239456+00:00"
+}

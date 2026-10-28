@@ -35,6 +35,7 @@ RECIPES = (
     "deploy/edge/tls.conf",
     "deploy/edge/routes.external-tls.conf",
     "scripts/build-deployment.ps1",
+    "scripts/tool-discovery.ps1",
     "scripts/start-deployment.ps1",
     "scripts/verify-deployment.ps1",
     "scripts/deployment-common.ps1",
@@ -317,7 +318,7 @@ try {
 
     def test_recipe_edit_and_deletion_are_rejected(self):
         for path in ("deploy/containers/backend.Dockerfile", "deploy/edge/routes.conf",
-                     "scripts/start-deployment.ps1"):
+                     "scripts/start-deployment.ps1", "scripts/tool-discovery.ps1"):
             for operation in ("delete", "modify"):
                 with self.subTest(path=path, operation=operation):
                     target = self.repository / path

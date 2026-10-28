@@ -1,9 +1,10 @@
-"""Exercise plans, guards and controlled command inventories; no SDK or deployment."""
+"""Exercise plans, guards and native command inventories; no SDK or deployment."""
 import base64
 import json
 import os
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import unittest
 import uuid
@@ -13,34 +14,39 @@ ROOT = Path(__file__).resolve().parents[2]
 ENTRY = ROOT / "scripts/manager.ps1"
 PWSH = os.environ.get("PWSH") or shutil.which("pwsh")
 
-DOCTOR_WRAPPER = r'''
+DOCTOR_METADATA = r'''
 $ErrorActionPreference = 'Stop'
 $fixture = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('__PAYLOAD__')) | ConvertFrom-Json
-$global:doctorLookups = [Collections.Generic.List[object]]::new()
-function global:docker { throw 'Diagnostic discovery must not invoke Docker.' }
-function global:git { throw 'Diagnostic discovery must not invoke Git.' }
-function global:java { throw 'Diagnostic discovery must not invoke Java.' }
-function global:mvn { throw 'Diagnostic discovery must not invoke Maven.' }
-function global:flutter { throw 'Diagnostic discovery must not invoke Flutter.' }
-function global:dart { throw 'Diagnostic discovery must not invoke Dart.' }
-function global:configured-flutter { throw 'Diagnostic discovery must not invoke configured tools.' }
-function global:Get-Command {
-    param([string]$Name, [object]$CommandType, [string]$ErrorAction)
-    $global:doctorLookups.Add(@{name=$Name; externalScriptAllowed=
-        (([Management.Automation.CommandTypes]$CommandType -band [Management.Automation.CommandTypes]::ExternalScript) -ne 0)})
-    $pattern = [Management.Automation.WildcardPattern]::new($Name,
-        [Management.Automation.WildcardOptions]::IgnoreCase)
-    foreach ($availableCommand in $fixture.available) {
-        if ($pattern.IsMatch([string]$availableCommand)) {
-            [pscustomobject]@{Source=[string]$availableCommand}
-        }
-    }
-}
 $parameters = @{}
 foreach ($property in $fixture.parameters.PSObject.Properties) { $parameters[$property.Name]=$property.Value }
 $raw = @(& $fixture.entry doctor @parameters)
-[ordered]@{inventory=(($raw -join "`n") | ConvertFrom-Json); lookups=@($global:doctorLookups.ToArray())} |
+$inventory = ($raw -join "`n") | ConvertFrom-Json
+. $fixture.discovery
+$types = [Management.Automation.CommandTypes]::Application -bor [Management.Automation.CommandTypes]::ExternalScript
+$metadata = @(
+    foreach ($tool in $inventory.tools) {
+        if (-not $tool.available) { continue }
+        $command = Find-DeploymentToolCommand -Command ([string]$tool.command) -CommandTypes $types
+        if ($null -eq $command) { throw 'Available tool has no native command metadata.' }
+        [ordered]@{tool=$tool.tool; commandType=$command.CommandType.ToString()}
+    }
+)
+[ordered]@{inventory=$inventory; metadata=$metadata} |
     ConvertTo-Json -Depth 10 -Compress
+'''
+
+TOOL_SOURCE_METADATA = r'''
+$ErrorActionPreference = 'Stop'
+$fixture = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('__PAYLOAD__')) | ConvertFrom-Json
+. $fixture.discovery
+$types = [Management.Automation.CommandTypes]::Application -bor [Management.Automation.CommandTypes]::ExternalScript
+$sources = @(
+    foreach ($name in $fixture.commands) {
+        $command = Find-DeploymentToolCommand -Command ([string]$name) -CommandTypes $types
+        [ordered]@{command=[string]$name; source=$(if ($null -eq $command) { $null } else { $command.Source })}
+    }
+)
+ConvertTo-Json -InputObject $sources -Depth 5 -Compress
 '''
 
 
@@ -63,28 +69,138 @@ class ManagerEntryTest(unittest.TestCase):
         self.assertEqual(document["action"], action)
         return document
 
-    def doctor_with_command_inventory(self, parameters, available):
+    def require_doctor_fixture_path(self, path):
+        cache_root = ROOT / ".cache"
+        self.assertTrue(path.is_absolute())
+        relative = path.relative_to(cache_root)
+        self.assertNotIn("..", relative.parts)
+        current = cache_root
+        for part in (None, *relative.parts):
+            if part is not None:
+                current = current / part
+            try:
+                metadata = current.lstat()
+            except FileNotFoundError:
+                continue
+            reparse_point = getattr(metadata, "st_file_attributes", 0) & getattr(
+                stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400,
+            )
+            self.assertFalse(
+                stat.S_ISLNK(metadata.st_mode) or reparse_point,
+                "Fixture paths must not traverse symbolic links or reparse points.",
+            )
+        resolved = path.resolve(strict=False)
+        self.assertTrue(resolved == cache_root or cache_root in resolved.parents)
+
+    def doctor_with_command_inventory(self, parameters, available, *, directory=None):
+        cache_root = ROOT / ".cache"
+        task_root = directory or cache_root / ("doctor-inventory-" + uuid.uuid4().hex)
+        self.assertEqual(task_root.parent, cache_root)
+        self.require_doctor_fixture_path(cache_root)
+        cache_root.mkdir(exist_ok=True)
+        self.require_doctor_fixture_path(task_root)
+        task_root.mkdir()
+        created_files = []
+        created_directories = [task_root]
+
+        def ensure_directory(path):
+            current = task_root
+            for part in path.relative_to(task_root).parts:
+                current = current / part
+                self.require_doctor_fixture_path(current)
+                if not current.exists():
+                    current.mkdir()
+                    created_directories.append(current)
+                else:
+                    self.assertTrue(current.is_dir())
+
+        try:
+            path_directory = task_root / "path bin"
+            ensure_directory(path_directory)
+            for name in available:
+                candidate = Path(name)
+                explicit = candidate.is_absolute() or any(
+                    separator and separator in name for separator in (os.sep, os.altsep)
+                )
+                if explicit:
+                    candidate = candidate if candidate.is_absolute() else ROOT / candidate
+                    candidate.relative_to(task_root)
+                    self.assertEqual(candidate.suffix.lower(), ".ps1")
+                    probe = "throw 'Tool discovery must never execute this script.'\n"
+                elif os.name == "nt":
+                    candidate = path_directory / (name + ".cmd")
+                    probe = "@echo off\r\nexit /b 97\r\n"
+                else:
+                    candidate = path_directory / name
+                    probe = "#!/bin/sh\nexit 97\n"
+                ensure_directory(candidate.parent)
+                self.require_doctor_fixture_path(candidate)
+                with candidate.open("x", encoding="utf-8", newline="\n") as stream:
+                    created_files.append(candidate)
+                    stream.write(probe)
+                if not explicit and os.name != "nt":
+                    candidate.chmod(0o700)
+            payload = base64.b64encode(json.dumps({
+                "entry": str(ENTRY), "parameters": parameters,
+                "discovery": str(ROOT / "scripts/tool-discovery.ps1"),
+            }).encode("utf-8")).decode("ascii")
+            script = DOCTOR_METADATA.replace("__PAYLOAD__", payload)
+            encoded = base64.b64encode(script.encode("utf-16-le")).decode("ascii")
+            environment = os.environ.copy()
+            environment["PATH"] = str(path_directory)
+            environment["NO_COLOR"] = "1"
+            if os.name == "nt":
+                environment["PATHEXT"] = ".COM;.EXE;.BAT;.CMD"
+            executable = shutil.which(PWSH) or PWSH
+            result = subprocess.run(
+                [executable, "-NoLogo", "-NoProfile", "-EncodedCommand", encoded],
+                cwd=ROOT, env=environment, capture_output=True, text=True,
+                encoding="utf-8", timeout=20,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            return json.loads(result.stdout)
+        finally:
+            for candidate in reversed(created_files):
+                self.require_doctor_fixture_path(candidate)
+                candidate.unlink()
+            for path in reversed(created_directories):
+                self.require_doctor_fixture_path(path)
+                path.rmdir()
+
+    def tool_command_sources(self, commands):
         payload = base64.b64encode(json.dumps({
-            "entry": str(ENTRY), "parameters": parameters, "available": available,
+            "discovery": str(ROOT / "scripts/tool-discovery.ps1"),
+            "commands": [str(command) for command in commands],
         }).encode("utf-8")).decode("ascii")
-        script = DOCTOR_WRAPPER.replace("__PAYLOAD__", payload)
+        script = TOOL_SOURCE_METADATA.replace("__PAYLOAD__", payload)
         encoded = base64.b64encode(script.encode("utf-16-le")).decode("ascii")
-        result = subprocess.run([PWSH, "-NoLogo", "-NoProfile", "-EncodedCommand", encoded],
-                                cwd=ROOT, capture_output=True, text=True,
-                                encoding="utf-8", timeout=20)
+        result = subprocess.run(
+            [PWSH, "-NoLogo", "-NoProfile", "-EncodedCommand", encoded],
+            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=20,
+        )
         self.assertEqual(result.returncode, 0, result.stderr)
-        return json.loads(result.stdout)
+        return {item["command"]: item["source"] for item in json.loads(result.stdout)}
 
     def test_doctor_runtime_does_not_require_source_build_commands(self):
         runtime = self.doctor_with_command_inventory({"Toolset": "Runtime"}, ["docker"])
         self.assertEqual(runtime["inventory"]["toolset"], "Runtime")
         self.assertEqual(runtime["inventory"]["missingTools"], [])
-        self.assertEqual([item["name"] for item in runtime["lookups"]], ["docker"])
+        self.assertEqual(
+            {item["tool"]: item["command"] for item in runtime["inventory"]["tools"]},
+            {"docker": "docker"},
+        )
+        self.assertEqual(
+            runtime["metadata"], [{"tool": "docker", "commandType": "Application"}],
+        )
         self.assertIn("status -Active -Plan", runtime["inventory"]["next"])
         self.assertNotIn("Resolve missing commands", runtime["inventory"]["next"])
         runtime_missing = self.doctor_with_command_inventory({"Toolset": "Runtime"}, [])
         self.assertEqual(runtime_missing["inventory"]["missingTools"], ["docker"])
-        self.assertEqual([item["name"] for item in runtime_missing["lookups"]], ["docker"])
+        self.assertEqual(
+            {item["tool"]: item["command"] for item in runtime_missing["inventory"]["tools"]},
+            {"docker": "docker"},
+        )
+        self.assertEqual(runtime_missing["metadata"], [])
         runtime_next = runtime_missing["inventory"]["next"]
         self.assertIn("Resolve missing commands", runtime_next)
         self.assertIn("docker", runtime_next)
@@ -94,8 +210,15 @@ class ManagerEntryTest(unittest.TestCase):
         build = self.doctor_with_command_inventory({}, ["docker"])
         self.assertEqual(build["inventory"]["toolset"], "Build")
         self.assertEqual(build["inventory"]["missingTools"], ["git", "java", "mvn", "flutter"])
-        self.assertEqual([item["name"] for item in build["lookups"]],
+        self.assertEqual([item["tool"] for item in build["inventory"]["tools"]],
                          ["docker", "git", "java", "mvn", "flutter"])
+        self.assertEqual(
+            {item["tool"]: item["command"] for item in build["inventory"]["tools"]},
+            {"docker": "docker", "git": "git", "java": "java", "mvn": "mvn", "flutter": "flutter"},
+        )
+        self.assertEqual(
+            build["metadata"], [{"tool": "docker", "commandType": "Application"}],
+        )
         build_next = build["inventory"]["next"]
         self.assertIn("Resolve missing commands", build_next)
         for name in ["git", "java", "mvn", "flutter", "-MavenCommand", "-FlutterCommand", "doctor"]:
@@ -109,23 +232,30 @@ class ManagerEntryTest(unittest.TestCase):
         self.assertFalse((ROOT / absent).exists())
         maven = str(ROOT / absent / "mvn.ps1")
         dart = str(ROOT / absent / "dart.ps1")
-        result = self.doctor_with_command_inventory({
-            "Toolset": "Build", "MavenCommand": str(absent / "mvn.ps1"),
-            "FlutterCommand": "configured-flutter", "DartCommand": str(absent / "dart.ps1"),
-        }, ["docker", "git", "java", maven, "configured-flutter", dart])
+        result = self.doctor_with_command_inventory(
+            {
+                "Toolset": "Build", "MavenCommand": str(absent / "mvn.ps1"),
+                "FlutterCommand": "configured-flutter", "DartCommand": str(absent / "dart.ps1"),
+            },
+            ["docker", "git", "java", maven, "configured-flutter", dart],
+            directory=ROOT / absent,
+        )
         inventory = result["inventory"]
         self.assertEqual(inventory["missingTools"], [])
         self.assertEqual({item["tool"]: item["command"] for item in inventory["tools"]}, {
             "docker": "docker", "git": "git", "java": "java", "mvn": maven,
             "flutter": "configured-flutter", "dart": dart,
         })
-        self.assertEqual([item["name"] for item in result["lookups"]
-                          if item["externalScriptAllowed"]], [maven, "configured-flutter", dart])
+        command_types = {item["tool"]: item["commandType"] for item in result["metadata"]}
+        self.assertEqual(
+            {name: command_types[name] for name in ["mvn", "flutter", "dart"]},
+            {"mvn": "ExternalScript", "flutter": "Application", "dart": "ExternalScript"},
+        )
         self.assertIn("init -Plan", inventory["next"])
         missing = self.doctor_with_command_inventory({
             "Toolset": "Build", "MavenCommand": str(absent / "mvn.ps1"),
             "FlutterCommand": "configured-flutter", "DartCommand": str(absent / "dart.ps1"),
-        }, ["docker", "git", "java"])
+        }, ["docker", "git", "java"], directory=ROOT / absent)
         self.assertEqual(missing["inventory"]["missingTools"], ["mvn", "flutter", "dart"])
         next_step = missing["inventory"]["next"]
         self.assertIn("Resolve missing commands", next_step)
@@ -155,28 +285,35 @@ class ManagerEntryTest(unittest.TestCase):
         ]:
             with self.subTest(explicit_paths_available=bool(available)):
                 result = self.doctor_with_command_inventory(
-                    parameters, defaults + available,
+                    parameters, defaults + available, directory=ROOT / absent,
                 )
                 inventory = result["inventory"]
                 self.assertEqual(inventory["missingTools"], expected_missing)
                 tools = {item["tool"]: item for item in inventory["tools"]}
+                command_types = {
+                    item["tool"]: item["commandType"] for item in result["metadata"]
+                }
                 for tool, command in commands.items():
                     self.assertEqual(tools[tool]["command"], command)
                     self.assertEqual(
                         tools[tool]["available"], tool not in expected_missing,
                     )
+                    if tool in expected_missing:
+                        self.assertNotIn(tool, command_types)
+                    else:
+                        self.assertEqual(command_types[tool], "ExternalScript")
                     self.assertNotIn(command, inventory["next"])
                 self.assertNotIn("doctor private", inventory["next"])
                 if expected_missing:
                     self.assertIn("Resolve missing commands", inventory["next"])
                     self.assertNotIn("init -Plan", inventory["next"])
-        for available_command, expected_missing in [
-            ("configured-flutter", ["flutter"]),
-            ("configured-*", []),
+        for configured_command, available_command, expected_missing in [
+            ("configured-*", "configured-flutter", ["flutter"]),
+            ("configured-[stable]", "configured-[stable]", []),
         ]:
             with self.subTest(available_command=available_command):
                 result = self.doctor_with_command_inventory(
-                    {"FlutterCommand": "configured-*"},
+                    {"FlutterCommand": configured_command},
                     [*defaults, "mvn", available_command],
                 )
                 inventory = result["inventory"]
@@ -184,11 +321,106 @@ class ManagerEntryTest(unittest.TestCase):
                 flutter = next(
                     item for item in inventory["tools"] if item["tool"] == "flutter"
                 )
-                self.assertEqual(flutter["command"], "configured-*")
+                self.assertEqual(flutter["command"], configured_command)
                 self.assertEqual(flutter["available"], not expected_missing)
+                command_types = {
+                    item["tool"]: item["commandType"] for item in result["metadata"]
+                }
+                if expected_missing:
+                    self.assertNotIn("flutter", command_types)
+                else:
+                    self.assertEqual(command_types["flutter"], "Application")
                 self.assertNotIn("configured-", inventory["next"])
                 if expected_missing:
                     self.assertIn("Resolve missing commands", inventory["next"])
+
+    def test_doctor_discovers_real_literal_script_paths_without_executing_them(self):
+        cache_root = ROOT / ".cache"
+        task_root = cache_root / ("doctor-native-" + uuid.uuid4().hex)
+        tool_directory = task_root / "SDK [stable] tools"
+        interference_directory = task_root / "SDK s tools"
+        commands = {
+            "mvn": tool_directory / "mvn[stable].ps1",
+            "flutter": tool_directory / "flutter[stable].ps1",
+            "dart": tool_directory / "dart[stable].ps1",
+        }
+        interference_commands = {
+            tool: interference_directory / (tool + "s.ps1") for tool in commands
+        }
+        leaf_interference_commands = {
+            tool: tool_directory / command.name
+            for tool, command in interference_commands.items()
+        }
+        probe = "throw 'Tool discovery must never execute this script.'\n"
+        created_files = []
+        created_directories = []
+
+        require_owned_path = self.require_doctor_fixture_path
+        require_owned_path(cache_root)
+        cache_root.mkdir(exist_ok=True)
+        require_owned_path(task_root)
+        task_root.mkdir()
+        try:
+            for directory in [tool_directory, interference_directory]:
+                require_owned_path(directory)
+                directory.mkdir()
+                created_directories.append(directory)
+            for script in [
+                *commands.values(),
+                *interference_commands.values(),
+                *leaf_interference_commands.values(),
+            ]:
+                require_owned_path(script)
+                with script.open("x", encoding="utf-8", newline="\n") as stream:
+                    created_files.append(script)
+                    stream.write(probe)
+            doctor_arguments = (
+                "doctor", "-MavenCommand", str(commands["mvn"]),
+                "-FlutterCommand", str(commands["flutter"]),
+                "-DartCommand", str(commands["dart"]),
+            )
+            result = self.invoke(*doctor_arguments)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            inventory = json.loads(result.stdout)
+            tools = {item["tool"]: item for item in inventory["tools"]}
+            for tool, command in commands.items():
+                self.assertTrue(tools[tool]["available"])
+                self.assertEqual(tools[tool]["command"], str(command))
+            sources = self.tool_command_sources(commands.values())
+            self.assertEqual(set(sources), {str(command) for command in commands.values()})
+            for command in commands.values():
+                self.assertIsNotNone(sources[str(command)])
+                self.assertEqual(Path(sources[str(command)]), command)
+
+            for script in commands.values():
+                require_owned_path(script)
+                script.unlink()
+                created_files.remove(script)
+            for script in [
+                *interference_commands.values(), *leaf_interference_commands.values(),
+            ]:
+                require_owned_path(script)
+                self.assertTrue(script.is_file())
+            missing = self.invoke(*doctor_arguments)
+            self.assertEqual(missing.returncode, 0, missing.stderr)
+            inventory = json.loads(missing.stdout)
+            tools = {item["tool"]: item for item in inventory["tools"]}
+            for tool, command in commands.items():
+                self.assertFalse(tools[tool]["available"])
+                self.assertEqual(tools[tool]["command"], str(command))
+                self.assertIn(tool, inventory["missingTools"])
+            self.assertEqual(self.tool_command_sources(commands.values()), {
+                str(command): None for command in commands.values()
+            })
+        finally:
+            for script in reversed(created_files):
+                require_owned_path(script)
+                script.unlink()
+            for directory in reversed(created_directories):
+                require_owned_path(directory)
+                directory.rmdir()
+            require_owned_path(task_root)
+            task_root.rmdir()
 
     def test_each_action_has_the_expected_entry_and_forwarded_parameters(self):
         source = str(ROOT / "input source")

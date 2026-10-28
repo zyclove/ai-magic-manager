@@ -19,6 +19,7 @@ $script:DeploymentRecipeRelativePaths = @(
     'deploy/edge/tls.conf',
     'deploy/edge/routes.external-tls.conf',
     'scripts/build-deployment.ps1',
+    'scripts/tool-discovery.ps1',
     'scripts/start-deployment.ps1',
     'scripts/verify-deployment.ps1',
     'scripts/deployment-common.ps1',

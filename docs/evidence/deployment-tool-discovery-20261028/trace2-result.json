@@ -1,0 +1,78 @@
+{
+  "kind": "DIAGNOSTIC_ONLY",
+  "sdkBefore": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "result": {
+    "inventory": {
+      "powershell": "7.6.5",
+      "toolset": "Build",
+      "tools": [
+        {
+          "tool": "docker",
+          "command": "docker",
+          "available": false,
+          "purpose": "Run the selected Compose deployment"
+        },
+        {
+          "tool": "git",
+          "command": "git",
+          "available": false,
+          "purpose": "Bind the source revision when building release artifacts"
+        },
+        {
+          "tool": "java",
+          "command": "java",
+          "available": false,
+          "purpose": "Build backend artifacts"
+        },
+        {
+          "tool": "mvn",
+          "command": "mvn",
+          "available": false,
+          "purpose": "Build backend artifacts"
+        },
+        {
+          "tool": "flutter",
+          "command": "configured-[stable]",
+          "available": false,
+          "purpose": "Build Flutter applications"
+        }
+      ],
+      "missingTools": [
+        "docker",
+        "git",
+        "java",
+        "mvn",
+        "flutter"
+      ],
+      "scope": "Command availability only; versions, Compose support, daemon health, and platform compatibility are not verified.",
+      "next": "Resolve missing commands: docker, git, java, mvn, flutter. Make them available on PATH. Existing build tools can instead be selected with -MavenCommand, -FlutterCommand. Run doctor -Toolset Build again; see docs/deployment-quickstart.md."
+    },
+    "metadata": [],
+    "diagnostic": {
+      "name": "configured-[stable]",
+      "pathext": ".COM;.EXE;.BAT;.CMD;.CPL",
+      "file": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-inventory-1fcd8263e7bd446b8bd4733c95d36e07\\path bin\\configured-[stable].cmd",
+      "entryFullName": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-inventory-1fcd8263e7bd446b8bd4733c95d36e07\\path bin\\configured-[stable].cmd",
+      "pattern": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-inventory-1fcd8263e7bd446b8bd4733c95d36e07\\path bin\\configured-`[stable`].cmd*",
+      "bareCandidates": [
+        {
+          "Name": "configured-[stable].cmd",
+          "Source": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-inventory-1fcd8263e7bd446b8bd4733c95d36e07\\path bin\\configured-[stable].cmd",
+          "CommandType": 32
+        }
+      ],
+      "fullCandidates": [],
+      "allCandidates": [
+        {
+          "Name": "configured-[stable].cmd",
+          "Source": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-inventory-1fcd8263e7bd446b8bd4733c95d36e07\\path bin\\configured-[stable].cmd",
+          "CommandType": 32
+        }
+      ],
+      "rawFullSource": "D:\\codes\\mobile\\ai-manager\\.cache\\doctor-inventory-1fcd8263e7bd446b8bd4733c95d36e07\\path bin\\configured-[stable].cmd"
+    }
+  }
+}

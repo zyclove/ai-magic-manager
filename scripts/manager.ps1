@@ -196,6 +196,7 @@ if ($Plan) {
 }
 
 if ($Action -eq 'doctor') {
+    . (Join-Path $PSScriptRoot 'tool-discovery.ps1')
     $tools = @(@{ name='docker'; command='docker'; purpose='Run the selected Compose deployment' })
     if ($forward.Toolset -eq 'Build') {
         $tools += @(
@@ -216,7 +217,7 @@ if ($Action -eq 'doctor') {
         [ordered]@{
             tool = $tool.name
             command = $tool.command
-            available = $null -ne (Get-Command -Name ([Management.Automation.WildcardPattern]::Escape([string]$tool.command)) -CommandType $commandKinds -ErrorAction SilentlyContinue)
+            available = $null -ne (Find-DeploymentToolCommand -Command ([string]$tool.command) -CommandTypes $commandKinds)
             purpose = $tool.purpose
         }
     }

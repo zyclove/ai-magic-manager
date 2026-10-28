@@ -1,0 +1,40 @@
+{
+  "startedUtc": "2026-10-28T03:47:03.551108+00:00",
+  "sourcePins": {
+    "scripts/tool-discovery.ps1": "af063b498203688189ad925d7ff482afd9979a56749aa17166bde2585ef95244",
+    "scripts/manager.ps1": "3816d86a37fdd28e8da2a2c2f80999724f7e57116406a0379035672e84f3665a",
+    "scripts/build-deployment.ps1": "859967e9f3d8322ca86c8611cc88d6e166b82d59046f4f2faea09c3e8482af6f",
+    "scripts/tests/test_manager_entry.py": "568d2f8561e2f03b83f7856c2ab328a9d0543cf2a5d5607e91b0dcd31a5ade52"
+  },
+  "scope": "Two affected native metadata regressions only; no SDK/build/service commands",
+  "resources": {
+    "ram": 2272718848,
+    "cFree": 5462986752,
+    "dFree": 11479339008
+  },
+  "sdkBefore": {
+    "powershell": "7.6.5",
+    "sdk": [],
+    "unknown": 0
+  },
+  "parseExitCode": 0,
+  "command": [
+    "C:\\Python313\\python.exe",
+    "-m",
+    "unittest",
+    "-v",
+    "test_manager_entry.ManagerEntryTest.test_doctor_discovers_real_literal_script_paths_without_executing_them",
+    "test_manager_entry.ManagerEntryTest.test_doctor_treats_special_paths_and_wildcard_command_names_literally"
+  ],
+  "exitCode": 1,
+  "naturalExit": true,
+  "status": "NOT_ACCEPTED",
+  "durationSeconds": 3.722,
+  "sdkAfter": {
+    "powershell": "7.6.5",
+    "sdk": [],
+    "unknown": 0
+  },
+  "sourceUnchanged": true,
+  "completedUtc": "2026-10-28T03:47:08.708427+00:00"
+}
