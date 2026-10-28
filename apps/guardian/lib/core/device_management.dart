@@ -529,6 +529,7 @@ class DeviceManagementController extends ChangeNotifier {
   Future<void> selectSection(DeviceManagementSection value) async {
     if (_busy ||
         !hasAccess ||
+        value == _section ||
         (value == DeviceManagementSection.applications &&
             !canReadApplications)) {
       return;

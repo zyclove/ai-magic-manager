@@ -719,7 +719,8 @@ class ConsoleActions {
             return receipt.committed;
           });
       final receipt = queried;
-      if (result != null && receipt != null && access.permitted() && parentRoute.isCurrent) {
+      if (result != null && receipt != null && owner.mounted &&
+          access.permitted() && parentRoute.isCurrent) {
         if (receipt.current['state'] == 'ARCHIVED') {
           toast(owner, '原操作已核对，档案现已归档；可在“包含已归档”中查看。');
         } else if ((receipt.current['version'] as int) >
@@ -1787,20 +1788,43 @@ class ConsoleActions {
         permitted: () => access.permitted() && s.tenant != null &&
             s.root == workspace && s.canOpen('approvals'));
     final writes = ApiWriteDispatch();
-    final changes = Listenable.merge([scope, access.changes]);
-    bool current() => scope.current && access.permitted();
+    final readChanges = ValueNotifier<bool>(false);
+    var requestDenied = false, live = true;
+    final changes = Listenable.merge([scope, access.changes, readChanges]);
+    bool sourceCurrent() => scope.current && access.permitted();
+    bool current() => !requestDenied && sourceCurrent();
+    void rejectRequestRead(Object failure) {
+      if (!current() || failure is! ApiFailure ||
+          failure.code == 'REAUTH_REQUIRED' ||
+          (failure.status != 401 && failure.status != 403 &&
+              failure.code != 'WORKSPACE_CHANGED')) return;
+      requestDenied = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (live) readChanges.value = true;
+      });
+      WidgetsBinding.instance.ensureVisualUpdate();
+    }
+
     try {
       if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-      final api = scope.api.trackingWrites(writes);
+      final api = scope.api.scoped(current).trackingWrites(writes);
+      Future<dynamic> read(String path) async {
+        try {
+          return await api.send('GET', path);
+        } catch (failure) {
+          rejectRequestRead(failure);
+          rethrow;
+        }
+      }
       final cancelKey = requestId();
-      final raw = await api.send('GET',
+      final raw = await read(
           '$workspace/access-requests/${listContext.requestId}');
       final request = ApprovalRequestSnapshot.read(raw,
           expectedId: listContext.requestId, context: listContext);
       final r = raw as Json;
       Json? delivery;
       if (request.state != 'PENDING') {
-        delivery = await api.send('GET',
+        delivery = await read(
             '$workspace/access-requests/${request.id}/delivery') as Json;
       }
       if (!context.mounted) return false;
@@ -1849,6 +1873,7 @@ class ConsoleActions {
           },
           accessChanges: changes,
           hasAccess: current,
+          closeOnAccessLost: true,
           reauth: reauth,
           actions: [
             if (['TEACHER', 'CHILD'].contains(s.role) && request.state == 'PENDING')
@@ -1866,7 +1891,9 @@ class ConsoleActions {
               }, destructive: true, closeOnSuccess: false),
             if (delivery != null)
               DetailAction('交付历史', (ctx) => approvalDeliveryHistory(
-                  ctx, request.id, scope: scope, api: api),
+                  ctx, request.id, scope: scope, api: api,
+                  requestChanges: changes, requestCurrent: current,
+                  onRequestReadDenied: rejectRequestRead),
                   closeOnSuccess: false),
             if (s.canWrite && request.state == 'PENDING') ...[
               DetailAction('批准', (ctx) async {
@@ -1942,14 +1969,19 @@ class ConsoleActions {
                 }
               }, destructive: true, closeOnSuccess: false)
           ]);
-      return writes.dispatched && current();
+      return (writes.dispatched || requestDenied) && sourceCurrent();
+    } catch (_) {
+      if (requestDenied && sourceCurrent()) return true;
+      rethrow;
     } finally {
+      live = false;
+      readChanges.dispose();
       scope.dispose();
       access.dispose();
     }
   }
 
-  Future<void> _approvalHistoryDialog(
+  Future<bool> _approvalHistoryDialog(
       BuildContext parent, DeviceSubflowScope scope, Api api,
       {required Key key,
       required String path,
@@ -1958,19 +1990,42 @@ class ConsoleActions {
       required String emptyTitle,
       required String emptyDescription,
       required List<ColumnSpec> columns,
-      Future<void> Function(BuildContext, Json)? onOpen}) async {
+      required Listenable requestChanges,
+      required bool Function() requestCurrent,
+      required ValueChanged<Object> onRequestReadDenied,
+      bool documentTarget = false,
+      Future<bool> Function(BuildContext, Json, ResourceActionLease)? onOpen}) async {
+    var readDenied = false, reviewDocuments = false, live = true;
     final access = DialogAccessBinding(parent,
-        accessChanges: scope, hasAccess: () => scope.current);
-    late final OwnedDialogRoute<void> route;
+        accessChanges: requestChanges,
+        hasAccess: () => !readDenied && requestCurrent());
+    late final OwnedDialogRoute<bool> route;
     Api? historyApi;
-    bool accepted() => scope.current && access.permitted() && route.available;
+    bool accepted() => live && !readDenied && scope.current &&
+        requestCurrent() && access.permitted() && route.available;
     void observe() {
-      if (!access.permitted()) route.finish();
+      if (!access.permitted()) route.finish(reviewDocuments);
+    }
+    void rejectRead(Object failure) {
+      if (!accepted() || failure is! ApiFailure ||
+          failure.code == 'REAUTH_REQUIRED' ||
+          (failure.status != 401 && failure.status != 403 &&
+              failure.code != 'WORKSPACE_CHANGED')) return;
+      readDenied = true;
+      // A missing document shares 403 with an unreadable request. Recheck the
+      // document list before retiring the whole request capture.
+      if (documentTarget && failure.status == 403 &&
+          failure.code != 'WORKSPACE_CHANGED') {
+        reviewDocuments = true;
+      } else {
+        onRequestReadDenied(failure);
+      }
+      access.permitted();
     }
 
     try {
-      if (!access.permitted()) return;
-      route = OwnedDialogRoute<void>(
+      if (!access.permitted()) return false;
+      route = OwnedDialogRoute<bool>(
           context: parent,
           barrierDismissible: false,
           builder: (dialog) => AnimatedBuilder(
@@ -1998,55 +2053,79 @@ class ConsoleActions {
                                             emptyDescription: emptyDescription,
                                             isCurrent: accepted,
                                             canInteract: () => route.isCurrent,
+                                            onReadDenied: rejectRead,
                                             onOpenChanged: onOpen == null ? null
-                                                : (row, _) async {
-                                                    await onOpen(dialog, row);
-                                                    return false;
+                                                : (row, lease) async {
+                                                    if (!accepted() || !lease.current) {
+                                                      return false;
+                                                    }
+                                                    final changed =
+                                                        await onOpen(dialog, row, lease);
+                                                    return changed && accepted() &&
+                                                        lease.current;
                                                   },
                                             columns: columns))),
                                 Align(
                                     alignment: Alignment.centerRight,
                                     child: TextButton(
                                         onPressed: route.isCurrent && accepted()
-                                            ? () => route.finish() : null,
+                                            ? () => route.finish(false) : null,
                                         child: const Text('关闭')))
                               ]))))));
       access.changes.addListener(observe);
-      await presentOwnedDialog(parent, route);
+      final changed = await presentOwnedDialog(parent, route);
+      return changed == true && scope.current && requestCurrent();
     } finally {
+      live = false;
       access.changes.removeListener(observe);
       access.dispose();
     }
   }
 
   Future<void> approvalDeliveryHistory(BuildContext ctx, String id,
-          {required DeviceSubflowScope scope, required Api api}) =>
-      _approvalHistoryDialog(ctx, scope, api,
-          key: const Key('approval-delivery-history'),
-          path: '$root/access-requests/$id/documents',
-          title: '审批文档交付历史',
-          subtitle: '选择记录查看各次尝试与拒收原因。旧回执不会覆盖当前状态。',
-          emptyTitle: '设备尚未获取文档',
-          emptyDescription: '设备获取批准或撤回文档后，这里会显示签发和回执记录。',
-          onOpen: (dialog, row) => approvalAttemptHistory(
-              dialog, id, row['documentId'] as String, scope: scope, api: api),
-          columns: [
-            ColumnSpec('审批版本', (row) => Text('${row['approvalVersion']}')),
-            ColumnSpec('动作', (row) => Text(label(row['action']))),
-            ColumnSpec('交付 / 设备报告',
-                (row) => Text(label(row['deliveryState']))),
-            ColumnSpec('尝试次数',
-                (row) => Text('${row['deliveryAttempt'] ?? 1}')),
-            ColumnSpec('适用版本',
-                (row) => Text(row['current'] == true ? '当前' : '历史')),
-            ColumnSpec('签发时间',
-                (row) => Text(dateLabel(row['documentIssuedAt']))),
-            ColumnSpec('回执时间', (row) => Text(dateLabel(row['receivedAt']))),
-          ]);
+      {required DeviceSubflowScope scope,
+      required Api api,
+      required Listenable requestChanges,
+      required bool Function() requestCurrent,
+      required ValueChanged<Object> onRequestReadDenied}) async {
+    await _approvalHistoryDialog(ctx, scope, api,
+        key: const Key('approval-delivery-history'),
+        path: '$root/access-requests/$id/documents',
+        title: '审批文档交付历史',
+        subtitle: '选择记录查看各次尝试与拒收原因。旧回执不会覆盖当前状态。',
+        emptyTitle: '设备尚未获取文档',
+        emptyDescription: '设备获取批准或撤回文档后，这里会显示签发和回执记录。',
+        requestChanges: requestChanges,
+        requestCurrent: requestCurrent,
+        onRequestReadDenied: onRequestReadDenied,
+        onOpen: (dialog, row, lease) => approvalAttemptHistory(
+            dialog, id, row['documentId'] as String,
+            scope: scope, api: api,
+            requestChanges: Listenable.merge([requestChanges, lease]),
+            requestCurrent: () => requestCurrent() && lease.current,
+            onRequestReadDenied: onRequestReadDenied),
+        columns: [
+          ColumnSpec('审批版本', (row) => Text('${row['approvalVersion']}')),
+          ColumnSpec('动作', (row) => Text(label(row['action']))),
+          ColumnSpec('交付 / 设备报告',
+              (row) => Text(label(row['deliveryState']))),
+          ColumnSpec('尝试次数',
+              (row) => Text('${row['deliveryAttempt'] ?? 1}')),
+          ColumnSpec('适用版本',
+              (row) => Text(row['current'] == true ? '当前' : '历史')),
+          ColumnSpec('签发时间',
+              (row) => Text(dateLabel(row['documentIssuedAt']))),
+          ColumnSpec('回执时间', (row) => Text(dateLabel(row['receivedAt']))),
+        ]);
+  }
 
-  Future<void> approvalAttemptHistory(
-          BuildContext ctx, String request, String document,
-          {required DeviceSubflowScope scope, required Api api}) =>
+  Future<bool> approvalAttemptHistory(
+      BuildContext ctx, String request, String document,
+      {required DeviceSubflowScope scope,
+      required Api api,
+      required Listenable requestChanges,
+      required bool Function() requestCurrent,
+      required ValueChanged<Object> onRequestReadDenied}) =>
       _approvalHistoryDialog(ctx, scope, api,
           key: const Key('approval-attempt-history'),
           path: '$root/access-requests/$request/documents/$document/attempts',
@@ -2054,6 +2133,10 @@ class ConsoleActions {
           subtitle: '每份文档最多 10 次尝试。接收与保存是设备报告，均不代表系统执行。',
           emptyTitle: '暂无交付尝试',
           emptyDescription: '设备获取文档后会建立第一次交付记录。',
+          requestChanges: requestChanges,
+          requestCurrent: requestCurrent,
+          onRequestReadDenied: onRequestReadDenied,
+          documentTarget: true,
           columns: [
             ColumnSpec('尝试', (row) => Text('第 ${row['deliveryAttempt']} 次')),
             ColumnSpec('交付状态', (row) => Text(label(row['deliveryState']))),

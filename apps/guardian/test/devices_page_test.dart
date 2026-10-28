@@ -39,6 +39,19 @@ void main() {
     var current = true, filtered = true, writable = false;
     final changes = <bool>[];
     final requests = <http.Request>[];
+    Future<void> waitForReconciliation(int expectedReads) async {
+      for (var attempt = 0; attempt < 50; attempt++) {
+        // Deliver HTTP responses without advancing the API's fake-clock deadline.
+        await tester.runAsync(() =>
+            Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump(const Duration(milliseconds: 1));
+        if (requests.length >= expectedReads &&
+            find.byType(LinearProgressIndicator).evaluate().isEmpty &&
+            find.byType(CircularProgressIndicator).evaluate().isEmpty) return;
+      }
+      fail('List reconciliation did not finish after $expectedReads reads.');
+    }
+
     var detail = Completer<bool>(), lookup = Completer<bool>();
     var creation = Completer<bool>();
     addTearDown(() {
@@ -203,7 +216,7 @@ void main() {
     await tester.pump();
     expect(opens, 2);
     detail.complete(true);
-    await tester.pumpAndSettle();
+    await waitForReconciliation(requestCount + 1);
     expect(requests, hasLength(requestCount + 1));
     expect(requests.last.url.queryParameters['cursor'], isNull);
     expect(find.text('书房平板'), findsNothing);
@@ -217,7 +230,7 @@ void main() {
     await tester.pump();
     expect(creations, 2);
     creation.complete(true);
-    await tester.pumpAndSettle();
+    await waitForReconciliation(requestCount + 3);
     expect(requests, hasLength(requestCount + 3));
     expect(requests.last.url.queryParameters['cursor'], isNull);
 
@@ -229,7 +242,7 @@ void main() {
     await tester.pump();
     expect(lookups, 2);
     lookup.complete(true);
-    await tester.pumpAndSettle();
+    await waitForReconciliation(requestCount + 5);
     expect(requests, hasLength(requestCount + 5));
     expect(requests.last.url.queryParameters['cursor'], isNull);
     expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, '书房');

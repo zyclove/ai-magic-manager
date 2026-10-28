@@ -47,15 +47,25 @@ Future<void> open(WidgetTester tester, Future<Json> Function(Json) submit,
   }
 }
 
+Future<void> until(WidgetTester tester, bool Function() ready) async {
+  for (var frame = 0; frame < 24 && !ready(); frame++) {
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+  expect(ready(), isTrue, reason: 'The member editor step must finish within the bounded wait.');
+}
+
 void main() {
   testWidgets('scope options load only when needed and leaving stops late pagination',
       (tester) async {
     final reads = <http.Request>[];
     final pending = Completer<http.Response>();
     addTearDown(() {
-      if (!pending.isCompleted) pending.complete(http.Response(
-          '{"items":[],"nextCursor":null}', 200,
-          headers: {'content-type': 'application/json; charset=utf-8'}));
+      if (!pending.isCompleted) {
+        pending.complete(http.Response(
+            '{"items":[],"nextCursor":null}', 200,
+            headers: {'content-type': 'application/json; charset=utf-8'}));
+      }
     });
     final client = MockClient((request) async {
       reads.add(request);
@@ -87,14 +97,18 @@ void main() {
     await tester.tap(find.text('审计员').last);
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('创建邀请'));
-    await tester.pump(const Duration(milliseconds: 300));
+    await until(tester, () => find.byType(MemberEditor).evaluate().isEmpty);
     expect(sent, {'recipientEmail': 'audit@fixture.invalid', 'role': 'AUDITOR'});
     expect(find.byType(MemberEditor), findsNothing);
     pending.complete(http.Response(jsonEncode({
       'items': [{'id': 'class-full', 'name': '晚到班级', 'state': 'ACTIVE'}],
       'nextCursor': 'must-not-load',
     }), 200, headers: {'content-type': 'application/json; charset=utf-8'}));
-    await tester.pumpAndSettle();
+    // Let the late HTTP response finish and cancel its original API deadline.
+    for (var frame = 0; frame < 6; frame++) {
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
     expect(reads, hasLength(1));
     expect(directories.current, isFalse);
     expect(find.textContaining('晚到班级'), findsNothing);
@@ -105,9 +119,11 @@ void main() {
       (tester) async {
     final pending = Completer<http.Response>();
     addTearDown(() {
-      if (!pending.isCompleted) pending.complete(http.Response(
-          '{"items":[],"nextCursor":null}', 200,
-          headers: {'content-type': 'application/json; charset=utf-8'}));
+      if (!pending.isCompleted) {
+        pending.complete(http.Response(
+            '{"items":[],"nextCursor":null}', 200,
+            headers: {'content-type': 'application/json; charset=utf-8'}));
+      }
     });
     var reads = 0;
     final client = MockClient((request) async {
@@ -144,7 +160,10 @@ void main() {
         find.byKey(const Key('member-subject'))).initialValue, 'original-subject-full');
     expect(find.textContaining('original-subject-full'), findsWidgets);
     pending.complete(http.Response('{"errorCode":"REAUTH_REQUIRED"}', 401));
-    await tester.pumpAndSettle();
+    await until(tester, () => find.byType(FailureView).evaluate().length == 1);
+    expect(tester.widget<FailureView>(find.byType(FailureView)).error,
+        isA<ApiFailure>().having((e) => e.status, 'status', 401)
+            .having((e) => e.code, 'code', 'REAUTH_REQUIRED'));
     expect(tester.widget<DropdownButtonFormField<String>>(
         find.byKey(const Key('member-subject'))).initialValue, 'original-subject-full');
     final originalRetry = tester.widget<FailureView>(find.byType(FailureView)).retry!;
@@ -156,7 +175,9 @@ void main() {
     expect(sent, isEmpty);
     await tester.ensureVisible(find.text('重试'));
     await tester.tap(find.text('重试'));
-    await tester.pumpAndSettle();
+    await until(tester, () =>
+        directories.subjects?.containsKey('available-subject-full') == true &&
+        find.byKey(const Key('member-subjects-loading')).evaluate().isEmpty);
     expect(reads, 2);
     expect(tester.widget<DropdownButtonFormField<String>>(
         find.byKey(const Key('member-subject'))).initialValue, 'original-subject-full');

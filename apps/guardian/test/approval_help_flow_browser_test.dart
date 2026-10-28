@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
+import 'package:guardian/core/console_routes.dart';
 import 'package:guardian/core/labels.dart';
 import 'package:guardian/core/session.dart';
 import 'package:guardian/pages/console_pages.dart';
@@ -67,6 +68,14 @@ Future<void> _flushPending(WidgetTester tester) async {
   }
 }
 
+Future<void> _waitUntil(WidgetTester tester, bool Function() done) async {
+  for (var frame = 0; frame < 40 && !done(); frame++) {
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+  expect(done(), isTrue, reason: 'The browser journey did not finish in time.');
+}
+
 Finder _helpButton(String text) => find.ancestor(
     of: find.text(text),
     matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
@@ -81,12 +90,14 @@ Future<void> _openHelpConfirmation(WidgetTester tester) async {
 
 class _ApprovalFixture {
   _ApprovalFixture(this.action,
-      {this.requestedSeconds = 60, this.listRow});
+      {this.requestedSeconds = 60, this.listRow,
+      this.documentAppend, this.attemptRead});
 
   final String action;
   final int requestedSeconds;
   final Json? listRow;
-  int deliveryReads = 0;
+  final Future<http.Response>? documentAppend, attemptRead;
+  int listReads = 0, deliveryReads = 0;
   final documentReads = <http.Request>[];
   final attemptReads = <http.Request>[];
   final pending = Completer<http.Response>();
@@ -96,6 +107,15 @@ class _ApprovalFixture {
   bool? needsReview;
   late final session = EntrySession((request) async {
     final path = request.url.path;
+    if (request.method == 'GET' && path.endsWith('/access-requests')) {
+      listReads++;
+      return _reply({
+        'items': [listRow ?? _approval(
+            action == '撤销批准' ? 'APPROVED_PENDING_DELIVERY' : 'PENDING',
+            requestedSeconds: requestedSeconds)],
+        'nextCursor': null,
+      });
+    }
     if (request.method == 'GET' && path.endsWith('/$_approvalId')) {
       return _reply(_approval(
           action == '撤销批准' ? 'APPROVED_PENDING_DELIVERY' : 'PENDING',
@@ -116,6 +136,7 @@ class _ApprovalFixture {
       final first = !request.url.queryParameters.containsKey('cursor');
       if (!first) {
         expect(request.url.queryParameters['cursor'], _documentId);
+        if (documentAppend != null) return documentAppend!;
       }
       return _reply({
         'items': [{
@@ -133,6 +154,7 @@ class _ApprovalFixture {
     }
     if (request.method == 'GET' && path.endsWith('/attempts')) {
       attemptReads.add(request);
+      if (attemptRead != null) return attemptRead!;
       return _reply({
         'items': [{
           'deliveryAttempt': 1,
@@ -153,7 +175,8 @@ class _ApprovalFixture {
     throw StateError('Unexpected approval fixture request.');
   });
 
-  Future<void> open(WidgetTester tester, {bool openAction = true}) async {
+  Future<void> open(WidgetTester tester,
+      {bool openAction = true, bool throughConsole = false}) async {
     addTearDown(() async {
       if (!pending.isCompleted) pending.complete(_reply({'id': _approvalId}));
       await tester.pumpWidget(const SizedBox.shrink());
@@ -165,7 +188,13 @@ class _ApprovalFixture {
         theme: consoleTheme(),
         home: Scaffold(body: Builder(builder: (context) {
           host = context;
-          return TextButton(
+          return throughConsole
+              ? ChangeNotifierProvider<Session>.value(
+                  value: session,
+                  child: const SingleChildScrollView(
+                      child: ConsolePages(section: 'approvals',
+                          listView: ConsoleListView.all)))
+              : TextButton(
               onPressed: () => ConsoleActions(context, session)
                   .approvalDetailsChanged(listRow ?? {'id': _approvalId})
                   .then((changed) {
@@ -174,7 +203,15 @@ class _ApprovalFixture {
                   }),
               child: const Text('打开申请'));
         }))));
-    await tester.tap(find.text('打开申请'));
+    if (throughConsole) {
+      await _waitUntil(tester, () => _helpButton('查看详情').evaluate().isNotEmpty);
+      expect(listReads, 1);
+      final open = _helpButton('查看详情');
+      await tester.ensureVisible(open);
+      await tester.tap(open);
+    } else {
+      await tester.tap(find.text('打开申请'));
+    }
     await settleReads(tester);
     expect(find.text('临时访问申请'), findsOneWidget);
     expect(deliveryReads, action == '撤销批准' ? 1 : 0);
@@ -510,6 +547,123 @@ void main() {
     fixture.succeed();
     await settleReads(tester);
     expect(fixture.detailsCompleted, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('document read denial retires covered histories and reviews approvals once',
+      (tester) async {
+    final append = Completer<http.Response>();
+    final fixture = _ApprovalFixture('撤销批准', documentAppend: append.future);
+    addTearDown(() {
+      if (!append.isCompleted) {
+        append.complete(_reply({'items': [], 'nextCursor': null}));
+      }
+    });
+    await fixture.open(tester, openAction: false, throughConsole: true);
+    final generation = fixture.session.scopeGeneration;
+    await tester.tap(_helpButton('交付历史'));
+    final history = find.byKey(const Key('approval-delivery-history'));
+    await _waitUntil(tester, () => fixture.documentReads.length == 1 &&
+        find.descendant(of: history, matching: _helpButton('查看详情'))
+            .evaluate().isNotEmpty);
+    final more = find.descendant(of: history, matching: _helpButton('加载更多'));
+    final oldMore = tester.widget<OutlinedButton>(more).onPressed!;
+    await tester.ensureVisible(more);
+    await tester.tap(more);
+    await _waitUntil(tester, () => fixture.documentReads.length == 2);
+    final open = find.descendant(of: history, matching: _helpButton('查看详情'));
+    await tester.ensureVisible(open);
+    await tester.tap(open);
+    await _waitUntil(tester, () => fixture.attemptReads.length == 1 &&
+        find.text('第 1 次').evaluate().isNotEmpty);
+    final attempts = find.byKey(const Key('approval-attempt-history'));
+    final oldClose = tester.widget<TextButton>(find.descendant(
+        of: attempts, matching: _helpButton('关闭'))).onPressed!;
+    final cover = DialogRoute<void>(
+        context: fixture.host,
+        builder: (_) => const AlertDialog(title: Text('独立通知')));
+    final navigator = Navigator.of(fixture.host, rootNavigator: true);
+    unawaited(navigator.push<void>(cover));
+    await _waitUntil(tester,
+        () => cover.animation?.status == AnimationStatus.completed);
+    append.complete(_reply({'errorCode': 'SCOPE_DENIED'}, 403));
+    await _waitUntil(tester, () => fixture.listReads == 2 &&
+        find.byKey(const Key('approval-delivery-history'),
+            skipOffstage: false).evaluate().isEmpty &&
+        find.byKey(const Key('approval-attempt-history'),
+            skipOffstage: false).evaluate().isEmpty &&
+        find.text('临时访问申请', skipOffstage: false).evaluate().isEmpty);
+    oldMore();
+    oldClose();
+    await _flushPending(tester);
+    expect(fixture.listReads, 2);
+    expect(fixture.documentReads, hasLength(2));
+    expect(fixture.attemptReads, hasLength(1));
+    expect(fixture.posts, isEmpty);
+    expect(fixture.session.scopeGeneration, generation);
+    expect(cover.isCurrent, isTrue);
+    expect(find.text('独立通知'), findsOneWidget);
+    navigator.removeRoute(cover);
+    await _flushPending(tester);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('attempt read denial reviews documents once and retains request details',
+      (tester) async {
+    final pendingAttempt = Completer<http.Response>();
+    final fixture = _ApprovalFixture('撤销批准', attemptRead: pendingAttempt.future);
+    addTearDown(() {
+      if (!pendingAttempt.isCompleted) {
+        pendingAttempt.complete(_reply({'items': [], 'nextCursor': null}));
+      }
+    });
+    await fixture.open(tester, openAction: false, throughConsole: true);
+    final generation = fixture.session.scopeGeneration;
+    await tester.tap(_helpButton('交付历史'));
+    final history = find.byKey(const Key('approval-delivery-history'));
+    await _waitUntil(tester, () => fixture.documentReads.length == 1 &&
+        find.descendant(of: history, matching: _helpButton('查看详情'))
+            .evaluate().isNotEmpty);
+    final open = find.descendant(of: history, matching: _helpButton('查看详情'));
+    await tester.ensureVisible(open);
+    await tester.tap(open);
+    await _waitUntil(tester, () => fixture.attemptReads.length == 1);
+    final cover = DialogRoute<void>(
+        context: fixture.host,
+        builder: (_) => const AlertDialog(title: Text('独立通知')));
+    final navigator = Navigator.of(fixture.host, rootNavigator: true);
+    unawaited(navigator.push<void>(cover));
+    await _waitUntil(tester,
+        () => cover.animation?.status == AnimationStatus.completed);
+    pendingAttempt.complete(_reply({'errorCode': 'SCOPE_DENIED'}, 403));
+    await _waitUntil(tester, () => fixture.documentReads.length == 2 &&
+        find.byKey(const Key('approval-attempt-history'),
+            skipOffstage: false).evaluate().isEmpty);
+    await _flushPending(tester);
+    expect(find.byKey(const Key('approval-delivery-history'),
+        skipOffstage: false), findsOneWidget);
+    expect(find.text('临时访问申请', skipOffstage: false), findsOneWidget);
+    expect(fixture.listReads, 1);
+    expect(fixture.documentReads, hasLength(2));
+    expect(fixture.attemptReads, hasLength(1));
+    expect(fixture.session.scopeGeneration, generation);
+    expect(cover.isCurrent, isTrue);
+    expect(find.text('独立通知'), findsOneWidget);
+    navigator.removeRoute(cover);
+    await _flushPending(tester);
+    await tester.tap(find.descendant(of: history, matching: _helpButton('关闭')));
+    await _waitUntil(tester, () => history.evaluate().isEmpty);
+    final revoke = find.widgetWithText(OutlinedButton, '撤销批准');
+    expect(tester.widget<OutlinedButton>(revoke).onPressed, isNotNull);
+    await tester.tap(revoke);
+    await _waitUntil(tester, () => find.text('撤销此访问窗口并记录审计。')
+        .evaluate().isNotEmpty);
+    await tester.tap(find.widgetWithText(TextButton, '取消'));
+    await _flushPending(tester);
+    expect(find.text('临时访问申请'), findsOneWidget);
+    expect(fixture.posts, isEmpty);
+    expect(fixture.listReads, 1);
+    expect(fixture.documentReads, hasLength(2));
     expect(tester.takeException(), isNull);
   });
 

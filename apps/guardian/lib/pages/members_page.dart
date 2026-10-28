@@ -361,7 +361,7 @@ class _MembersPageState extends State<MembersPage> {
         }
       }
       final access = await readAccess();
-      if (access == null || !current(scope)) {
+      if (access == null || !mounted || !current(scope)) {
         return sourceCurrent() && needsReview;
       }
       needsReview = access.version != row['version'];
@@ -439,7 +439,7 @@ class _MembersPageState extends State<MembersPage> {
       if (edit && current(scope)) {
         // Fetch again after leaving the detail dialog: never silently replace the version on submit.
         final latest = await readAccess(previous: access);
-        if (latest == null || !current(scope)) {
+        if (latest == null || !mounted || !current(scope)) {
           return sourceCurrent() && needsReview;
         }
         needsReview = needsReview || latest.version != access.version;

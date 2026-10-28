@@ -25,12 +25,23 @@
 - `682e528` 后补成员读取拒绝流程：列表当前401/403（非REAUTH_REQUIRED）或工作空间失效锁存整页，清私有资料及搜索并停止旧入口。核对后端发现access/history的目标隐藏也返回403，因此只退役该成员旅程并通过仍有效的外层列表租约核对一次；不能从目标403直接推断整页失权。目标非近期认证401／工作空间失效可退役整页，PATCH/DELETE拒绝和班级名称目录不进入该分支。scope同步退役，通知帧后发布。
 - 复核修正历史通知缺口：targetLost须传至历史及已打开的历史详情；通用详情新增默认关闭的closeOnAccessLost选项，仅成员三层窗口启用，失权后结束自己的OwnedDialogRoute，覆盖通知保留并让原流程完成列表核对。既有其他详情默认仍隐藏后允许手动关闭。源文件保持原换行，不加入临时文件。
 
+- `d8b82f8` 后继续简化设备与审批：重复选择当前设备栏目不再重复GET或更新读取时间，独立刷新／核对结果入口保持；扩展原有设备栏目测试，同时确认明确刷新仍读取详情和栏目。
+- 审批历史按真实后端边界处理：documents403退役原申请详情与两层历史、核对原申请列表；attempts403也可能只缺单个文档，只结束尝试窗口并核对文档列表，不能直接升级整申请／整页失权。相关真实401／WORKSPACE_CHANGED退役申请；REAUTH、网络及写拒绝不扩大失权。来源权限与目标读取状态分开，帧后通知收起自有窗口并保留覆盖通知；旧来源拒绝无效。
+
 ## 静态核对与待运行范围
 
-已定点核对调用签名、租约／窗口归属、派发标记位置、接口路径和回归源；最终提交前核对差异空白与文件范围。没有运行 SDK、格式化器、分析、测试、构建、资源轮询或服务维护；运行验收为 **NOT_RUN**，静态审查不能证明整体稳定。
+已定点核对调用签名、租约／窗口归属、派发标记位置、接口路径和回归源；最终提交前核对差异空白与文件范围。此前静态阶段未运行 SDK、分析、测试或构建，历史范围仍按各阶段NOT_RUN记录；本次窗口恢复后首次执行如下受影响检查，不将静态审查当作整体稳定证明。
 
 资源和排期恢复后，仅先运行受影响的既有文件：`access_requests_page_test.dart`、`devices_page_test.dart`、`members_page_workflow_browser_test.dart`、`approval_help_flow_browser_test.dart`、`device_management_entry_test.dart`、`api_deadline_test.dart`，以及设备注册／管理／退出受影响边界；前五份新增或扩展列表保留、单次核对、过期筛选和覆盖窗口旅程，最后一份覆盖显式未带键观察及认证晚到失权。续改还涉及 `device_management_test.dart` 与 `device_management_dialog_test.dart`：前者保留默认重读并新增只读保留／pending失权边界，后者在既有子流程和控制器替换旅程中核对真实刷新策略与旧按钮隔离。访问申请创建另更新 `access_request_dialog_test.dart` 的时长边界、余秒／短时／空秒、原正文不可变和拒绝后恢复／停止断言；继续在既有设备／规则恢复旅程检查同步防重与旧选项失效，新增一条有界组合旅程覆盖通知置顶、pending POST、默认路由完成和卸载后旧入口无副作用。读取失权续改还在同一测试文件循环覆盖设备／规则目录×401/403、另一目录晚成功不复活、旧回调退役与关闭可用；普通设备失败加入401 REAUTH_REQUIRED，保留草稿和同游标重试；旧目标晚规则403保持新目标可用。成员续改在既有 `member_editor_test.dart` 加纯快照边界，并更新 `members_page_workflow_browser_test.dart` 为真实六字段fixture及7个有界目标／范围／版本响应场景；还原换行噪声，不改旧旅程主体。成员读取拒绝续改在同一browser文件准备4个测试／5条旅程：列表403退役旧按钮、目标403仅核对列表、近期认证读取保留父页、历史分页403关闭已打开的两层历史与成员窗口并保留独立通知、DELETE403仍按操作错误处理；历史使用原cursor分页、窗口等待有界。上述均为回归源准备，仍为 NOT_RUN。不重复构建未变更组件；若共享 API 检查发现失败，再依具体影响扩展验证。
 
 窗口释放后，本轮仅做一次有效资源准入：CIM读取权限不足，未得到有效内存值，随后用GlobalMemoryStatusEx确认2026-10-28 17:16 CST可用内存1,027,842,048字节（约0.96GiB），低于原2GiB门槛；C/D盘空间满足门槛，因此没有启动SDK。Guardian现有71个依赖包URI与21个本阶段Dart文件直接导入可达，仍只属于输入检查；不需重新pub get。
 
+本次续改收到资源恢复后仅重新准入一次：可用内存5,422,485,504字节，C盘11,067,301,888字节、D盘5,751,291,904字节，均满足原2GiB门槛。随后验证窗口已明确释放，实际启动前内存5,826,887,680字节，C/D盘空间均满足原门槛；后台语言服务及Gradle daemon不能只凭进程名称认定为正在测试。审批browser既有fixture准备增加真实列表入口及定向延迟GET，覆盖documents分页拒绝关闭三层窗口、attempts拒绝仅核对文档列表，保持单次核对与通知覆盖断言；仍为NOT_RUN。
+
 按原门槛等待可用内存及 C/D 盘空间、SDK 空闲窗口，不降低准入条件。临时文件、缓存、源码副本和历史大取证文件不在提交范围。
+
+本轮运行记录：22个本阶段受影响Dart文件首轮分析发现7处info（异步界面存活检查与既有测试花括号），定点修正后同范围分析exit0、No issues found。7份普通测试首次自然结束为103通过／3失败；失败集中在devices_page与member_editor既有异步旅程，正在按真实请求／窗口完成状态替换过早的pumpAndSettle或单pump，并保留全部业务断言和原API期限。日志仅保留在忽略目录 `.cache/guardian-flow-validation-20261028/`，不提交。
+
+普通测试收口：devices_page的3处核对等待改为有界真实事件排空后通过；member_editor保留原401/REAUTH_REQUIRED、原正文和失权停止分页断言，等待表单路由完成及迟到HTTP取消原deadline。两文件首次复验15通过／1条结束时遗留Timer，补齐迟到HTTP等待后成员单文件15项全部通过；结合其余未变更且首轮通过范围，7文件共106项均通过。只复跑失败范围，不将重复执行计为新增测试。22文件分析通过后只修改两份等待测试，再分析两文件无问题。默认CanvasKit的三份browser旅程未进入测试正文：已确认本轮浏览器所有633个JS模块加载完成，但/canvaskit/chromium/canvaskit.js及/canvaskit/canvaskit.js均404，bootstrap Promise拒绝。通过原session1700正常中断，exit1，随后只读核对本轮进程创建身份，无残留；没有因观测超时重启或按PID结束共享进程。Web模式虽提示忽略显式concurrency，本地Flutter test.dart:425–434实际固定jobs=1，仍为串行。
+
+CanvasKit静态定位：Flutter3.22.2的flutter_web_platform.dart先用Windows path.fromUri，再检查POSIX前缀canvaskit/，导致现有四份CanvasKit JS/WASM不能从该handler提供。SDK缓存资产齐全，未下载或修改SDK；没有建立临时联接。现行Guardian README及build-deployment.ps1:233均固定HTML；本地test.dart注册同一渲染器选项并传给编译器与测试平台。后续按实际交付目标用相同三文件加--web-renderer=html，不能将HTML检查冒充CanvasKit验收。README记录同目标定向命令并修正当前申请秒级范围，未建立临时联接或新增工具。

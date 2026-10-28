@@ -31,12 +31,18 @@ flutter build web --release --web-renderer html --pwa-strategy=none --no-web-res
 
 本机已验证的环境为 Flutter 3.22.2 / Dart 3.4.3。Windows 使用自定义 `--output` 时传绝对路径，避免 shader 编译器无法写入相对目录。部署构建参数由根目录 `scripts/build-deployment.ps1` 管理，生产服务使用正式 HTTPS 来源与身份服务配置。
 
+浏览器旅程使用与发布构建一致的 HTML 渲染器；已有依赖可用时不重新下载。按改动选择受影响文件，例如本阶段的成员、审批与设备旅程：
+
+```powershell
+flutter test --no-pub --platform chrome --web-renderer html test/members_page_workflow_browser_test.dart test/approval_help_flow_browser_test.dart test/device_management_entry_test.dart
+```
+
 ## 使用语义
 
 - 列表搜索范围为已加载记录；后续页需使用“加载更多”。
 - 记录修改使用资源版本；网络结果未知时保留原请求进行幂等重试。
 - 访问审批分别显示决定、文档交付、设备报告与执行状态。当前配置文档接收或保存不表示设备已解锁。
-- 教师和儿童可从当前范围设备的服务端选项中申请临时访问、查看与取消本人申请。表单支持规则分页、多选、1–60 分钟、选填理由及未知提交原样重试；教师失去最后一条学生授权时申请失效或批准撤回。
+- 教师和儿童可从当前范围设备的服务端选项中申请临时访问、查看与取消本人申请。表单支持规则分页、多选、1 秒～60 分钟（分钟＋可选秒）、选填理由及未知提交原样重试；教师失去最后一条学生授权时申请失效或批准撤回。
 - 共享额度展示账本与计划；真实设备计时、停止能力、原生客户端及完整产品剩余工作继续按[实施计划](../../docs/implementation-plan.md)推进。
 - 设备详情的“使用情况与隐私”向所有者、监护人、机构管理员开放。清单和使用摘要分别授权，修改需原因、影响确认及近期 MFA；未知提交原样重试，版本冲突关闭并刷新。报告展示实际系统聚合区间与设备自报状态，不能作为精确计费或实际控制证明。[集成与运行记录](../../docs/observation-console-integration.md)。
 - 顶部铃铛与“通知中心”显示当前空间个人未读提醒，支持全部/未读筛选、分页、逐条和当前页已读。旧通知打开最新申请，不表示设备已执行。详见[站内通知契约](../../docs/inapp-notifications-contract.md)。
