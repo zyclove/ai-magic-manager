@@ -380,7 +380,8 @@ class ResourcePageState extends State<ResourcePage> {
         ? constraints.maxWidth
         : MediaQuery.sizeOf(context).width;
     final narrow = availableWidth < 760;
-    final canAct = _canInteract && !readDenied && !loading && !acting;
+    final canRefresh = _canInteract && !loading && !acting;
+    final canAct = canRefresh && !readDenied;
     final showActionProgress = acting && !loading && _canInteract &&
         (ModalRoute.of(context)?.isCurrent ?? true);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -425,12 +426,14 @@ class ResourcePageState extends State<ResourcePage> {
                                       ? null
                                       : IconButton(
                                           tooltip: '清除列表搜索',
-                                          onPressed: guard(clearSearch),
+                                          onPressed: _canInteract
+                                              ? guard(clearSearch)
+                                              : null,
                                           icon: const Icon(Icons.close, size: 18)),
                                   isDense: true))),
                       IconButton(
                           tooltip: '刷新',
-                          onPressed: loading || acting ? null : refreshRecords,
+                          onPressed: canRefresh ? refreshRecords : null,
                           icon: const Icon(Icons.refresh, size: 20)),
                       ...widget.toolbar
                     ])),
@@ -466,7 +469,7 @@ class ResourcePageState extends State<ResourcePage> {
                         const Text('请先刷新列表核对结果，再重新打开详情或重新操作。',
                             style: TextStyle(color: muted, fontSize: 12)),
                         TextButton.icon(
-                            onPressed: loading || acting ? null : refreshRecords,
+                            onPressed: canRefresh ? refreshRecords : null,
                             icon: const Icon(Icons.refresh, size: 18),
                             label: const Text('刷新列表'))
                       ])),
@@ -481,20 +484,35 @@ class ResourcePageState extends State<ResourcePage> {
                         const SizedBox(height: 8),
                         FailureView(error!, reauth: guardedReauth),
                         TextButton.icon(
-                            onPressed: loading || acting ? null : refreshRecords,
+                            onPressed: canRefresh ? refreshRecords : null,
                             icon: const Icon(Icons.refresh, size: 18),
                             label: const Text('重新刷新列表'))
                       ])),
             if (loading && rows.isEmpty)
-              const Padding(
-                  padding: EdgeInsets.all(60),
-                  child:
-                      Center(child: CircularProgressIndicator(strokeWidth: 2)))
+              Padding(
+                  padding: const EdgeInsets.all(40),
+                  child: Semantics(
+                      container: true,
+                      liveRegion: true,
+                      label: '正在加载记录，请稍候',
+                      child: const ExcludeSemantics(
+                          child: Center(
+                              child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                            SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(strokeWidth: 2)),
+                            SizedBox(height: 12),
+                            Text('正在加载记录…',
+                                style: TextStyle(color: muted, fontSize: 13))
+                          ])))))
             else if (error != null && rows.isEmpty)
               Padding(
                   padding: const EdgeInsets.all(24),
                   child: FailureView(error!,
-                      retry: refreshRecords,
+                      retry: canRefresh ? refreshRecords : null,
                       reauth: guardedReauth))
             else if (rows.isEmpty)
               EmptyView(widget.emptyTitle, widget.emptyDescription,
@@ -511,7 +529,9 @@ class ResourcePageState extends State<ResourcePage> {
                       ? '调整搜索关键词后再试。'
                       : '搜索仅匹配已加载记录，可加载更多后继续查找。',
                   action: TextButton.icon(
-                      onPressed: guard(clearSearch),
+                      onPressed: _canInteract
+                          ? guard(clearSearch)
+                          : null,
                       icon: const Icon(Icons.clear, size: 18),
                       label: const Text('清除搜索')))
             else if (narrow)
@@ -617,13 +637,14 @@ class ResourcePageState extends State<ResourcePage> {
                                 const TextStyle(color: muted, fontSize: 12)),
                     if (cursorExpired)
                       OutlinedButton.icon(
-                          onPressed: acting ? null : refreshRecords,
+                          onPressed: canRefresh ? refreshRecords : null,
                           icon: const Icon(Icons.refresh, size: 18),
                           label: const Text('刷新列表后继续查看'))
                     else if (cursor != null)
                       OutlinedButton(
-                          onPressed:
-                              more || acting ? null : guard(() => load(append: true)),
+                          onPressed: canRefresh && !more
+                              ? guard(() => load(append: true))
+                              : null,
                           child: Text(more
                               ? '加载中…'
                               : appendError != null

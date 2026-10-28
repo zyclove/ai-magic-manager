@@ -388,10 +388,25 @@ void main() {
     await tester.pumpAndSettle();
     expect(opens, 3);
     final heldOpen = tester.widget<ButtonStyleButton>(details).onPressed!;
+    final refresh = find.byWidgetPredicate(
+        (widget) => widget is IconButton && widget.tooltip == '刷新');
+    final clear = find.byWidgetPredicate(
+        (widget) => widget is IconButton && widget.tooltip == '清除列表搜索');
+    final more = find.ancestor(of: find.text('加载更多'),
+        matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
+    final heldRefresh = tester.widget<IconButton>(refresh).onPressed!;
+    final heldClear = tester.widget<IconButton>(clear).onPressed!;
+    final heldMore = tester.widget<ButtonStyleButton>(more).onPressed!;
     resize(() => interactive = false);
     await tester.pump();
     expect(tester.widget<ButtonStyleButton>(details).onPressed, isNull);
+    expect(tester.widget<IconButton>(refresh).onPressed, isNull);
+    expect(tester.widget<IconButton>(clear).onPressed, isNull);
+    expect(tester.widget<ButtonStyleButton>(more).onPressed, isNull);
     heldOpen();
+    heldRefresh();
+    heldClear();
+    heldMore();
     await tester.pump();
     expect(opens, 3, reason: 'A captured button must honor the current interaction gate.');
     expect(key.currentState, same(state));
@@ -962,6 +977,9 @@ void main() {
         'success and its cursor', (tester) async {
       final key = GlobalKey<ResourcePageState>();
       final waiting = Completer<http.Response>();
+      addTearDown(() {
+        if (!waiting.isCompleted) waiting.complete(page([]));
+      });
       final api = apiFor((request) =>
           request.url.path.endsWith('/new-records')
               ? page(['new'])
@@ -969,13 +987,16 @@ void main() {
       final replacement = changeApi ? apiFor((_) => page(['new'])) : api;
       await tester.pumpWidget(host(api, resourceKey: key));
       await tester.pump();
+      expect(find.text('正在加载记录…'), findsOneWidget);
       await tester.pumpWidget(host(replacement,
           resourceKey: key, path: changeApi ? '/records' : '/new-records'));
       await tester.pumpAndSettle();
       expect(find.text('new'), findsOneWidget);
+      expect(find.text('正在加载记录…'), findsNothing);
       waiting.complete(page(['private-old'], cursor: 'old-private-cursor'));
       await tester.pumpAndSettle();
       expect(find.text('new'), findsOneWidget);
+      expect(find.text('正在加载记录…'), findsNothing);
       expect(find.text('private-old'), findsNothing);
       expect(find.text('加载更多'), findsNothing);
       expect(find.text('已加载 1 条'), findsOneWidget);
