@@ -95,6 +95,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 [DeviceGroupsPage](../apps/guardian/lib/pages/device_groups_page.dart) 以一个加入入口复用 [DeviceGroupBatchPicker](../apps/guardian/lib/ui/device_group_batch_picker.dart)，1～50台均走既有原子 batches；确认保留完整设备／注册编号。详情操作锁在首个等待前建立并保持至子路由完成，返回、筛选及操作捕获原视图代次。选择器明确读取拒绝时锁存失权并清空私有数据，普通网络／近期认证保留选择，满50台有就近提示。五类修改共用 EditDialog 的固定UUID／原值查询钩子，单台移出也走 removals；新建借用 ResourceActionLease 并返回布尔核对信号，普通取消不重读，不再维护设备组专用确认状态机。[device_group_change.dart](../apps/guardian/lib/core/device_group_change.dart) 校验7字段、原回执／当前事实及合法无变化结果，未知后仅用既有 operation-results 查询，不重放写入，不改变目录性质或设备执行能力。
 
+设备组页面在原有效读取／操作范围内收到明确拒绝时锁存失权，借既有 accessChanged 清空私有状态、推进视图代次并关闭自有窗口；旧范围晚到拒绝不影响当前视图。近期认证／网络失败保持原恢复语义，不能用刷新或本地旧Session让失权页面复活。
+
 成员范围的 [MemberScopeDirectories](../apps/guardian/lib/core/member_scope_directories.dart) 按窗口捕获缓存/并发读取，null 未读与不可变空 Map 区分。MemberEditor 按角色和范围加载所需一类目录，现有引用始终保留完整编号占位；目录对象内部补名称不等于换绑，重载不改提交或版本。每窗独立实例在退役时 revoke，阻止晚到页继续读取；直接注入已读 Map 的组件路径仍使用原快照，不能与异步目录形成双重数据来源。
 
 教师班级选择使用 [MemberClassPicker](../apps/guardian/lib/ui/member_class_picker.dart)，只管理本地查找/仅看已选与有界懒列表；唯一选择集合、Form校验和实时权限/写锁仍由MemberEditor持有。options与已选编号取并集，缺项也保留并允许移除；过滤不裁剪范围，不触发请求。目录已读只表示选项可校验，必填和无效引用继续由表单就近提示。

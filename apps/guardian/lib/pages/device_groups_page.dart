@@ -24,7 +24,7 @@ class DeviceGroupsPage extends StatefulWidget {
 class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   late final String root;
   late final DeviceSubflowScope pageScope;
-  bool _active = true, _rebuildPending = false;
+  bool _active = true, _rebuildPending = false, pageReadDenied = false;
   final listKey = GlobalKey<ResourcePageState>();
   String? selectedId, nextMemberCursor, memberFilter;
   Json? detail;
@@ -38,7 +38,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   bool get acting => activeAction != null;
   final dialogs = <OwnedDialogRoute<dynamic>>{};
 
-  bool get current => mounted && _active &&
+  bool get current => mounted && _active && !pageReadDenied &&
       widget.session.tenant != null && pageScope.current;
 
   @override
@@ -47,7 +47,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     root = widget.session.tenant == null ? '' : widget.session.root;
     final session = widget.session;
     pageScope = DeviceSubflowScope(session,
-        permitted: () => mounted && _active &&
+        permitted: () => mounted && _active && !pageReadDenied &&
             identical(widget.session, session) && session.canOpen('device-groups'));
     pageScope.addListener(accessChanged);
   }
@@ -77,6 +77,19 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     } else {
       setState(() {});
     }
+  }
+
+  // Only a rejection of the still-current request can retire this page capture.
+  // Local scope failures and late responses must not revoke a newer view.
+  bool rejectPrivateAccess(Object failure, bool Function() available) {
+    if (!current || !available() || failure is! ApiFailure ||
+        (failure.status != 403 && failure.code != 'WORKSPACE_CHANGED' &&
+            (failure.status != 401 || failure.code == 'REAUTH_REQUIRED'))) {
+      return false;
+    }
+    pageReadDenied = true;
+    accessChanged();
+    return true;
   }
 
   void closeDialogs() {
@@ -116,7 +129,9 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
             changes: changes,
             hasAccess: available,
             builder: (context) => builder(context, api, available)));
-    api = scope.api.scoped(available);
+    api = _GroupDialogApi(scope.api.scoped(available), (failure) {
+      rejectPrivateAccess(failure, available);
+    });
     dialogs.add(route);
     parent?.popped.then<void>((_) {
       parentOpen = false;
@@ -219,7 +234,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
         nextMemberCursor = page.nextCursor;
       });
     } catch (failure) {
-      if (current && scope.current && revision == generation) {
+      if (current && scope.current && revision == generation &&
+          !rejectPrivateAccess(failure, () => scope.current && revision == generation)) {
         setState(() => error = failure);
       }
     } finally {
@@ -251,7 +267,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
         nextMemberCursor = page.nextCursor;
       });
     } catch (failure) {
-      if (current && scope.current) {
+      if (current && scope.current &&
+          !rejectPrivateAccess(failure, () => scope.current)) {
         setState(() {
           memberPageError = failure;
           if (failure is ApiFailure && failure.code == 'INVALID_CURSOR') {
@@ -550,13 +567,19 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
       return const Panel(child: EmptyView('机构范围已变化', '请重新打开设备组页面。'));
     }
     if (selectedId == null) {
-      final listView = generation;
+      final listView = generation, includeArchived = archived;
+      bool sourceCurrent() => current && selectedId == null &&
+          generation == listView && archived == includeArchived;
       return ResourcePage(
           key: listKey,
           title: '机构设备组',
           subtitle: '整理设备与未来批量策略的目标范围。',
           path: '$root/device-groups?includeArchived=$archived',
           api: pageScope.api,
+          isCurrent: sourceCurrent,
+          onReadDenied: (failure) {
+            rejectPrivateAccess(failure, sourceCurrent);
+          },
           notice: '设备组只保存关联关系，不会自行限制应用、下发策略或证明系统执行。',
           emptyTitle: '暂无设备组',
           emptyDescription: '创建一个分组，再关联本机构已激活的设备。',
@@ -568,7 +591,11 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                 label: const Text('包含已归档'),
                 selected: archived,
                 onSelected: (value) {
-                  if (current) setState(() => archived = value);
+                  if (!sourceCurrent() || value == includeArchived) return;
+                  setState(() {
+                    generation++;
+                    archived = value;
+                  });
                 })
           ],
           columns: [
@@ -578,8 +605,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
             ColumnSpec('设备数', (r) => Text('${r['deviceCount']} 台'))
           ],
           onOpen: (row) async {
-            if (!current || acting || selectedId != null ||
-                generation != listView) return;
+            if (!sourceCurrent() || acting) return;
             await open(row['id'] as String);
           });
     }
@@ -712,6 +738,47 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
       ]
     ]);
   }
+}
+
+/// Preserve the original API's transport, deadlines, paging and pending writes.
+/// A borrowed child view reports rejection only while all its guards still hold.
+class _GroupDialogApi extends Api {
+  final Api source;
+  final void Function(Object) rejected;
+  _GroupDialogApi(this.source, this.rejected)
+      : super(source.client, baseUrl: source.baseUrl);
+
+  Future<T> request<T>(bool Function()? isCurrent,
+      Future<T> Function() operation) async {
+    try {
+      return await operation();
+    } catch (failure) {
+      if (isCurrent?.call() != false) rejected(failure);
+      rethrow;
+    }
+  }
+
+  @override
+  Api scoped(bool Function() isCurrent) =>
+      _GroupDialogApi(source.scoped(isCurrent), (failure) {
+        if (isCurrent()) rejected(failure);
+      });
+
+  @override
+  Future<dynamic> send(String method, String path,
+      {Json? body, int? version, String? key, String? clientRequestId,
+      bool Function()? isCurrent}) => request(isCurrent, () => source.send(method, path,
+          body: body, version: version, key: key, clientRequestId: clientRequestId,
+          isCurrent: isCurrent));
+
+  @override
+  Future<PageResult> page(String path,
+      {String? cursor, bool Function()? isCurrent}) =>
+      request(isCurrent, () => source.page(path, cursor: cursor, isCurrent: isCurrent));
+
+  @override
+  Future<List<Json>> all(String path, {bool Function()? isCurrent}) =>
+      request(isCurrent, () => source.all(path, isCurrent: isCurrent));
 }
 
 /// All selectors hide their private contents before a revoked route is removed.

@@ -53,6 +53,7 @@ class _GroupSession extends Session {
   void login({bool stepUp = false}) {
     if (stepUp) stepUps++;
   }
+  void refreshIdentity() => notifyListeners();
 }
 
 http.Response _reply(Object value, [int status = 200]) => http.Response(
@@ -69,6 +70,7 @@ class _Fixture {
   String name = '七年级设备组', state = 'ACTIVE';
   Json? committed;
   Completer<http.Response>? pending;
+  FutureOr<http.Response>? Function(http.Request)? responseOverride;
   late final transport = MockClient(handle);
   late final api = Api(() async => transport,
       baseUrl: 'https://fixture.invalid/api/v1');
@@ -101,6 +103,8 @@ class _Fixture {
   Future<http.Response> handle(http.Request request) async {
     requests.add(request);
     final path = request.url.path;
+    final overridden = responseOverride?.call(request);
+    if (overridden != null) return overridden;
     if (request.method == 'GET') {
       if (path == _groups) {
         return _reply({'items': recoveryOperation == 'CREATE' && committed == null
@@ -248,13 +252,14 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
 }
 
 Future<void> _mount(WidgetTester tester, _Fixture fixture,
-    {bool openGroup = true}) async {
+    {bool openGroup = true, bool waitForList = true}) async {
   tester.view.physicalSize = const Size(1200, 1200);
   tester.view.devicePixelRatio = 1;
   await tester.pumpWidget(MaterialApp(theme: consoleTheme(),
       home: Scaffold(body: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: DeviceGroupsPage(session: fixture.session)))));
+  if (!waitForList) return;
   await _until(tester, () => fixture.recoveryOperation == 'CREATE'
       ? find.text('暂无设备组').evaluate().length == 1
       : find.text('七年级设备组').evaluate().length == 1);
@@ -532,6 +537,125 @@ void main() {
           expect(fixture.version, greaterThan(fixture.committed!['version'] as int));
           expect(find.text('原操作已核对，设备组已有后续修改，请核对当前记录。'), findsOneWidget);
         }
+        expect(tester.takeException(), isNull);
+      } finally {
+        await fixture.cleanup(tester);
+      }
+    }
+  });
+
+  testWidgets('current server denials retire the page while late denials cannot revoke a new view',
+      (tester) async {
+    final fixture = _Fixture();
+    fixture.members.addAll(_devices.take(2).map(fixture._member));
+    final lateList = Completer<http.Response>();
+    final latePage = Completer<http.Response>();
+    var listReads = 0, appends = 0;
+    fixture.responseOverride = (request) {
+      if (request.method == 'GET' && request.url.path == _groups) {
+        listReads++;
+        if (listReads == 1) return lateList.future;
+      }
+      if (request.method != 'GET' || request.url.path != '$_groupPath/devices') {
+        return null;
+      }
+      if (request.url.queryParameters['cursor'] == null) {
+        return _reply({'items': [fixture.members.first],
+          'nextCursor': _devices.first['id']});
+      }
+      appends++;
+      return appends == 1 ? latePage.future
+          : _reply({'errorCode': 'ACCESS_DENIED'}, 403);
+    };
+    try {
+      await _mount(tester, fixture, openGroup: false, waitForList: false);
+      final archived = find.widgetWithText(FilterChip, '包含已归档');
+      await _until(tester, () => listReads == 1 && archived.evaluate().length == 1);
+      await _tap(tester, archived);
+      await _until(tester, () => listReads == 2 &&
+          find.text('七年级设备组').evaluate().length == 1);
+      expect(fixture.reads(_groups).last.url.queryParameters['includeArchived'], 'true');
+      lateList.complete(_reply({'errorCode': 'ACCESS_DENIED'}, 403));
+      await _flush(tester);
+      expect(tester.widget<FilterChip>(archived).selected, isTrue);
+      expect(find.text('七年级设备组'), findsOneWidget);
+      expect(find.text('机构范围已变化'), findsNothing);
+      await _openGroup(tester, count: 2);
+      await _tap(tester, _button('加载更多设备'));
+      await _until(tester, () => appends == 1);
+      await _tap(tester, _chip('关联有效 2'));
+      await _until(tester, () => _enabled(tester, '加入设备') &&
+          tester.widget<ChoiceChip>(_chip('关联有效 2')).selected);
+      latePage.complete(_reply({'errorCode': 'ACCESS_DENIED'}, 403));
+      await _flush(tester);
+      expect(find.text('七年级设备组'), findsOneWidget);
+      expect(find.text('阅读平板'), findsOneWidget);
+      final add = _callback(tester, '加入设备');
+      final back = _callback(tester, '返回列表');
+      final filter = tester.widget<ChoiceChip>(_chip('全部 2')).onSelected!;
+      final more = _callback(tester, '加载更多设备');
+      await _tap(tester, _button('加载更多设备'));
+      await _until(tester, () => find.text('机构范围已变化').evaluate().length == 1);
+      final requests = fixture.requests.length;
+      add();
+      back();
+      filter(true);
+      more();
+      fixture.session.refreshIdentity();
+      await _flush(tester);
+      expect(find.text('七年级设备组'), findsNothing);
+      expect(find.text('阅读平板'), findsNothing);
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(fixture.requests, hasLength(requests));
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await _flush(tester);
+      fixture.responseOverride = null;
+      await _mount(tester, fixture);
+      expect(find.text('七年级设备组'), findsOneWidget);
+      expect(find.text('阅读平板'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    } finally {
+      if (!lateList.isCompleted) {
+        lateList.complete(_reply({'errorCode': 'TEST_CLEANUP'}, 503));
+      }
+      if (!latePage.isCompleted) {
+        latePage.complete(_reply({'errorCode': 'TEST_CLEANUP'}, 503));
+      }
+      await fixture.cleanup(tester);
+    }
+
+    for (final denial in [(403, 'ACCESS_DENIED'), (401, 'INVALID_SESSION'),
+        (409, 'WORKSPACE_CHANGED')]) {
+      final fixture = _Fixture(recoveryOperation: 'RENAME');
+      fixture.responseOverride = (request) =>
+          request.url.path.startsWith('$_groups/operation-results/')
+              ? _reply({'errorCode': denial.$2}, denial.$1) : null;
+      try {
+        await _mount(tester, fixture);
+        final add = _callback(tester, '加入设备');
+        final back = _callback(tester, '返回列表');
+        final filter = tester.widget<ChoiceChip>(_chip('关联有效 0')).onSelected!;
+        final submit = await _openRecoveryOperation(tester, 'RENAME');
+        await _tap(tester, _button(submit));
+        await _until(tester, () => _enabled(tester, '查询原操作结果'));
+        final recover = _callback(tester, '查询原操作结果');
+        await _tap(tester, _button('查询原操作结果'));
+        await _until(tester, () => find.text('机构范围已变化').evaluate().length == 1 &&
+            find.byType(EditDialog).evaluate().isEmpty);
+        final requests = fixture.requests.length;
+        recover();
+        add();
+        back();
+        filter(true);
+        fixture.session.refreshIdentity();
+        await _flush(tester);
+        expect(find.text('七年级设备组'), findsNothing);
+        expect(find.text('恢复目标名称'), findsNothing);
+        expect(find.byType(AlertDialog), findsNothing);
+        expect(fixture.writes, hasLength(1));
+        expect(fixture.queries, hasLength(1));
+        expect(fixture.requests, hasLength(requests));
         expect(tester.takeException(), isNull);
       } finally {
         await fixture.cleanup(tester);
