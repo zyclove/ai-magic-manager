@@ -1,4 +1,5 @@
 import 'api.dart';
+import 'duration_labels.dart';
 
 const _invalidDuration = ApiFailure(400, 'INVALID_DURATION');
 const _maximumSeconds = 86400;
@@ -29,14 +30,5 @@ int policyRuleDurationSeconds(Json values) {
   return _requireSeconds(minutes * 60 + seconds);
 }
 
-String policyRuleDurationLabel(Object? seconds) {
-  final total = _requireSeconds(seconds);
-  final hours = total ~/ 3600;
-  final minutes = (total % 3600) ~/ 60;
-  final remainder = total % 60;
-  return [
-    if (hours != 0) '$hours 小时',
-    if (minutes != 0) '$minutes 分钟',
-    if (remainder != 0) '$remainder 秒',
-  ].join(' ');
-}
+String policyRuleDurationLabel(Object? seconds) =>
+    wholeSecondsLabel(_requireSeconds(seconds));

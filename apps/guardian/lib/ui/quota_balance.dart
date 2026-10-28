@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import '../core/api.dart';
+import '../core/duration_labels.dart';
 import 'design.dart';
 
-String quotaDuration(dynamic seconds) {
-  final value = (seconds as num).toInt();
-  if (value < 60) return '$value 秒';
-  return value % 60 == 0
-      ? '${value ~/ 60} 分钟'
-      : '${value ~/ 60} 分 ${value % 60} 秒';
-}
+String quotaDuration(dynamic seconds) =>
+    wholeSecondsLabel((seconds as num).toInt());
 
 String quotaDelta(dynamic seconds) =>
     '${(seconds as num) > 0 ? '+' : seconds < 0 ? '−' : ''}${quotaDuration(seconds.abs())}';
