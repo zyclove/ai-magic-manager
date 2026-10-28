@@ -1,6 +1,6 @@
 # 成员、设备与审批核心流程
 
-实现范围：`4a8a069` 后的管理台流程改进，已提交阶段至 `3c7958ae`。本轮将近期安全验证恢复规则补齐到管理及只读工作台；各阶段验证分开记录，不继承历史通过。不推送、不部署，当前服务不自动使用这些提交。
+实现范围：`4a8a069` 后的管理台流程改进，源码阶段至 `9d8009bf`，当前冻结待验。各阶段验证分开记录，不继承历史通过。不推送、不部署，当前服务不自动使用这些提交。
 
 ## 已实现行为
 
@@ -14,7 +14,14 @@
 | 渐进交付摘要 | 核心详情先开，原授权历史／撤销不等待摘要；原窗口局部读取与重试。Summary只补交付事实，不覆盖原核心版本；新版、结果未知或读取中关闭需要核对原列表，已核验同版普通关闭不重读。新DTO及边界详见渐进交付摘要小节与审批合同。 |
 | 共用窗口 | DialogAccessBinding同时观察父路由popped/completed，覆盖既有SDK raw removeRoute不完成popped的情况；同步停止旧入口、帧后发布退役。详情仅按显式closeOnAccessLost结束所属OwnedDialogRoute，其他默认隐藏语义保持，不关闭独立通知。 |
 
-## 本轮工作台验证恢复
+## 当前验证阻塞
+
+- 源码基线为 `9d8009bf`，必要代码与规格均已本地提交；本次只更新本记录。前阶段已有静态复核和差异检查，本批SDK分析／测试仍未运行，不能据此认定功能通过。
+- 准备补验时一次实测RAM1,386,606,592字节，低于原2GiB门槛；C盘10,418,995,200、D盘15,016,464,384字节达标，未发现活跃构建／测试，没有本任务活SDK句柄。未启动SDK、未停止共享服务或清理缓存；此前同一资源条件已连续阻止验证，后续仅在明确恢复信号及共享窗口可用后重查。
+- 合并待验：15个Dart文件分析。源码为lib/core/approval_decision.dart、lib/pages/console_pages.dart、lib/ui/design.dart、lib/ui/member_editor.dart、lib/core/device_management.dart、lib/ui/device_management_dialog.dart、lib/pages/scoped_overview_page.dart，加下述八个测试文件；均相对apps/guardian。普通测试为test/下approval_decision_test.dart、dialog_submit_guard_test.dart、member_editor_test.dart、device_management_test.dart、device_management_dialog_test.dart；HTML浏览器为同目录approval_help_flow_browser_test.dart、dashboard_read_authority_test.dart、scoped_overview_page_test.dart。串行使用既有依赖与HTML目标，不重跑未改模块或构建发布包。
+- 资源恢复后先分析上述文件，再运行受影响普通／浏览器测试并记录原运行句柄的实际终态。真实账号MFA、完整后端／设备联调及各平台安装验收仍需各自证据；本记录及局部测试均不能替代整个产品目标的验收。
+
+## 工作台验证恢复（9d8009bf）
 
 - 在设备MFA修复后的限域同根检查中，注册／诊断／退出流程未发现永久失权与入口不可达变体。确认管理Dashboard与只读ScopedOverviewPage对REAUTH_REQUIRED仍按普通401清摘要并退役范围，保留该差异证据；不扩大为全仓审计。
 - 仅在两处拒绝分类排除明确REAUTH_REQUIRED，沿原可恢复错误展示旧摘要、原读取时间及安全验证入口；读取失败期间原任务建议保持隐藏。真正401／403及工作空间失效、会话代际变化继续清私有事实并退役旧回调；不新增刷新、轮询或自动重放。
