@@ -539,6 +539,17 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
   Widget applications() {
     final value = c.inventory;
     if (value == null) return const Notice('尚未取得应用清单，请完成读取后核对。');
+    final common = commonActions();
+    final observation = switch (value.observationStatus) {
+      'NOT_AUTHORIZED' => widget.onPrivacy == null
+          ? '应用清单采集尚未授权，请联系有权限的管理员核对采集设置。'
+          : '应用清单采集尚未授权。请在“使用情况与隐私”核对采集设置，开启后等待设备上报。',
+      'UNKNOWN' => '尚未收到当前注册的应用清单。请核对设备连接和采集设置，等待设备上报。',
+      'RECENT' => '近期收到设备上报，清单内容以最近上报时间为准。',
+      'STALE' => '应用清单已超过观察时限。下面保留上次上报内容，可能与当前安装情况不同。',
+      'REVOKED' => '当前注册已撤销，不能继续接收新的应用清单。下方如有历史内容，仅供核对。',
+      _ => '应用清单状态暂不可用，请刷新资料后核对。',
+    };
     final searchChanged = guard(() => setState(() {}), allowBusy: true);
     final query = search.text.trim().toLowerCase();
     final matches = value.applications
@@ -551,38 +562,51 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
       children: [
         Text('设备自报应用清单', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
-        const Notice('仅展示设备可见并已上报的应用，不代表完整安装清单；设备自报资料尚未独立验证。'),
+        Notice(observation,
+            key: const Key('device-app-observation-status'),
+            warning: value.observationStatus == 'STALE' ||
+                value.observationStatus == 'REVOKED'),
+        const SizedBox(height: 8),
+        const Text('仅展示设备可见并已上报的应用，不代表完整安装清单；设备自报资料尚未独立验证。',
+            style: TextStyle(color: muted, height: 1.7)),
         const SizedBox(height: 12),
         Text('最近上报：${dateLabel(value.receivedAt)}',
             style: Theme.of(context).textTheme.bodySmall),
         Text('实际读取：${dateLabel(c.sectionUpdatedAt)}',
             style: Theme.of(context).textTheme.bodySmall),
+        if (common.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Wrap(spacing: 10, runSpacing: 10, children: common),
+        ],
         const SizedBox(height: 16),
-        TextField(
-          key: const Key('device-app-search'),
-          controller: search,
-          onChanged: (_) => searchChanged(),
-          autocorrect: false,
-          enableSuggestions: false,
-          decoration: InputDecoration(
-            labelText: '查找已上报应用',
-            hintText: '应用名称或包名',
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon: search.text.isEmpty
-                ? null
-                : IconButton(
-                    tooltip: '清除应用查找',
-                    onPressed: guard(() => setState(search.clear), allowBusy: true),
-                    icon: const Icon(Icons.close),
-                  ),
+        if (value.applications.isNotEmpty) ...[
+          TextField(
+            key: const Key('device-app-search'),
+            controller: search,
+            onChanged: (_) => searchChanged(),
+            autocorrect: false,
+            enableSuggestions: false,
+            decoration: InputDecoration(
+              labelText: '查找已上报应用',
+              hintText: '应用名称或包名',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: search.text.isEmpty
+                  ? null
+                  : IconButton(
+                      tooltip: '清除应用查找',
+                      onPressed: guard(() => setState(search.clear), allowBusy: true),
+                      icon: const Icon(Icons.close),
+                    ),
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        if (value.applications.isEmpty)
+          const SizedBox(height: 12),
+        ],
+        if (value.applications.isEmpty &&
+            const {'RECENT', 'STALE'}.contains(value.observationStatus))
           const Notice('尚无可见应用上报，不能据此判断设备未安装应用。')
-        else if (matches.isEmpty)
+        else if (value.applications.isNotEmpty && matches.isEmpty)
           const Notice('当前已上报清单没有匹配项。可清除查找条件后重新查看。')
-        else ...[
+        else if (matches.isNotEmpty) ...[
           Text('匹配 ${matches.length} / ${value.applications.length} 项',
               style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 8),
@@ -665,14 +689,9 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
     }, refreshAfter: refreshAfter);
   }
 
-  Widget actions(DeviceManagementRecord device) {
-    final controller = c, epoch = interactionEpoch;
-    if (checkingRevoke) return const SizedBox.shrink();
-    final activeWrite = c.canWrite && device.state == 'ACTIVE';
-    final canExit = c.canWrite &&
-        const {'ACTIVE', 'REVOKED'}.contains(device.state) &&
-        widget.onExit != null;
-    final common = <Widget>[
+  List<Widget> commonActions() {
+    if (checkingRevoke) return const [];
+    return <Widget>[
       if (widget.onPrivacy != null)
         actionButton('device-management-privacy', '使用情况与隐私',
             Icons.privacy_tip_outlined, widget.onPrivacy!,
@@ -685,6 +704,19 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
         actionButton('device-management-executions', '执行记录',
             Icons.history_outlined, widget.onExecutions!),
     ];
+  }
+
+  Widget actions(DeviceManagementRecord device) {
+    final controller = c, epoch = interactionEpoch;
+    if (checkingRevoke) return const SizedBox.shrink();
+    final activeWrite = c.canWrite && device.state == 'ACTIVE';
+    final canExit = c.canWrite &&
+        const {'ACTIVE', 'REVOKED'}.contains(device.state) &&
+        widget.onExit != null;
+    final common = c.section == DeviceManagementSection.applications &&
+            c.inventory != null
+        ? const <Widget>[]
+        : commonActions();
     final additional = <Widget>[
       if (activeWrite && widget.onExport != null)
         actionButton('device-management-export', '导出诊断包',

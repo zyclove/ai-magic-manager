@@ -44,18 +44,21 @@ DeviceManagementCapabilities deviceCapabilities() =>
       ),
     ]);
 
-DeviceManagementInventory deviceInventory({bool empty = false}) =>
-    DeviceManagementInventory(
+DeviceManagementInventory deviceInventory({bool empty = false,
+    String observationStatus = 'RECENT',
+    Iterable<DeviceManagementApplication>? applications}) {
+  final hasReport = !const {'NOT_AUTHORIZED', 'UNKNOWN'}.contains(observationStatus);
+  return DeviceManagementInventory(
       deviceId: deviceId,
       registrationId: registrationId,
-      visibility: 'VISIBLE_PACKAGES',
-      observationStatus: 'RECENT',
+      visibility: hasReport ? 'VISIBLE_PACKAGES' : 'UNKNOWN',
+      observationStatus: observationStatus,
       evidenceStatus: 'AGENT_REPORTED_UNVERIFIED',
-      sequence: 4,
-      receivedAt: 1791972000000,
-      applications: empty
+      sequence: hasReport ? 4 : 0,
+      receivedAt: hasReport ? 1791972000000 : null,
+      applications: !hasReport || empty
           ? []
-          : [
+          : applications ?? [
               DeviceManagementApplication(
                 packageName: 'com.example.study',
                 displayName: '学习应用',
@@ -74,6 +77,7 @@ DeviceManagementInventory deviceInventory({bool empty = false}) =>
               ),
             ],
     );
+}
 
 /// Only the widget is under test. Every public controller entry is implemented;
 /// no parser, repository operation or unimplemented core method is exercised.
@@ -428,6 +432,86 @@ void main() {
     await press(tester, 'device-section-applications');
     expect(find.textContaining('不能据此判断设备未安装应用'), findsOneWidget);
     expect(find.text('设备未安装应用'), findsNothing);
+  });
+
+  testWidgets('inventory status explains empty and historical reports without another read',
+      (tester) async {
+    for (final scenario in <({String status, String message, bool history})>[
+      (status: 'NOT_AUTHORIZED', message: '尚未授权', history: false),
+      (status: 'UNKNOWN', message: '尚未收到', history: false),
+      (status: 'RECENT', message: '近期收到', history: true),
+      (status: 'STALE', message: '超过观察时限', history: true),
+      (status: 'REVOKED', message: '已撤销', history: true),
+    ]) {
+      final f = Fixture();
+      f.controller.inventoryValue = deviceInventory(observationStatus: scenario.status);
+      if (scenario.status == 'REVOKED') {
+        f.controller.value = deviceRecord(state: 'REVOKED');
+      }
+      await mount(tester, f);
+      await press(tester, 'device-section-applications');
+      final status = find.byKey(const Key('device-app-observation-status'));
+      expect(status, findsOneWidget, reason: scenario.status);
+      expect(find.descendant(of: status,
+          matching: find.textContaining(scenario.message)), findsOneWidget);
+      expect(find.textContaining('设备自报资料尚未独立验证'), findsOneWidget);
+      final search = find.byKey(const Key('device-app-search'));
+      if (scenario.history) {
+        expect(find.text('学习应用'), findsOneWidget);
+        expect(find.text('视频应用'), findsOneWidget);
+        await tester.ensureVisible(search);
+        await tester.enterText(search, 'COM.EXAMPLE.VIDEO');
+        await tester.pump();
+        expect(find.text('视频应用'), findsOneWidget);
+        expect(find.text('学习应用'), findsNothing);
+        expect(status, findsOneWidget);
+      } else {
+        expect(search, findsNothing, reason: 'An empty report has nothing to search.');
+        expect(find.text('学习应用'), findsNothing);
+        expect(find.text('视频应用'), findsNothing);
+      }
+      expect(f.controller.sections, [DeviceManagementSection.applications]);
+      expect(f.controller.refreshCalls, 0);
+      expect(f.controller.actionDispatches, 0);
+      expect(f.opened, isEmpty);
+      expect(tester.takeException(), isNull, reason: scenario.status);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    }
+  });
+
+  testWidgets('long inventories keep common actions before apps and privacy refreshes once',
+      (tester) async {
+    final f = Fixture();
+    f.controller.inventoryValue = deviceInventory(applications: List.generate(500,
+        (index) => DeviceManagementApplication(
+            packageName: 'com.example.app$index', displayName: '清单应用 $index',
+            profile: 'PRIMARY', signingDigests: const [], versionCode: index,
+            systemApplication: false)));
+    await mount(tester, f);
+    await press(tester, 'device-section-applications');
+    final firstApp = find.text('清单应用 0');
+    expect(firstApp, findsOneWidget);
+    for (final action in ['privacy', 'diagnostic', 'executions']) {
+      final entry = find.byKey(Key('device-management-$action'));
+      expect(entry, findsOneWidget, reason: 'Common actions have one original entry.');
+      expect(tester.getTopLeft(entry).dy, lessThan(tester.getTopLeft(firstApp).dy),
+          reason: 'Long inventories must not bury the common device workflows.');
+    }
+    expect(f.controller.refreshCalls, 0);
+    await press(tester, 'device-management-privacy');
+    expect(find.text('子流程 · privacy'), findsOneWidget);
+    expect(f.controller.actionDispatches, 1);
+    expect(f.controller.refreshCalls, 0);
+    await tester.tap(find.text('返回设备管理'));
+    await tester.pumpAndSettle();
+    expect(f.opened, ['privacy']);
+    expect(f.controller.refreshCalls, 1);
+    expect(f.controller.sections, [DeviceManagementSection.applications]);
+    expect(f.closeCalls, 0);
+    expect(find.byKey(const Key('device-management-privacy')), findsOneWidget);
+    expect(find.text('清单应用 0'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('every nested flow runs through the controller and returns here',
