@@ -28,11 +28,12 @@ class _MembersPageState extends State<MembersPage> {
   int _viewGeneration = 0;
   ModalRoute<dynamic>? _owner;
   bool _active = true, _rebuildPending = false, _pageClosed = false;
-  bool _retirementQueued = false;
+  bool _retirementQueued = false, _pageReadDenied = false;
   final _ownerLost = ValueNotifier<bool>(false);
   late final DeviceSubflowScope _pageScope;
   Session get s => widget.session;
-  bool get pageCurrent => mounted && _active && _pageScope.current;
+  bool get pageCurrent =>
+      mounted && _active && !_pageReadDenied && _pageScope.current;
   bool get pageInteractive => pageCurrent &&
       (_owner == null || (_owner!.isActive && _owner!.isCurrent));
 
@@ -48,7 +49,8 @@ class _MembersPageState extends State<MembersPage> {
     final session = s;
     final root = session.tenant == null ? null : session.root;
     _pageScope = DeviceSubflowScope(session,
-        permitted: () => mounted && _active && !_pageClosed && identical(s, session) &&
+        permitted: () => mounted && _active && !_pageClosed &&
+            !_pageReadDenied && identical(s, session) &&
             session.tenant != null && session.root == root &&
             session.canManage && session.canOpen('members'));
     _pageScope.addListener(_accessChanged);
@@ -59,9 +61,22 @@ class _MembersPageState extends State<MembersPage> {
     _rebuildPending = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _rebuildPending = false;
-      if (mounted && _active) setState(() {});
+      if (mounted && _active) {
+        _ownerLost.value = true;
+        setState(() {});
+      }
     });
     WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  bool rejectPageRead(Object failure, bool Function() available) {
+    if (failure is! ApiFailure || failure.code == 'REAUTH_REQUIRED' ||
+        !available()) return false;
+    if (failure.status != 401 && failure.status != 403 &&
+        failure.code != 'WORKSPACE_CHANGED') return false;
+    _pageReadDenied = true;
+    _accessChanged();
+    return true;
   }
 
   void _retirePage() {
@@ -103,9 +118,11 @@ class _MembersPageState extends State<MembersPage> {
       {ResourceActionLease? listLease}) =>
       Listenable.merge([scope, _ownerLost, if (listLease != null) listLease]);
 
-  DeviceSubflowScope capture(String root, {ResourceActionLease? listLease}) =>
+  DeviceSubflowScope capture(String root,
+      {ResourceActionLease? listLease, bool Function()? permitted}) =>
       DeviceSubflowScope(s, permitted: () => pageCurrent &&
-          s.tenant != null && s.root == root && listLease?.current != false);
+          s.tenant != null && s.root == root && listLease?.current != false &&
+          (permitted?.call() ?? true));
 
   Api dialogApi(BuildContext dialog, DeviceSubflowScope scope) {
     final route = ModalRoute.of(dialog);
@@ -154,6 +171,9 @@ class _MembersPageState extends State<MembersPage> {
       path: '$root/${invitations ? 'invitations' : 'members'}',
       api: _pageScope.api,
       reauth: reauth,
+      isCurrent: () => pageCurrent,
+      onReadDenied: (failure) => rejectPageRead(failure,
+          () => pageCurrent && view == _viewGeneration),
       canInteract: () => pageInteractive,
       onCreateChanged: (lease) => performListAction(lease, view, () async {
         final scope = capture(root, listLease: lease);
@@ -299,23 +319,60 @@ class _MembersPageState extends State<MembersPage> {
 
   Future<bool> openMember(String root, Json row,
       {ResourceActionLease? listLease}) async {
-    final scope = capture(root, listLease: listLease);
-    var needsReview = false;
+    final targetLost = ValueNotifier<bool>(false);
+    var targetDenied = false, flowLive = true, needsReview = false;
+    final scope = capture(root, listLease: listLease,
+        permitted: () => !targetDenied);
+    bool sourceCurrent() => pageCurrent && s.tenant != null &&
+        s.root == root && listLease?.current != false;
+    bool rejectTargetRead(Object failure) {
+      if (!current(scope) || failure is! ApiFailure ||
+          failure.code == 'REAUTH_REQUIRED') return false;
+      if (failure.status == 401 || failure.code == 'WORKSPACE_CHANGED') {
+        return rejectPageRead(failure, sourceCurrent);
+      }
+      if (failure.status != 403) return false;
+      // A concealed or revoked target also returns 403. Recheck the list
+      // before concluding that access to every member has been lost.
+      needsReview = true;
+      targetDenied = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (flowLive) targetLost.value = true;
+      });
+      WidgetsBinding.instance.ensureVisualUpdate();
+      toast(context, '当前无法查看该成员，将核对成员列表。');
+      return true;
+    }
     try {
       if (!current(scope)) return false;
       final kind = s.tenant!['kind'] as String, operatorRole = s.role;
       final target = MemberAccessTarget.fromRow(row);
       final path = '$root/members/${target.memberKey}/access';
-      final raw = await scope.api.send('GET', path);
-      if (!mounted || !current(scope)) return false;
-      final access = MemberAccessSnapshot.read(raw, kind: kind, target: target);
+      Future<MemberAccessSnapshot?> readAccess(
+          {MemberAccessSnapshot? previous}) async {
+        try {
+          final raw = await scope.api.send('GET', path);
+          if (!current(scope)) return null;
+          return MemberAccessSnapshot.read(raw,
+              kind: kind, target: target, previous: previous);
+        } catch (failure) {
+          if (rejectTargetRead(failure)) return null;
+          rethrow;
+        }
+      }
+      final access = await readAccess();
+      if (access == null || !current(scope)) {
+        return sourceCurrent() && needsReview;
+      }
       needsReview = access.version != row['version'];
       final classIds = access.classIds;
       final member = memberPresentation(row, access);
       final allowed = memberRoles(kind, operatorRole, currentRole: access.role);
       var edit = false;
       final removalKey = requestId();
-      final changes = flowChanges(scope, listLease: listLease);
+      final changes = Listenable.merge([
+        flowChanges(scope, listLease: listLease), targetLost,
+      ]);
       Api? classScopeApi;
       await scopedDetailsDialog(
           context,
@@ -335,6 +392,7 @@ class _MembersPageState extends State<MembersPage> {
           reauth: reauth,
           accessChanges: changes,
           hasAccess: () => current(scope),
+          closeOnAccessLost: true,
           extraContent: classIds.isEmpty ? null : Builder(builder: (dialog) {
             if (!dialog.mounted || !current(scope)) return const SizedBox.shrink();
             final route = ModalRoute.of(dialog);
@@ -351,7 +409,8 @@ class _MembersPageState extends State<MembersPage> {
           }),
           actions: [
             DetailAction('权限变更记录', (dialog) =>
-                history(dialog, root, member, scope, listLease: listLease),
+                history(dialog, root, member, scope, listLease: listLease,
+                    targetChanges: targetLost, onReadDenied: rejectTargetRead),
                 closeOnSuccess: false),
             if (allowed.isNotEmpty) ...[
               DetailAction('调整权限', (dialog) async {
@@ -379,10 +438,10 @@ class _MembersPageState extends State<MembersPage> {
           ]);
       if (edit && current(scope)) {
         // Fetch again after leaving the detail dialog: never silently replace the version on submit.
-        final latestRaw = await scope.api.send('GET', path);
-        if (!mounted || !current(scope)) return false;
-        final latest = MemberAccessSnapshot.read(latestRaw,
-            kind: kind, target: target, previous: access);
+        final latest = await readAccess(previous: access);
+        if (latest == null || !current(scope)) {
+          return sourceCurrent() && needsReview;
+        }
         needsReview = needsReview || latest.version != access.version;
         if (memberRoles(kind, operatorRole, currentRole: latest.role).isEmpty) {
           toast(context, '该成员当前不支持权限调整，请核对最新成员资料。');
@@ -413,14 +472,18 @@ class _MembersPageState extends State<MembersPage> {
           toast(context, '成员权限已更新。');
         }
       }
-      return current(scope) && needsReview;
+      return sourceCurrent() && needsReview;
     } finally {
+      flowLive = false;
       scope.dispose();
+      targetLost.dispose();
     }
   }
 
   Future<void> history(BuildContext parent, String root, Json member,
-      DeviceSubflowScope owner, {ResourceActionLease? listLease}) async {
+      DeviceSubflowScope owner, {ResourceActionLease? listLease,
+      required Listenable targetChanges,
+      required ValueChanged<Object> onReadDenied}) async {
     final route = ModalRoute.of(parent);
     final parentChanged = ValueNotifier<bool>(false);
     var live = true, parentClosed = false;
@@ -436,7 +499,8 @@ class _MembersPageState extends State<MembersPage> {
         permitted: () => !parentClosed && current(owner) && parent.mounted &&
             route?.isActive == true);
     final changes = Listenable.merge([
-      scope, parentChanged, _ownerLost, if (listLease != null) listLease
+      scope, parentChanged, _ownerLost, targetChanges,
+      if (listLease != null) listLease
     ]);
     try {
       if (!current(scope)) return;
@@ -444,11 +508,20 @@ class _MembersPageState extends State<MembersPage> {
       await scopedDetailsDialog(parent, '权限变更记录', {
         '成员': memberName(member),
       }, accessChanges: changes, hasAccess: () => current(scope),
-        reauth: reauth,
+        closeOnAccessLost: true, reauth: reauth,
         extraContent: Builder(builder: (dialog) {
+          final historyRoute = ModalRoute.of(dialog);
+          bool available() => current(scope) && dialog.mounted &&
+              historyRoute?.isActive == true &&
+              (historyRoute is! OwnedDialogRoute<dynamic> ||
+                  historyRoute.available);
           final api = historyApi ??= dialogApi(dialog, scope);
           return SizedBox(width: 920, child: ResourcePage(
                   api: api,
+                  isCurrent: available,
+                  onReadDenied: (failure) {
+                    if (available()) onReadDenied(failure);
+                  },
                   path: '$root/members/${member['memberKey']}/access-history',
                   title: '权限变更记录',
                   subtitle: '${memberName(member)} · 按权限版本从新到旧显示角色调整与撤销记录。',
@@ -484,7 +557,8 @@ class _MembersPageState extends State<MembersPage> {
                     '操作账号': r['changedByActorId'],
                     '操作时间': dateLabel(r['occurredAt']),
                   }, accessChanges: changes,
-                     hasAccess: () => current(scope), reauth: reauth),
+                     hasAccess: () => current(scope), reauth: reauth,
+                     closeOnAccessLost: true),
                 ));
         }));
     } finally {

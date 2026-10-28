@@ -65,13 +65,16 @@ class _Fixture {
   final bool unknownRemoval;
   final Map<int, Json> accessOverrides;
   final Json patchOverride;
+  final String? historyCursor;
+  final FutureOr<http.Response?> Function(http.Request)? responseOverride;
   final requests = <http.Request>[];
   final classes = Completer<http.Response>();
   bool invitationCancelled = false;
   late final session = _MemberSession(handle);
 
   _Fixture({this.unknownRemoval = false,
-      this.accessOverrides = const {}, this.patchOverride = const {}});
+      this.accessOverrides = const {}, this.patchOverride = const {},
+      this.responseOverride, this.historyCursor});
 
   List<http.Request> reads(String path) => requests.where(
       (request) => request.method == 'GET' && request.url.path == path).toList();
@@ -80,6 +83,8 @@ class _Fixture {
 
   Future<http.Response> handle(http.Request request) async {
     requests.add(request);
+    final response = await responseOverride?.call(request);
+    if (response != null) return response;
     final path = request.url.path;
     if (request.method == 'GET') {
       if (path == _members) {
@@ -100,7 +105,7 @@ class _Fixture {
           'previousSubjectId': null, 'previousClassIds': <String>[],
           'subjectId': null, 'classIds': <String>[],
           'changedByActorId': 'adult-a', 'occurredAt': '2026-10-25T00:00:00Z',
-        }]);
+        }], cursor: historyCursor);
       }
       if (path == '$_root/classes') {
         expect(request.url.queryParameters['includeArchived'], 'true');
@@ -149,6 +154,11 @@ Widget _host(_Fixture fixture, {Key? pageKey, Future<bool> Function()? invite}) 
 Finder _button(String label) => find.ancestor(
     of: find.text(label),
     matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
+Finder get _refresh => find.byWidgetPredicate((widget) =>
+    widget is IconButton && widget.tooltip == '刷新');
+Finder _failure(String code) => find.byWidgetPredicate((widget) =>
+    widget is FailureView && widget.error is ApiFailure &&
+    (widget.error as ApiFailure).code == code);
 Finder get _topDialog => find.byType(AlertDialog).last;
 Finder _dialogButton(String label) =>
     find.descendant(of: _topDialog, matching: _button(label));
@@ -270,6 +280,211 @@ void main() {
         await fixture.cleanup(tester);
       }
     }
+  });
+
+  testWidgets('a denied member continuation retires the page and old callbacks',
+      (tester) async {
+    _wide(tester);
+    var denied = true;
+    var invites = 0;
+    final fixture = _Fixture(responseOverride: (request) {
+      if (denied && request.method == 'GET' && request.url.path == _members &&
+          request.url.queryParameters['cursor'] != null) {
+        return _reply({'errorCode': 'SCOPE_DENIED'}, status: 403);
+      }
+      return null;
+    });
+    addTearDown(() => fixture.cleanup(tester));
+    await tester.pumpWidget(_host(fixture, invite: () async {
+      invites++;
+      return false;
+    }));
+    await _until(tester, () => find.text('林老师').evaluate().length == 1);
+    await tester.enterText(find.byType(TextField), '林老师');
+    await tester.pump();
+    final oldOpen = tester.widget<ButtonStyleButton>(_button('查看详情')).onPressed!;
+    final oldCreate = tester.widget<ButtonStyleButton>(_button('邀请成员')).onPressed!;
+    final oldMore = tester.widget<ButtonStyleButton>(_button('加载更多')).onPressed!;
+    final oldRefresh = tester.widget<IconButton>(_refresh).onPressed!;
+    final oldTab = tester.widget<SegmentedButton<bool>>(find.byWidgetPredicate(
+        (widget) => widget is SegmentedButton<bool>)).onSelectionChanged!;
+    final generation = fixture.session.scopeGeneration;
+    await _tap(tester, _button('加载更多'));
+    final retired = find.text('工作空间或权限已变化，请重新打开成员管理。');
+    await _until(tester, () => retired.evaluate().length == 1);
+    expect(find.text('林老师'), findsNothing);
+    expect(find.byType(TextField), findsNothing,
+        reason: 'The retired page must also hide its private search draft.');
+    denied = false;
+    oldTab({true});
+    oldOpen();
+    oldCreate();
+    oldRefresh();
+    oldMore();
+    await tester.pumpWidget(_host(fixture));
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(retired, findsOneWidget);
+    expect(find.text('林老师'), findsNothing);
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(fixture.reads(_members), hasLength(2));
+    expect(fixture.reads(_invitations), isEmpty);
+    expect(fixture.reads('$_members/$_memberKey/access'), isEmpty);
+    expect(fixture.writes, isEmpty);
+    expect(invites, 0);
+    expect(fixture.session.scopeGeneration, generation);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('target access denial reconciles only that target and reauth keeps the page',
+      (tester) async {
+    _wide(tester);
+    for (final reauth in [false, true]) {
+      late final _Fixture fixture;
+      fixture = _Fixture(responseOverride: (request) {
+        if (request.method != 'GET') return null;
+        if (request.url.path == '$_members/$_memberKey/access' &&
+            fixture.reads(request.url.path).length == 1) {
+          return _reply({'errorCode': reauth ? 'REAUTH_REQUIRED' : 'SCOPE_DENIED'},
+              status: reauth ? 401 : 403);
+        }
+        if (!reauth && request.url.path == _members &&
+            fixture.reads(_members).length > 1) {
+          return _page([_member(second: true)]);
+        }
+        return null;
+      });
+      try {
+        await tester.pumpWidget(_host(fixture));
+        await _until(tester, () => find.text('林老师').evaluate().length == 1);
+        final generation = fixture.session.scopeGeneration;
+        await _tap(tester, find.text('林老师'));
+        if (reauth) {
+          await _until(tester, () => _failure('REAUTH_REQUIRED').evaluate().length == 1);
+          expect(find.text('林老师'), findsOneWidget);
+          expect(fixture.reads(_members), hasLength(1));
+          await _tap(tester, _refresh);
+          await _until(tester, () => fixture.reads(_members).length == 2 &&
+              _failure('REAUTH_REQUIRED').evaluate().isEmpty);
+        } else {
+          await _until(tester, () => fixture.reads(_members).length == 2 &&
+              find.text('陈老师').evaluate().length == 1);
+          expect(find.text('林老师'), findsNothing);
+          fixture.classes.complete(_page([]));
+        }
+        expect(find.byType(AlertDialog), findsNothing);
+        expect(find.text('工作空间或权限已变化，请重新打开成员管理。'), findsNothing);
+        expect(fixture.session.scopeGeneration, generation);
+        await _tap(tester, find.text(reauth ? '林老师' : '陈老师'));
+        await _until(tester, () => _routeReady(tester, find.text('成员详情')));
+        expect(tester.widget<ButtonStyleButton>(_dialogButton('调整权限')).onPressed,
+            isNotNull, reason: 'A denied target must not lock management of readable members.');
+        expect(fixture.reads(_members), hasLength(2));
+        expect(fixture.writes, isEmpty);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await fixture.cleanup(tester);
+      }
+    }
+  });
+
+  testWidgets('history continuation denial retires three windows beneath an independent notice',
+      (tester) async {
+    _wide(tester);
+    final historyRead = Completer<http.Response>();
+    late final _Fixture fixture;
+    const cursor = '97777777-7777-4777-8777-777777777777';
+    fixture = _Fixture(historyCursor: cursor, responseOverride: (request) {
+      if (request.method != 'GET') return null;
+      if (request.url.path == '$_members/$_memberKey/access-history' &&
+          request.url.queryParameters['cursor'] != null) {
+        return historyRead.future;
+      }
+      if (request.url.path == _members && fixture.reads(_members).length > 1) {
+        return _page([_member(second: true)]);
+      }
+      return null;
+    });
+    addTearDown(() => fixture.cleanup(tester));
+    addTearDown(() {
+      if (!historyRead.isCompleted) historyRead.complete(_page([]));
+    });
+    await tester.pumpWidget(_host(fixture));
+    await _until(tester, () => find.text('林老师').evaluate().length == 1);
+    await _tap(tester, find.text('林老师'));
+    await _until(tester, () => _routeReady(tester, find.text('成员详情')));
+    final memberRoute = ModalRoute.of(tester.element(_topDialog))!
+        as OwnedDialogRoute<void>;
+    await _tap(tester, _dialogButton('权限变更记录'));
+    await _until(tester, () =>
+        fixture.reads('$_members/$_memberKey/access-history').length == 1 &&
+        find.text('v7').evaluate().length == 1 && _routeReady(tester, _topDialog));
+    final historyRoute = ModalRoute.of(tester.element(_topDialog))!
+        as OwnedDialogRoute<void>;
+    await _tap(tester, _dialogButton('加载更多'));
+    await _until(tester, () =>
+        fixture.reads('$_members/$_memberKey/access-history').length == 2);
+    expect(fixture.reads('$_members/$_memberKey/access-history').last
+        .url.queryParameters['cursor'], cursor);
+    await _tap(tester, _dialogButton('查看详情'));
+    await _until(tester, () => _routeReady(tester, find.text('权限变更详情')));
+    final historyDetailRoute = ModalRoute.of(tester.element(_topDialog))!
+        as OwnedDialogRoute<void>;
+    final generation = fixture.session.scopeGeneration;
+    unawaited(showDialog<void>(context: tester.element(_topDialog),
+        builder: (context) => AlertDialog(title: const Text('独立覆盖通知'),
+            actions: [TextButton(onPressed: () => Navigator.of(context).pop(),
+                child: const Text('知道了'))])));
+    await _until(tester, () => _routeReady(tester, find.text('独立覆盖通知')));
+    historyRead.complete(_reply({'errorCode': 'SCOPE_DENIED'}, status: 403));
+    await _until(tester, () => !memberRoute.available && !historyRoute.available &&
+        !historyDetailRoute.available && fixture.reads(_members).length == 2);
+    expect(find.text('独立覆盖通知'), findsOneWidget);
+    expect(find.text('成员详情'), findsNothing);
+    expect(find.text('权限变更记录'), findsNothing);
+    expect(find.text('权限变更详情'), findsNothing);
+    expect(find.text('林老师'), findsNothing);
+    expect(fixture.session.scopeGeneration, generation);
+    expect(fixture.reads('$_members/$_memberKey/access-history'), hasLength(2));
+    await _tap(tester, _dialogButton('知道了'));
+    await _until(tester, () => find.byType(AlertDialog).evaluate().isEmpty &&
+        find.text('陈老师').evaluate().length == 1);
+    fixture.classes.complete(_page([]));
+    await _tap(tester, find.text('陈老师'));
+    await _until(tester, () => _routeReady(tester, find.text('成员详情')));
+    expect(fixture.reads(_members), hasLength(2));
+    expect(fixture.writes, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a denied DELETE remains an operation failure and does not retire the page',
+      (tester) async {
+    _wide(tester);
+    final fixture = _Fixture(responseOverride: (request) =>
+        request.method == 'DELETE' && request.url.path == '$_members/$_memberKey/access'
+            ? _reply({'errorCode': 'SCOPE_DENIED'}, status: 403) : null);
+    addTearDown(() => fixture.cleanup(tester));
+    await tester.pumpWidget(_host(fixture));
+    await _until(tester, () => find.text('林老师').evaluate().length == 1);
+    await _tap(tester, find.text('林老师'));
+    await _until(tester, () => _routeReady(tester, find.text('成员详情')));
+    await _tap(tester, _dialogButton('撤销访问'));
+    await _until(tester, () => _routeReady(tester, find.text('撤销成员访问')));
+    await _tap(tester, _confirm);
+    await _until(tester, () => _failure('SCOPE_DENIED').evaluate().length == 1 &&
+        _routeReady(tester, find.text('成员详情')));
+    expect(find.text('工作空间或权限已变化，请重新打开成员管理。'), findsNothing);
+    expect(find.text('成员访问已撤销。'), findsNothing);
+    expect(fixture.reads(_members), hasLength(1));
+    expect(fixture.writes, hasLength(1));
+    await _tap(tester, _dialogButton('关闭'));
+    await _until(tester, () => fixture.reads(_members).length == 2 &&
+        find.byType(AlertDialog).evaluate().isEmpty);
+    await _tap(tester, find.text('林老师'));
+    await _until(tester, () => _routeReady(tester, find.text('成员详情')));
+    expect(tester.widget<ButtonStyleButton>(_dialogButton('调整权限')).onPressed, isNotNull);
+    expect(fixture.writes, hasLength(1));
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('an observed newer access version reconciles the member list',

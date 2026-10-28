@@ -75,7 +75,8 @@ Future<void> scopedDetailsDialog(
     VoidCallback? reauth,
     Listenable? accessChanges,
     bool Function()? hasAccess,
-    Widget? extraContent}) async {
+    Widget? extraContent,
+    bool closeOnAccessLost = false}) async {
   if (!context.mounted || hasAccess?.call() == false) return;
   final access = DialogAccessBinding(context,
       accessChanges: accessChanges, hasAccess: hasAccess);
@@ -90,7 +91,8 @@ Future<void> scopedDetailsDialog(
               },
         accessChanges: access.changes,
         hasAccess: access.permitted,
-        extraContent: extraContent);
+        extraContent: extraContent,
+        closeOnAccessLost: closeOnAccessLost);
   } finally {
     access.dispose();
   }

@@ -898,7 +898,8 @@ Future<void> actionDetails(
     VoidCallback? reauth,
     Listenable? accessChanges,
     bool Function()? hasAccess,
-    Widget? extraContent}) async {
+    Widget? extraContent,
+    bool closeOnAccessLost = false}) async {
   var live = true, allowed = true;
   bool permitted() {
     if (!live) return false;
@@ -906,12 +907,11 @@ Future<void> actionDetails(
     return allowed;
   }
 
+  late final OwnedDialogRoute<void> route;
   void observeAccess() {
-    permitted();
+    if (!permitted() && closeOnAccessLost && route.available) route.finish();
   }
 
-  accessChanges?.addListener(observeAccess);
-  late final OwnedDialogRoute<void> route;
   void closeCurrent() {
     if (route.available && route.isCurrent) route.finish();
   }
@@ -943,6 +943,8 @@ Future<void> actionDetails(
               : AnimatedBuilder(
                   animation: accessChanges, builder: (_, __) => content());
         });
+    accessChanges?.addListener(observeAccess);
+    if (!permitted() && closeOnAccessLost) return;
     await presentOwnedDialog(context, route);
   } finally {
     live = false;

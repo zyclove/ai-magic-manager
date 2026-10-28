@@ -27,6 +27,8 @@
 
 - 管理台只读查看成员、邀请及权限历史后保留已加载页与搜索；取消危险确认不刷新。实际尝试 PATCH/DELETE、读取观察到访问版本变化或编辑器要求核对后才重读列表，未知写入关闭仍需核对，不推断为未执行或保存成功。撤销确认展示原成员名称、完整账号/成员编号、权限版本及后果，取消邀请展示原邀请编号、角色和期限；原窗口或权限失效即停止旧确认，独立覆盖窗口保留。
 
+- 列表当前读取明确401/403（非REAUTH_REQUIRED）或WORKSPACE_CHANGED，锁存页面读取失权并停止旧回调，重新进入页面才能重新读取。单个access／access-history的403也用于隐藏不存在、不属于租户或已撤销的目标，不能直接判定整页失权；只退役该成员详情及两层历史窗口，再由原列表租约核对一次。列表仍可读时其他成员照常管理，列表拒绝才退役整页。目标读取的非近期认证401或工作空间失效直接退役页面；目录读取、普通网络／近期认证错误及写操作拒绝不复用目标拒绝处理。目标通知贯穿历史详情，窗口失权后只结束所属OwnedDialogRoute，独立通知保留，不改变会话代际。
+
 - 成员编辑或邀请提交前冻结原正文（含班级列表），首次明确拒绝仍可修正；已有网络/5xx未知结果后，后续认证、权限或普通4xx拒绝不证明旧操作失败，原内容保持锁定。412、409 IDEMPOTENCY_KEY_EXPIRED、410 IDEMPOTENCY_RESULT_EXPIRED/IDEMPOTENCY_RESPONSE_ERASED 停止旧请求重试，保留中文只读草稿与完整范围编号。未知关闭先在原表单内确认，明确关闭不等于取消操作；编辑返回 refresh，禁止重试的邀请返回 reviewInvitations，只核对记录，不自动重放。
 
 - 邀请表单立即打开；调整表单仅先重读当前成员权限并固定版本。按所选角色/范围读取必要目录，无范围角色不查目录；目录未读、失败和成功空结果分别显示，加载失败可就地重试。原档案/班级引用保留完整编号占位，成功目录缺少原项时提示重新选择；不静默清空、默认替换或放开无效范围提交。目录读取不改变未知写入状态，关闭编辑器同步停止其目录生命周期和后续分页。
@@ -42,8 +44,8 @@
 | 路由 | 输入与返回 | 权限与并发 |
 |---|---|---|
 | GET /tenants/{tenantId}/members | 分页成员资料、角色、档案名称/归档标记、权限版本 | OWNER/ORG_ADMIN；儿童邮箱不输出，旧账户资料缺失时保留稳定标识 |
-| GET /tenants/{tenantId}/members/{memberKey}/access | actorId/memberKey/role/subjectId/version，强 ETag | 当前管理权限；不含会独立更新的显示资料 |
-| PATCH /tenants/{tenantId}/members/{memberKey}/access | role、可选 subjectId → 最新访问描述 | 近期 MFA、If-Match，支持 Idempotency-Key；角色和范围改变同事务清理旧待办 |
+| GET /tenants/{tenantId}/members/{memberKey}/access | actorId/memberKey/role/subjectId/version/classIds，强 ETag | 当前管理权限；不含会独立更新的显示资料 |
+| PATCH /tenants/{tenantId}/members/{memberKey}/access | role、可选 subjectId 或 classIds → 最新访问描述 | 近期 MFA、If-Match，支持 Idempotency-Key；角色和范围改变同事务清理旧待办 |
 | DELETE /tenants/{tenantId}/members/{memberKey}/access | 无正文，204 | 近期 MFA、If-Match，支持 Idempotency-Key；旧撤销请求重放不撤销重新加入的新成员版本 |
 | GET /tenants/{tenantId}/members/{memberKey}/access-history | limit/cursor → 角色/范围前后差异、版本、操作者、时间 | 当前管理权限；按成员版本倒序，游标限定当前成员与租户；包括撤销历史 |
 

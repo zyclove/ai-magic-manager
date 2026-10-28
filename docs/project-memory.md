@@ -69,6 +69,8 @@ DialogAccessBinding 同时观察父路由 popped 与 completed；当前 Flutter 
 
 [成员详情](../apps/guardian/lib/pages/members_page.dart)只以最新 access 读取决定角色、版本和获授编号；[member_access.dart](../apps/guardian/lib/core/member_access.dart)集中MemberAccessTarget／Snapshot，原行actor/cursor等待前捕获，六字段深冻结、kind/范围/safe-int校验；二次GET不倒退／同版漂移，PATCH匹配原正文全部范围与no-op原版／变更+1。actor保持OIDC原文，不要求UUID；档案班级不查活动状态，归档引用保持。页面只白名单补profile，不用任意Map覆盖访问事实；已观察到版本变化或最新角色不可编辑时核对列表，同版本只读不重读。[MemberClassScope](../apps/guardian/lib/ui/member_class_scope.dart)仅在有获授班级时异步读取名称，绑定原详情 API 和租约，不阻塞核心资料或决定授权。目录失败保留完整编号并就地重试 GET；编辑仍走原有重新读取与版本保护。成员邀请通过 onCreateChanged 返回需核对信号，普通取消保留列表，需核对时直接进入邀请记录，不先刷新退役的成员视图；筛选与操作同步防重并绑定原视图代次。成员与邀请通过 ResourcePage.onOpenChanged 返回需核对信号，PATCH/DELETE 发出前置位，不能只看表单非空结果；只读返回保留列表。危险确认复用 [confirmLeasedAction](../apps/guardian/lib/ui/leased_dialog.dart)，页面同步退役、帧后通知租约并释放通知器，避免导航重入。应用分类存于独立资源，应用身份详情返回不重读身份目录，保留原分页和搜索。
 
+成员列表／邀请列表的当前读取拒绝可锁存整页失权；单个access/history的403也隐藏已撤销或不存在目标，只退役该成员窗口并由原列表租约核对，不能直接推断所有成员失权。targetLost贯穿两层历史，scope同步门禁与帧后通知分开；scopedDetailsDialog/actionDetails可显式closeOnAccessLost，只结束所属OwnedDialogRoute，默认详情隐藏语义保持。成员三层窗口显式启用，非近期认证401／WORKSPACE_CHANGED可退役整页；普通读取错误、目录失败及写拒绝不扩大此边界。
+
 [通用 API](../apps/guardian/lib/core/api.dart) 使用已锁定 `http 1.6.0` 的 Abortable 协议；[作用域包装层](../apps/guardian/lib/core/scoped_http_client.dart)必须透传中止信号，在实际发送/终结请求前同时检查原作用域和请求期限，借用的客户端不能被单次请求关闭。纯时限单元测试使用原生 `FakeAsync`；共享完成 Future 的取消续程可能在其区域外调度，正常重试须保留有界真实异步断言，参考[超时回归](../apps/guardian/test/api_deadline_test.dart)，不要用无限等待或删除完成断言掩盖问题。
 
 ApiWriteDispatch／Api.trackingWrites 默认只保存带键写请求交给 HTTP 客户端的布尔事实；借用链保留父观察器、原作用域和共享待决写入，读取及无写键查询不标记。设备注册和设备管理仓储借用的专用观察器显式 includeUnkeyedWrites=true，覆盖其既有 Client-Request-Id 创建、确认／取消及云端撤销，不向请求补伪幂等键，不改变其他观察器或未知恢复语义。策略详情与其编辑、复制、回滚子流程共用同一观察器：原详情独立关闭后仍可返回列表核对信号，未派发或作用域失效不刷新；该信号不代表保存成功，也不替代原结果查询。
