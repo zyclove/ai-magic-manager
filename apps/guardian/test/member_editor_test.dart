@@ -13,6 +13,7 @@ import 'package:guardian/ui/design.dart';
 
 Future<void> open(WidgetTester tester, Future<Json> Function(Json) submit,
     {Json? member, bool retryUncertain = true,
+    Map<String, String> classes = const {'c1': '七年级一班', 'c2': '七年级二班'},
     VoidCallback? reauth, void Function(Json?)? onResult,
     MemberScopeDirectories? directories, bool wait = true}) async {
   await tester.pumpWidget(MaterialApp(
@@ -28,8 +29,7 @@ Future<void> open(WidgetTester tester, Future<Json> Function(Json) submit,
                             operatorRole: 'OWNER',
                             subjects: directories == null
                                 ? const {'a': '小明', 'b': '小雨'} : const {},
-                            classes: directories == null
-                                ? const {'c1': '七年级一班', 'c2': '七年级二班'} : const {},
+                            classes: directories == null ? classes : const {},
                             directories: directories,
                             member: member,
                             onSubmit: submit,
@@ -351,6 +351,55 @@ void main() {
       'classIds': ['c1', 'c2']
     });
   });
+  testWidgets('member review exposes equal-count class replacements before the canonical save',
+      (tester) async {
+    const classA = '10000000-0000-4000-8000-000000000001';
+    const classB = '10000000-0000-4000-8000-000000000002';
+    const classC = '10000000-0000-4000-8000-000000000003';
+    final sent = <Json>[];
+    await open(tester, (body) async { sent.add(body); return body; },
+        classes: const {classA: '七年级一班', classB: '七年级二班', classC: '七年级三班'},
+        member: {
+          'actorId': 'teacher', 'displayName': '林老师', 'role': 'TEACHER',
+          'subjectId': null, 'classIds': [classA, classB], 'version': 7,
+        });
+    final review = find.byKey(const Key('member-access-change-review'));
+    String reviewText() => tester.widgetList<Text>(find.descendant(
+        of: review, matching: find.byType(Text)))
+        .map((value) => value.data ?? '').join('\n');
+    final save = find.byKey(const Key('member-editor-save'));
+    expect(review, findsOneWidget);
+    expect(reviewText(), contains('尚未修改权限'));
+    expect(tester.widget<FilledButton>(save).onPressed, isNull);
+    await tester.ensureVisible(find.byKey(const Key('member-class-$classB')));
+    await tester.tap(find.byKey(const Key('member-class-$classB')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('member-class-$classC')));
+    await tester.tap(find.byKey(const Key('member-class-$classC')));
+    await tester.pumpAndSettle();
+    expect(reviewText(), contains('本次调整'));
+    expect(reviewText(), contains('调整后范围：2 个班级'));
+    expect(reviewText(), matches(RegExp(r'新增\s*1')));
+    expect(reviewText(), matches(RegExp(r'移除\s*1')));
+    final identifiers = find.byKey(const Key('member-access-change-identifiers'));
+    await tester.ensureVisible(identifiers);
+    await tester.tap(identifiers);
+    await tester.pumpAndSettle();
+    for (final id in [classB, classC]) {
+      expect(find.descendant(of: review, matching: find.byWidgetPredicate(
+          (widget) => widget is SelectableText && widget.data == id)), findsOneWidget);
+    }
+    expect(sent, isEmpty, reason: 'Review and expansion only inspect the local draft.');
+    await tester.ensureVisible(save);
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+    expect(sent, [
+      {'role': 'TEACHER', 'classIds': [classA, classC]},
+    ]);
+    expect(find.byType(MemberEditor), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
       'new invitations default to read-only access instead of administrator',
       (tester) async {
@@ -429,10 +478,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(() => sent.first['role'] = 'AUDITOR', throwsUnsupportedError);
     expect(() => (sent.first['classIds'] as List).add('c3'), throwsUnsupportedError);
+    final review = find.byKey(const Key('member-access-change-review'));
+    String reviewText() => tester.widgetList<Text>(find.descendant(
+        of: review, matching: find.byType(Text)))
+        .map((value) => value.data ?? '').join('\n');
+    final frozenReview = reviewText();
+    expect(frozenReview, matches(RegExp(r'新增\s*1')));
+    expect(frozenReview, matches(RegExp(r'移除\s*0')));
     originalToggle(false);
     await tester.tap(find.text('重试原提交'));
     await tester.pumpAndSettle();
     expect(sent, hasLength(2));
+    expect(reviewText(), frozenReview,
+        reason: 'A later authentication rejection must keep the original pending review.');
     expect(tester.widget<DropdownButtonFormField<String>>(
         find.byKey(const Key('member-role'))).onChanged, isNull);
     originalToggle(false);

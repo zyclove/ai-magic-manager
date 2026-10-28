@@ -11,6 +11,7 @@ import 'design.dart';
 import 'dialog_access.dart';
 import 'editor_draft_text.dart';
 import 'member_class_picker.dart';
+import 'member_access_review.dart';
 import 'owned_dialog_route.dart';
 
 Future<Json?> memberEditorDialog(BuildContext context,
@@ -451,14 +452,9 @@ class _MemberEditorState extends State<MemberEditor> {
     });
   }
 
-  Future<void> save() async {
-    if (!current || busy || recoveryStopped || confirmingUnknownClose ||
-        (pending != null && !widget.retryUncertain)) return;
-    final retryingUnknown = pending != null;
-    if (!retryingUnknown &&
-        (!optionsReady || form.currentState?.validate() != true || roles.isEmpty || !changed)) return;
+  Json draftBody() {
     final classes = selectedClasses.toList()..sort();
-    final body = pending ?? Map<String, dynamic>.unmodifiable({
+    return Map<String, dynamic>.unmodifiable({
       if (!editing) 'recipientEmail': email.text.trim(),
       'role': role,
       if (memberNeedsSubject(role) && !(role == 'TEACHER' && classMode))
@@ -466,6 +462,15 @@ class _MemberEditorState extends State<MemberEditor> {
       if (role == 'TEACHER' && classMode)
         'classIds': List<String>.unmodifiable(classes),
     });
+  }
+
+  Future<void> save() async {
+    if (!current || busy || recoveryStopped || confirmingUnknownClose ||
+        (pending != null && !widget.retryUncertain)) return;
+    final retryingUnknown = pending != null;
+    if (!retryingUnknown &&
+        (!optionsReady || form.currentState?.validate() != true || roles.isEmpty || !changed)) return;
+    final body = pending ?? draftBody();
     setState(() {
       busy = true;
       error = null;
@@ -716,6 +721,13 @@ class _MemberEditorState extends State<MemberEditor> {
                                       warning: true)),
                           ],
                           const SizedBox(height: 20),
+                          if (editing) ...[
+                            MemberAccessReview(original: initialMember!,
+                                proposed: pending ?? recoveryValues ?? draftBody(),
+                                subjectNames: subjectOptions ?? const {},
+                                classNames: classOptions ?? const {}),
+                            const SizedBox(height: 16),
+                          ],
                           Notice(editing
                               ? memberConsequences
                               : '邀请有效期为 24 小时。创建后请复制令牌并安全交给收件人；系统尚未发送邮件。'),
