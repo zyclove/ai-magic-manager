@@ -210,6 +210,72 @@ void main() {
         }),
         '2 个班级');
   });
+  test('member history distinguishes scope changes and searchable receipt facts', () {
+    const classA = '10000000-0000-4000-8000-000000000001';
+    const classB = '10000000-0000-4000-8000-000000000002';
+    const classC = '10000000-0000-4000-8000-000000000003';
+    const subjectA = '00000000-0000-4000-8000-000000000001';
+    const subjectB = '00000000-0000-4000-8000-000000000002';
+    final replacement = <String, dynamic>{
+      'id': '20000000-0000-4000-8000-000000000001', 'memberVersion': 7,
+      'previousRole': 'TEACHER', 'role': 'TEACHER',
+      'previousSubjectId': null, 'subjectId': null,
+      'previousClassIds': [classA, classB], 'classIds': [classA, classC],
+      'changedByActorId': 'adult-a', 'occurredAt': '2026-10-25T00:00:00Z',
+    };
+    for (final scenario in <({Json row, List<String> includes, List<String> excludes})>[
+      (row: replacement, includes: ['教师', '新增 1', '移除 1'], excludes: ['→ 教师']),
+      (row: {...replacement, 'classIds': [classB, classA]},
+        includes: ['范围未变化'], excludes: ['新增', '移除']),
+      (row: {...replacement, 'previousClassIds': [classA],
+          'subjectId': subjectA, 'classIds': <String>[]},
+        includes: ['关联档案已设置'], excludes: ['资料待核对']),
+      (row: {...replacement, 'previousSubjectId': subjectA,
+          'previousClassIds': <String>[], 'subjectId': subjectB, 'classIds': <String>[]},
+        includes: ['关联档案已更换'], excludes: ['资料待核对']),
+      (row: {...replacement, 'previousSubjectId': subjectA,
+          'previousClassIds': <String>[], 'classIds': [classC]},
+        includes: ['关联档案已移除'], excludes: ['资料待核对']),
+      (row: {...replacement, 'role': null, 'classIds': <String>[]},
+        includes: ['教师 → 已撤销'], excludes: ['新增', '移除']),
+      (row: {...replacement, 'previousRole': 'AUDITOR', 'role': 'AUDITOR',
+          'previousClassIds': <String>[], 'classIds': <String>[]},
+        includes: ['范围未变化'], excludes: ['资料待核对']),
+    ]) {
+      final summary = memberAccessHistorySummary(scenario.row);
+      for (final expected in scenario.includes) {
+        expect(summary, contains(expected));
+      }
+      for (final excluded in scenario.excludes) {
+        expect(summary, isNot(contains(excluded)));
+      }
+    }
+    for (final incomplete in <Json>[
+      {...replacement}..remove('previousClassIds'),
+      {...replacement}..remove('classIds'),
+      {...replacement}..remove('previousSubjectId'),
+      {...replacement}..remove('subjectId'),
+      {...replacement, 'classIds': null},
+      {...replacement, 'classIds': 'not-a-list'},
+      {...replacement, 'classIds': [classA, false]},
+      {...replacement, 'classIds': [classA, classA]},
+      {...replacement, 'classIds': List.generate(51, (index) => 'class-$index')},
+      {...replacement, 'subjectId': {'private': 'must-not-echo'}},
+    ]) {
+      expect(memberAccessHistorySummary(incomplete), contains('范围资料待核对'),
+          reason: 'Missing or malformed facts cannot be described as an empty scope.');
+    }
+    final searchable = memberAccessHistorySearchText(replacement);
+    for (final term in ['新增', '移除', classA, classB, classC, 'TEACHER',
+      'v7', replacement['id'] as String, 'adult-a']) {
+      expect(searchable, contains(term));
+    }
+    final private = {...replacement,
+      'subjectId': {'private': 'must-not-echo'},
+      'classIds': [{'private': 'must-not-echo'}], 'unused': 'must-not-echo'};
+    expect(memberAccessHistorySearchText(private), isNot(contains('must-not-echo')));
+  });
+
   group('member access snapshots', () {
     const actor = ' oidc|School.Alice/汉字 ';
     const key = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';

@@ -542,13 +542,15 @@ class _MembersPageState extends State<MembersPage> {
                   subtitle: '${memberName(member)} · 按权限版本从新到旧显示角色调整与撤销记录。',
                   emptyTitle: '暂无权限调整记录',
                   refreshAfterOpen: false,
+                  searchHint: '搜索已加载的角色、范围或编号',
+                  searchText: memberAccessHistorySearchText,
                   emptyDescription: '角色或档案范围调整、撤销访问后会记录在这里。所有者交接请查看交接记录。',
                   columns: [
                     ColumnSpec('版本', (r) => Text('v${r['memberVersion']}')),
                     ColumnSpec(
                         '变更',
-                        (r) => Text(
-                            '${label(r['previousRole'])} → ${r['role'] == null ? '已撤销' : label(r['role'])}')),
+                        (r) => Text(memberAccessHistorySummary(r),
+                            maxLines: 3, overflow: TextOverflow.ellipsis)),
                     ColumnSpec('时间', (r) => Text(dateLabel(r['occurredAt']))),
                   ],
                   onOpen: (r) => scopedDetailsDialog(dialog, '权限变更详情', {

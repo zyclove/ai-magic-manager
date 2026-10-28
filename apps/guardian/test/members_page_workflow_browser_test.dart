@@ -705,7 +705,22 @@ void main() {
   testWidgets('member read-only subflows keep loaded pages and invitation cancellation refreshes',
       (tester) async {
     _wide(tester);
-    final fixture = _Fixture();
+    const classA = '95555555-5555-4555-8555-555555555551';
+    const classB = '95555555-5555-4555-8555-555555555552';
+    const classC = '95555555-5555-4555-8555-555555555553';
+    final fixture = _Fixture(responseOverride: (request) {
+      if (request.method == 'GET' &&
+          request.url.path == '$_members/$_memberKey/access-history') {
+        return _page([{
+          'id': '97777777-7777-4777-8777-777777777777',
+          'memberVersion': 6, 'previousRole': 'TEACHER', 'role': 'TEACHER',
+          'previousSubjectId': null, 'previousClassIds': [classA, classB],
+          'subjectId': null, 'classIds': [classA, classC],
+          'changedByActorId': 'adult-a', 'occurredAt': '2026-10-25T00:00:00Z',
+        }]);
+      }
+      return null;
+    });
     addTearDown(() => fixture.cleanup(tester));
     await tester.pumpWidget(_host(fixture));
     await settleReads(tester);
@@ -722,9 +737,32 @@ void main() {
     await _tap(tester, _dialogButton('权限变更记录'));
     await settleReads(tester);
     expect(fixture.reads('$_members/$_memberKey/access-history'), hasLength(1));
+    expect(find.textContaining(RegExp(r'新增\s*1')), findsOneWidget);
+    expect(find.textContaining(RegExp(r'移除\s*1')), findsOneWidget);
+    final historySearch = find.descendant(of: _topDialog,
+        matching: find.byType(TextField));
+    expect(tester.widget<TextField>(historySearch).decoration?.hintText,
+        '搜索已加载的角色、范围或编号');
+    for (final query in ['新增', classC]) {
+      await tester.enterText(historySearch, query);
+      await tester.pump();
+      expect(_dialogButton('查看详情'), findsOneWidget,
+          reason: 'Loaded history remains searchable by its change and full references.');
+      expect(fixture.reads('$_members/$_memberKey/access-history'), hasLength(1));
+      expect(fixture.writes, isEmpty);
+    }
+    await _tap(tester, find.descendant(of: _topDialog,
+        matching: find.byTooltip('清除列表搜索')));
+    await tester.pump();
+    expect(tester.widget<TextField>(historySearch).controller!.text, isEmpty);
     await _tap(tester, _dialogButton('查看详情'));
     await settleReads(tester);
     expect(find.text('权限变更详情'), findsOneWidget);
+    for (final references in ['$classA\n$classB', '$classA\n$classC']) {
+      expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
+          widget.data == references), findsOneWidget);
+    }
+    expect(fixture.writes, isEmpty);
     await _tap(tester, _dialogButton('关闭'));
     await settleReads(tester);
     expect(fixture.reads('$_members/$_memberKey/access-history'), hasLength(1));

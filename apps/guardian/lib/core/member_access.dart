@@ -185,6 +185,58 @@ String memberScope(Json row) {
   return row['role'] == 'TEACHER' ? '尚未分配范围' : '工作空间范围';
 }
 
+/// Human-readable history; incomplete scope facts never imply an empty scope.
+String memberAccessHistorySummary(Json row) {
+  const roles = {'OWNER', 'GUARDIAN', 'ORG_ADMIN', 'TEACHER', 'AUDITOR', 'CHILD'};
+  final previousRole = row['previousRole'], role = row['role'];
+  if (!roles.contains(previousRole) || !row.containsKey('role') ||
+      (role != null && !roles.contains(role))) return '权限变更资料待核对';
+  if (role == null) return '${label(previousRole)} → 已撤销';
+  final roleText = previousRole == role
+      ? label(role) : '${label(previousRole)} → ${label(role)}';
+  final previousSubject = row['previousSubjectId'], subject = row['subjectId'];
+  final previousClasses = _historyClassIds(row['previousClassIds']);
+  final classes = _historyClassIds(row['classIds']);
+  if (!row.containsKey('previousSubjectId') || !row.containsKey('subjectId') ||
+      (previousSubject != null && (previousSubject is! String || previousSubject.trim().isEmpty)) ||
+      (subject != null && (subject is! String || subject.trim().isEmpty)) ||
+      previousClasses == null || classes == null) {
+    return '$roleText · 范围资料待核对';
+  }
+  final added = classes.difference(previousClasses).length;
+  final removed = previousClasses.difference(classes).length;
+  final changes = <String>[
+    if (previousSubject != subject)
+      subject == null ? '关联档案已移除' : previousSubject == null
+          ? '关联档案已设置' : '关联档案已更换',
+    if (added > 0 || removed > 0)
+      '班级${[if (added > 0) '新增 $added 个', if (removed > 0) '移除 $removed 个'].join('、')}',
+  ];
+  if (changes.isEmpty) return previousRole == role
+      ? '$roleText · 范围未变化' : roleText;
+  return '$roleText · ${changes.join(' · ')}';
+}
+
+Set<String>? _historyClassIds(Object? value) {
+  if (value is! List || value.length > 50 ||
+      value.any((id) => id is! String || id.trim().isEmpty)) return null;
+  final ids = Set<String>.from(value);
+  return ids.length == value.length ? ids : null;
+}
+
+/// Search only known receipt fields and their visible Chinese summary.
+String memberAccessHistorySearchText(Json row) => [
+  memberAccessHistorySummary(row),
+  for (final field in const ['id', 'previousRole', 'role', 'previousSubjectId',
+    'subjectId', 'changedByActorId', 'memberVersion', 'occurredAt'])
+    if (row[field] is String || row[field] is int) '${row[field]}',
+  if (row['memberVersion'] is int) 'v${row['memberVersion']}',
+  for (final field in const ['previousClassIds', 'classIds'])
+    if (row[field] is List)
+      for (final id in (row[field] as List).take(50))
+        if (id is String) id,
+].join('\n');
+
 const memberConsequences =
     '保存后立即按新权限访问。该成员发出的未使用邀请、待确认设备配对、临时访问窗口及相关预览将失效。已生效设备和已发布策略保留。';
 String memberRoleDescription(String role) => switch (role) {
