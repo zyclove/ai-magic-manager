@@ -212,8 +212,9 @@ String memberAccessHistorySummary(Json row) {
     if (added > 0 || removed > 0)
       '班级${[if (added > 0) '新增 $added 个', if (removed > 0) '移除 $removed 个'].join('、')}',
   ];
-  if (changes.isEmpty) return previousRole == role
-      ? '$roleText · 范围未变化' : roleText;
+  if (changes.isEmpty) {
+    return previousRole == role ? '$roleText · 范围未变化' : roleText;
+  }
   return '$roleText · ${changes.join(' · ')}';
 }
 

@@ -228,9 +228,9 @@ class _MemberEditorState extends State<MemberEditor> {
 
   String missingDirectoryReference(MemberScopeDirectory directory, String id) {
     final kind = directory == MemberScopeDirectory.subjects ? '档案' : '班级';
-    return optionsFor(directory) != null ? '原${kind}已不可选：$id'
-        : directoryErrors.containsKey(directory) ? '原${kind}（选项读取失败）：$id'
-        : '原${kind}（选项未读取）：$id';
+    return optionsFor(directory) != null ? '原$kind已不可选：$id'
+        : directoryErrors.containsKey(directory) ? '原$kind（选项读取失败）：$id'
+        : '原$kind（选项未读取）：$id';
   }
 
   String? validateSubject(String? value) {
@@ -264,10 +264,10 @@ class _MemberEditorState extends State<MemberEditor> {
       if (loading) ...[
         LinearProgressIndicator(key: Key('member-$keyName-loading')),
         const SizedBox(height: 6),
-        Text('正在读取${kind}选项；仍可切换角色或访问范围。',
+        Text('正在读取$kind选项；仍可切换角色或访问范围。',
             style: const TextStyle(color: muted, fontSize: 12)),
       ] else if (failure != null) ...[
-        Text('${kind}选项读取未完成，原关联编号已保留。可重试或切换角色。'),
+        Text('$kind选项读取未完成，原关联编号已保留。可重试或切换角色。'),
         FailureView(failure, retry: locked ? null : refresh,
             reauth: widget.reauth == null || locked ? null : () {
               if (current && !locked && requiredDirectory == directory) {
@@ -278,9 +278,9 @@ class _MemberEditorState extends State<MemberEditor> {
         TextButton.icon(key: Key('member-$keyName-refresh'),
             onPressed: locked ? null : refresh,
             icon: const Icon(Icons.refresh, size: 16),
-            label: Text(options == null ? '读取${kind}选项' : '重新加载选项')),
+            label: Text(options == null ? '读取$kind选项' : '重新加载选项')),
       if (invalidReference)
-        Text('原${kind}已不在当前可选范围，请重新选择后保存。',
+        Text('原$kind已不在当前可选范围，请重新选择后保存。',
             style: const TextStyle(color: muted, fontSize: 12)),
     ]));
   }
