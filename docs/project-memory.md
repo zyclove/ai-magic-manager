@@ -97,6 +97,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 设备组页面在原有效读取／操作范围内收到明确拒绝时锁存失权，借既有 accessChanged 清空私有状态、推进视图代次并关闭自有窗口；旧范围晚到拒绝不影响当前视图。近期认证／网络失败保持原恢复语义，不能用刷新或本地旧Session让失权页面复活。
 
+设备组同源详情刷新只保留原已读事实并标示“上次读取”；loading／失败期间旧资料只读，写入与翻页同步门禁，成功完整替换后恢复。切换分组／成员筛选不带入旧数据，沿原generation退役旧响应；原操作回执和当前记录刷新仍分开，不由缓存确认保存。
+
 成员范围的 [MemberScopeDirectories](../apps/guardian/lib/core/member_scope_directories.dart) 按窗口捕获缓存/并发读取，null 未读与不可变空 Map 区分。MemberEditor 按角色和范围加载所需一类目录，现有引用始终保留完整编号占位；目录对象内部补名称不等于换绑，重载不改提交或版本。每窗独立实例在退役时 revoke，阻止晚到页继续读取；直接注入已读 Map 的组件路径仍使用原快照，不能与异步目录形成双重数据来源。
 
 教师班级选择使用 [MemberClassPicker](../apps/guardian/lib/ui/member_class_picker.dart)，只管理本地查找/仅看已选与有界懒列表；唯一选择集合、Form校验和实时权限/写锁仍由MemberEditor持有。options与已选编号取并集，缺项也保留并允许移除；过滤不裁剪范围，不触发请求。目录已读只表示选项可校验，必填和无效引用继续由表单就近提示。

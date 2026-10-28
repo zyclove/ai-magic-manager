@@ -33,6 +33,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   Object? error, memberPageError;
   bool memberCursorInvalid = false;
   bool loading = false, loadingMore = false, archived = false;
+  bool showingPrevious = false;
   int generation = 0;
   Object? activeAction;
   bool get acting => activeAction != null;
@@ -63,6 +64,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     memberFilter = null;
     nextMemberCursor = null;
     loading = loadingMore = false;
+    showingPrevious = false;
     error = memberPageError = null;
     memberCursorInvalid = false;
     if (!mounted || !_active) return;
@@ -199,16 +201,20 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   String membersPath(String id) =>
       '$root/device-groups/$id/devices${memberFilter == null ? '' : '?status=$memberFilter'}';
 
-  Future<void> open(String id) async {
-    if (!current) return;
+  Future<void> open(String id, {bool keepLoaded = true}) async {
+    if (!current || (loading && selectedId == id && keepLoaded)) return;
+    final preserve = keepLoaded && selectedId == id && detail != null && summary != null;
     final revision = ++generation;
     if (selectedId != id) memberFilter = null;
     setState(() {
       selectedId = id;
-      detail = null;
-      summary = null;
-      members = const [];
-      nextMemberCursor = null;
+      if (!preserve) {
+        detail = null;
+        summary = null;
+        members = const [];
+        nextMemberCursor = null;
+      }
+      showingPrevious = preserve;
       error = null;
       memberPageError = null;
       memberCursorInvalid = false;
@@ -232,6 +238,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
         summary = health;
         members = rows;
         nextMemberCursor = page.nextCursor;
+        showingPrevious = false;
       });
     } catch (failure) {
       if (current && scope.current && revision == generation &&
@@ -248,7 +255,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
 
   Future<void> moreMembers() async {
     final id = selectedId, cursor = nextMemberCursor;
-    if (!current || id == null || cursor == null || loading || loadingMore) return;
+    if (!current || id == null || cursor == null || loading || loadingMore ||
+        acting || showingPrevious) return;
     final scope = capture();
     setState(() {
       loadingMore = true;
@@ -286,7 +294,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   void chooseFilter(String? status) {
     if (!current || acting || selectedId == null || memberFilter == status) return;
     memberFilter = status;
-    open(selectedId!);
+    open(selectedId!, keepLoaded: false);
   }
 
   bool needsReview(Object failure) => failure is! ApiFailure ||
@@ -407,7 +415,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
 
   /// Lock before opening a child route; a retained old view cannot start work.
   Future<void> runAction(int view, Future<void> Function() operation) async {
-    if (!current || acting || loading || loadingMore || view != generation) return;
+    if (!current || acting || loading || loadingMore || showingPrevious ||
+        view != generation) return;
     final action = Object(), groupId = selectedId;
     setState(() => activeAction = action);
     try {
@@ -612,12 +621,18 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     final view = generation, groupId = selectedId;
     bool viewCurrent() => current && generation == view && selectedId == groupId;
     void refreshDetail() {
-      if (viewCurrent() && !acting && groupId != null) open(groupId);
+      if (viewCurrent() && !acting && !loading && groupId != null) open(groupId);
     }
-    final canAct = !acting && !loading && !loadingMore;
+    final canAct = !acting && !loading && !loadingMore && !showingPrevious;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       PageHeading('设备组详情', '核对设备身份和注册周期后调整分组。',
-          action: OutlinedButton.icon(
+          action: Wrap(spacing: 8, runSpacing: 8, children: [
+            OutlinedButton.icon(
+                key: const Key('device-group-refresh'),
+                onPressed: acting || loading ? null : refreshDetail,
+                icon: const Icon(Icons.refresh),
+                label: const Text('刷新设备组')),
+            OutlinedButton.icon(
               onPressed: acting ? null : () {
                 if (!viewCurrent() || acting) return;
                 setState(() {
@@ -628,6 +643,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                   members = const [];
                   nextMemberCursor = null;
                   loading = loadingMore = false;
+                  showingPrevious = false;
                   error = null;
                   memberPageError = null;
                   memberCursorInvalid = false;
@@ -635,14 +651,21 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                 });
               },
               icon: const Icon(Icons.arrow_back),
-              label: const Text('返回列表'))),
+              label: const Text('返回列表'))])),
       const Notice('分组成员不是策略执行回执；归档、移出设备也不会自动撤销其他独立策略。'),
       const SizedBox(height: 16),
+      if (showingPrevious) ...[
+        Notice(loading
+            ? '正在刷新，显示上次读取的设备组资料；完成前暂不能修改或继续翻页。'
+            : '刷新未完成，显示上次读取的设备组资料；请重试刷新后再修改或继续翻页。',
+            warning: !loading),
+        const SizedBox(height: 12),
+      ],
       if (loading || acting) const LinearProgressIndicator(),
       if (error != null)
         Panel(
             child: FailureView(error!,
-                retry: acting ? null : refreshDetail,
+                retry: acting || loading ? null : refreshDetail,
                 reauth: reauth)),
       if (detail != null) ...[
         Panel(
@@ -687,7 +710,9 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                 const Notice('部分成员关联已失效，不会进入设备组策略目标。请核对注册周期后移出旧成员。',
                     warning: true),
               if (members.isEmpty)
-                EmptyView(
+                showingPrevious ? EmptyView(
+                    memberFilter == null ? '上次读取时组内暂无设备' : '上次读取时此状态下暂无设备',
+                    '请刷新设备组，核对当前成员。') : EmptyView(
                     memberFilter == null ? '组内暂无设备' : '此状态下暂无设备',
                     memberFilter == null
                         ? '从已激活的机构设备清单中选择并加入。'
@@ -717,7 +742,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                     warning: true),
                 FailureView(memberPageError!, reauth: reauth),
                 TextButton.icon(
-                    onPressed: loading || loadingMore || acting
+                    onPressed: loading || loadingMore || acting || showingPrevious
                         ? null
                         : memberCursorInvalid
                             ? refreshDetail
@@ -729,7 +754,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
               ],
               if (memberPageError == null && nextMemberCursor != null)
                 TextButton.icon(
-                    onPressed: loadingMore || acting ? null : () {
+                    onPressed: loading || loadingMore || acting || showingPrevious ? null : () {
                       if (viewCurrent() && !acting) moreMembers();
                     },
                     icon: const Icon(Icons.expand_more),

@@ -662,4 +662,126 @@ void main() {
       }
     }
   });
+
+  testWidgets('failed refresh keeps read-only facts until retry and a new filter clears old members',
+      (tester) async {
+    final fixture = _Fixture();
+    fixture.members.addAll(_devices.take(2).map(fixture._member));
+    final failed = Completer<http.Response>();
+    final retried = Completer<http.Response>();
+    final filtered = Completer<http.Response>();
+    var phase = 'initial';
+    fixture.responseOverride = (request) {
+      if (request.method != 'GET') return null;
+      if (request.url.path == _groupPath) {
+        if (phase == 'failed') return failed.future;
+        if (phase == 'retried') return retried.future;
+      }
+      if (request.url.path == '$_groupPath/devices' &&
+          request.url.queryParameters['cursor'] == null) {
+        if (phase == 'filtered') return filtered.future;
+        return _reply({'items': [fixture.members.first],
+          'nextCursor': fixture.members.first['deviceId']});
+      }
+      return null;
+    };
+    bool readsAt(int count) => fixture.reads(_groupPath).length == count &&
+        fixture.reads('$_groupPath/devices').length == count &&
+        fixture.reads('$_groupPath/summary').length == count;
+    try {
+      await _mount(tester, fixture);
+      final oldAdd = _callback(tester, '加入设备');
+      final oldMore = _callback(tester, '加载更多设备');
+      final oldRemove = tester.widget<IconButton>(find.byWidgetPredicate(
+          (widget) => widget is IconButton && widget.tooltip == '移出 阅读平板')).onPressed!;
+      final refresh = _callback(tester, '刷新设备组');
+      phase = 'failed';
+      refresh();
+      refresh();
+      await _until(tester, () => readsAt(2) &&
+          find.textContaining('正在刷新，显示上次读取').evaluate().length == 1);
+      expect(find.text('七年级设备组'), findsOneWidget);
+      expect(find.text('阅读平板'), findsOneWidget);
+      expect(_chip('全部 2'), findsOneWidget);
+      expect(find.text('编号 $_groupId · 版本 3'), findsOneWidget);
+      expect(_enabled(tester, '加入设备'), isFalse);
+      expect(_enabled(tester, '加载更多设备'), isFalse);
+      expect(_enabled(tester, '刷新设备组'), isFalse);
+      expect(_enabled(tester, '返回列表'), isTrue);
+      final requests = fixture.requests.length;
+      oldAdd();
+      oldMore();
+      oldRemove();
+      await _flush(tester);
+      expect(fixture.requests, hasLength(requests));
+      expect(find.byType(AlertDialog), findsNothing);
+
+      failed.complete(_reply({'errorCode': 'SERVICE_UNAVAILABLE'}, 503));
+      await _until(tester, () => _enabled(tester, '重试') &&
+          find.textContaining('刷新未完成，显示上次读取').evaluate().length == 1);
+      expect(find.text('七年级设备组'), findsOneWidget);
+      expect(find.text('阅读平板'), findsOneWidget);
+      expect(_enabled(tester, '加入设备'), isFalse);
+      expect(_enabled(tester, '加载更多设备'), isFalse);
+      oldAdd();
+      oldMore();
+      oldRemove();
+      await _flush(tester);
+      expect(fixture.requests, hasLength(requests));
+      expect(fixture.writes, isEmpty);
+
+      phase = 'retried';
+      fixture.name = '核对后的设备组';
+      fixture.version = 4;
+      fixture.members
+        ..clear()
+        ..addAll(_devices.skip(1).map(fixture._member));
+      final retry = _callback(tester, '重试');
+      retry();
+      retry();
+      await _until(tester, () => readsAt(3) &&
+          find.textContaining('正在刷新，显示上次读取').evaluate().length == 1);
+      expect(find.text('七年级设备组'), findsOneWidget);
+      expect(find.text('阅读平板'), findsOneWidget);
+      expect(_enabled(tester, '加入设备'), isFalse);
+      retried.complete(_reply(fixture.group));
+      await _until(tester, () => _enabled(tester, '加入设备') &&
+          find.text('编号 $_groupId · 版本 4').evaluate().length == 1 &&
+          find.text('课堂平板').evaluate().length == 1);
+      expect(find.text('核对后的设备组'), findsOneWidget);
+      expect(find.text('阅读平板'), findsNothing);
+      expect(find.textContaining('显示上次读取'), findsNothing);
+      expect(_enabled(tester, '加载更多设备'), isTrue);
+      oldAdd();
+      oldMore();
+      oldRemove();
+      await _flush(tester);
+      expect(readsAt(3), isTrue);
+      expect(find.byType(AlertDialog), findsNothing);
+
+      phase = 'filtered';
+      fixture.version = 5;
+      fixture.members
+        ..clear()
+        ..add(fixture._member(_devices.last));
+      await _tap(tester, _chip('关联有效 2'));
+      await _until(tester, () => readsAt(4));
+      expect(fixture.reads('$_groupPath/devices').last.url.queryParameters['status'], 'CURRENT');
+      expect(find.text('课堂平板'), findsNothing);
+      expect(find.text('核对后的设备组'), findsNothing);
+      expect(find.textContaining('显示上次读取'), findsNothing);
+      filtered.complete(_reply({'items': fixture.members, 'nextCursor': null}));
+      await _until(tester, () => _enabled(tester, '加入设备') &&
+          find.text('实验平板').evaluate().length == 1);
+      expect(find.text('课堂平板'), findsNothing);
+      expect(find.text('编号 $_groupId · 版本 5'), findsOneWidget);
+      expect(fixture.writes, isEmpty);
+      expect(tester.takeException(), isNull);
+    } finally {
+      for (final gate in [failed, retried, filtered]) {
+        if (!gate.isCompleted) gate.complete(_reply({'errorCode': 'TEST_CLEANUP'}, 503));
+      }
+      await fixture.cleanup(tester);
+    }
+  });
 }
