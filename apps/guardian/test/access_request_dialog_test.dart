@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
 import 'package:guardian/ui/access_request_dialog.dart';
 import 'package:guardian/ui/design.dart';
+import 'package:guardian/ui/owned_dialog_route.dart';
 
 const deviceId = '11111111-1111-1111-1111-111111111111';
 Json policy({String version = 'version-1', int rules = 1}) => {
@@ -43,10 +44,13 @@ Future<void> open(WidgetTester tester, Future<Json> Function(Json) submit,
           body: Builder(
               builder: (context) => TextButton(
                   onPressed: () async {
-                    final result = await showDialog<Json>(
+                    late final OwnedDialogRoute<Json> route;
+                    route = OwnedDialogRoute<Json>(
                         context: context,
                         builder: (_) => AccessRequestDialog(
-                            load: loader ?? load, submit: submit));
+                            load: loader ?? load, submit: submit,
+                            onComplete: route.finish));
+                    final result = await presentOwnedDialog(context, route);
                     onResult?.call(result);
                   },
                   child: const Text('打开申请'))))));

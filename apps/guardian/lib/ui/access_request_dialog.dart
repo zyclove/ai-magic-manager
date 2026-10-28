@@ -8,9 +8,10 @@ import 'dialog_access.dart';
 class AccessRequestDialog extends StatefulWidget {
   final Future<PageResult> Function(String path, String? cursor) load;
   final Future<Json> Function(Json body) submit;
-  final ValueChanged<Json?>? onComplete;
+  final ValueChanged<Json?> onComplete;
   const AccessRequestDialog(
-      {super.key, required this.load, required this.submit, this.onComplete});
+      {super.key, required this.load, required this.submit,
+      required this.onComplete});
   @override
   State<AccessRequestDialog> createState() => _AccessRequestDialogState();
 }
@@ -71,20 +72,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
     if (!windowCurrent) return;
     finished = true;
     generation++;
-    final complete = widget.onComplete;
-    if (complete != null) {
-      complete(result);
-    } else {
-      final route = owner, navigator = owner?.navigator;
-      if (route == null || navigator == null || !route.isActive) return;
-      if (route.isCurrent) {
-        navigator.pop(result);
-      } else {
-        // Flutter 3.22 removeRoute does not complete the original popped future.
-        route.didComplete(result);
-        navigator.removeRoute(route);
-      }
-    }
+    widget.onComplete(result);
   }
 
   void close() {
