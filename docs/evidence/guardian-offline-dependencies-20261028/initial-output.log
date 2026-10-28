@@ -1,0 +1,5 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+Resolving dependencies...
+Because guardian depends on qr_flutter any which doesn't exist (could not find package qr_flutter in cache), version solving failed.
+
+Try again without --offline!

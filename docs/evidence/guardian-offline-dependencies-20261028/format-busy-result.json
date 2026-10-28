@@ -1,0 +1,28 @@
+{
+  "driverSha256": "023c246e3e1ca4dbc8bd2f8e4d78c630238417dd9b2e0048ef904614a4c7b808",
+  "mode": "format",
+  "attempt": "format",
+  "status": "NO_START",
+  "sdkCalls": 0,
+  "tests": [
+    "device_group_change_test.dart",
+    "device_group_batch_picker_test.dart"
+  ],
+  "forceRequested": false,
+  "head": "61aa4143009c3634c2b2978d4a006fedc63a3f22",
+  "resourcesBefore": {
+    "ram": 6234472448,
+    "cFree": 6003216384,
+    "dFree": 15364272128
+  },
+  "sdkBefore": {
+    "sdk": [
+      "go",
+      "link",
+      "vet"
+    ],
+    "unknown": 0
+  },
+  "error": "SDKs busy or unknown names",
+  "elapsedSeconds": 0.598161900001287
+}
