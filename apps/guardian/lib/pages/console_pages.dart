@@ -523,6 +523,7 @@ class ConsoleActions {
       Json initial = const {},
       String? description,
       String submit = '保存',
+      Set<String> terminalConflictCodes = const {},
       Future<Json> Function(Api, Json)? onRecoverUnknown,
       Listenable? accessChanges,
       bool Function()? hasAccess,
@@ -543,6 +544,7 @@ class ConsoleActions {
           initial: initial,
           description: description,
           submit: submit,
+          terminalConflictCodes: terminalConflictCodes,
           recoverLabel: recoverLabel,
           accessChanges: Listenable.merge([scope, if (accessChanges != null) accessChanges]),
           hasAccess: () => scope.current,
@@ -1942,12 +1944,14 @@ class ConsoleActions {
             if (s.canWrite && request.state == 'PENDING') ...[
               DetailAction('批准', (ctx) async {
                 ApprovalRequestSnapshot? completedDecision;
+                final actionWrites = ApiWriteDispatch();
                 final finish = captureDialogCompletion(ctx);
                 final key = requestId();
                 final result = await _tenantForm(
                     parent: ctx,
                     title: '批准临时访问',
                     submit: '确认批准',
+                    terminalConflictCodes: const {'ACCESS_REQUEST_NOT_PENDING'},
                     section: 'approvals',
                     accessChanges: changes,
                     hasAccess: current,
@@ -1968,28 +1972,33 @@ class ConsoleActions {
                     onSubmit: (api, v) async {
                       final body = approvalGrantBody(v,
                           requestedSeconds: request.requestedSeconds);
-                      final reply = await api.trackingWrites(writes).send('POST',
+                      final reply = await api
+                          .trackingWrites(writes)
+                          .trackingWrites(actionWrites)
+                          .send('POST',
                           '$root/access-requests/${request.id}/decisions',
                           version: request.version, key: key, body: body);
                       completedDecision = request.verifyDecision(reply, body: body);
                       return reply as Json;
                     });
                 final confirmed = completedDecision;
-                if (result != null && current()) {
+                if ((result != null || actionWrites.dispatched) && current()) {
                   finish();
-                  if (confirmed != null && context.mounted && current()) {
+                  if (result != null && confirmed != null && context.mounted && current()) {
                     toast(context, approvalDecisionFeedback(confirmed.state));
                   }
                 }
               }, closeOnSuccess: false),
               DetailAction('拒绝', (ctx) async {
                 ApprovalRequestSnapshot? completedDecision;
+                final actionWrites = ApiWriteDispatch();
                 final finish = captureDialogCompletion(ctx);
                 final key = requestId();
                 final result = await _tenantForm(
                     parent: ctx,
                     title: '拒绝申请',
                     submit: '确认拒绝',
+                    terminalConflictCodes: const {'ACCESS_REQUEST_NOT_PENDING'},
                     description: '$decisionContext\n\n'
                         '拒绝后此申请将结束，申请人可按需要重新申请。',
                     section: 'approvals',
@@ -2007,16 +2016,18 @@ class ConsoleActions {
                         'decision': 'DENY',
                         if (v['reasonCode'] != null) 'reasonCode': v['reasonCode'],
                       });
-                      final reply = await api.trackingWrites(writes).send(
-                          'POST', '$root/access-requests/${request.id}/decisions',
+                      final reply = await api
+                          .trackingWrites(writes)
+                          .trackingWrites(actionWrites)
+                          .send('POST', '$root/access-requests/${request.id}/decisions',
                           version: request.version, key: key, body: body);
                       completedDecision = request.verifyDecision(reply, body: body);
                       return reply as Json;
                     });
                 final confirmed = completedDecision;
-                if (result != null && current()) {
+                if ((result != null || actionWrites.dispatched) && current()) {
                   finish();
-                  if (confirmed != null && context.mounted && current()) {
+                  if (result != null && confirmed != null && context.mounted && current()) {
                     toast(context, approvalDecisionFeedback(confirmed.state));
                   }
                 }

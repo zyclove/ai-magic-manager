@@ -735,6 +735,121 @@ void main() {
     }
   });
 
+  testWidgets('a removed decision form cannot report a late success or dismiss its independent cover',
+      (tester) async {
+    for (final action in ['批准', '拒绝']) {
+      final row = _approval('PENDING');
+      final fixture = _ApprovalFixture(action, listRow: row);
+      await fixture.open(tester, throughConsole: true);
+      final form = ModalRoute.of(tester.element(find.byType(EditDialog)))!
+          as OwnedDialogRoute<Json>;
+      final details = ModalRoute.of(tester.element(
+          find.text('临时访问申请', skipOffstage: false)))! as OwnedDialogRoute<void>;
+      final oldSave = tester.widget<FilledButton>(
+          find.widgetWithText(FilledButton, '确认$action')).onPressed!;
+      await fixture.submit(tester);
+      final navigator = Navigator.of(fixture.host, rootNavigator: true);
+      final cover = DialogRoute<void>(context: fixture.host,
+          builder: (_) => const AlertDialog(title: Text('独立通知')));
+      unawaited(navigator.push<void>(cover));
+      await _waitUntil(tester,
+          () => cover.animation?.status == AnimationStatus.completed);
+      var formCompleted = false;
+      form.completed.then<void>((_) {
+        formCompleted = true;
+      });
+      navigator.removeRoute(form);
+      row.addAll(fixture.decisionResult());
+      // Deliver the valid HTTP result before a frame disposes the removed form.
+      await tester.runAsync(() async {
+        fixture.succeed();
+        await Future<void>.delayed(Duration.zero);
+      });
+      await tester.idle();
+      await _waitUntil(tester, () => formCompleted && !details.isActive &&
+          fixture.listReads == 2 &&
+          find.byType(EditDialog, skipOffstage: false).evaluate().isEmpty &&
+          find.text('临时访问申请', skipOffstage: false).evaluate().isEmpty);
+      oldSave();
+      await _flushPending(tester);
+      expect(cover.isCurrent, isTrue);
+      expect(find.text('独立通知'), findsOneWidget);
+      expect(find.text('批准已记录，可查看交付状态。', skipOffstage: false), findsNothing);
+      expect(find.text('申请已拒绝。', skipOffstage: false), findsNothing);
+      expect(fixture.posts, hasLength(1));
+      expect(fixture.listReads, 2);
+      expect(fixture.coreReads, 1);
+      expect(fixture.deliveryReads, 0);
+      navigator.pop<void>();
+      final open = _helpButton('查看详情');
+      await _waitUntil(tester, () => !cover.isActive && open.evaluate().length == 1 &&
+          tester.widget<ButtonStyleButton>(open).onPressed != null);
+      oldSave();
+      await _flushPending(tester);
+      expect(fixture.posts, hasLength(1));
+      expect(fixture.listReads, 2);
+      expect(find.text('临时访问申请'), findsNothing);
+      expect(tester.takeException(), isNull, reason: action);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await settleReads(tester);
+    }
+  });
+
+  testWidgets('a finished request stops its original decision and closes back to one reconciled list',
+      (tester) async {
+    for (final action in ['批准', '拒绝']) {
+      final row = _approval('PENDING', requestedSeconds: 90);
+      final fixture = _ApprovalFixture(action, requestedSeconds: 90, listRow: row);
+      await fixture.open(tester, throughConsole: true);
+      final originalSave = tester.widget<FilledButton>(
+          find.widgetWithText(FilledButton, '确认$action')).onPressed!;
+      if (action == '批准') {
+        await tester.enterText(find.byWidgetPredicate((widget) => widget is TextField &&
+            widget.decoration?.labelText == '分钟'), '0');
+        await tester.enterText(find.byWidgetPredicate((widget) => widget is TextField &&
+            widget.decoration?.labelText == '秒'), '45');
+      }
+      await fixture.submit(tester);
+      row.addAll({..._approval('EXPIRED', requestedSeconds: 90),
+        'version': 4, 'reasonCode': 'TIME_EXPIRED'});
+      fixture.pending.complete(_reply({'errorCode': 'ACCESS_REQUEST_NOT_PENDING'}, 409));
+      final stopped = find.byKey(const Key('edit-dialog-terminal-conflict-notice'));
+      final closeForm = find.widgetWithText(FilledButton, '关闭表单');
+      await _waitUntil(tester, () => stopped.evaluate().length == 1 &&
+          closeForm.evaluate().length == 1);
+      final draft = action == '批准' ? '分钟：0\n秒：45' : '原因：当前不合适';
+      expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
+          widget.data == draft), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, '确认$action'), findsNothing);
+      expect(find.widgetWithText(FilledButton, '重试原提交'), findsNothing);
+      expect(find.widgetWithText(TextButton, '暂时关闭'), findsNothing);
+      expect(fixture.listReads, 1);
+      originalSave();
+      originalSave();
+      await _flushPending(tester);
+      expect(fixture.posts, hasLength(1),
+          reason: 'A retained save cannot repeat a terminal decision.');
+      await tester.tap(closeForm);
+      final open = _helpButton('查看详情');
+      await _waitUntil(tester, () => fixture.listReads == 2 &&
+          find.byType(EditDialog).evaluate().isEmpty &&
+          find.text('临时访问申请').evaluate().isEmpty &&
+          open.evaluate().length == 1 &&
+          tester.widget<ButtonStyleButton>(open).onPressed != null);
+      expect(find.text(label('EXPIRED')), findsOneWidget);
+      expect(find.text('批准已记录，可查看交付状态。'), findsNothing);
+      expect(find.text('申请已拒绝。'), findsNothing);
+      await _flushPending(tester);
+      expect(fixture.listReads, 2);
+      expect(fixture.coreReads, 1);
+      expect(fixture.deliveryReads, 0);
+      expect(fixture.posts, hasLength(1));
+      expect(tester.takeException(), isNull, reason: action);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await settleReads(tester);
+    }
+  });
+
   testWidgets('pending delivery leaves core actions usable and late results cannot affect a new window',
       (tester) async {
     for (final lateStatus in [200, 403]) {
@@ -1130,7 +1245,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('$action failed submission keeps the original details open',
+    testWidgets('$action failed submission keeps its error until the user closes',
         (tester) async {
       final fixture = _ApprovalFixture(action);
       await fixture.open(tester);
@@ -1145,14 +1260,18 @@ void main() {
         await tester.tap(find.widgetWithText(TextButton, '暂时关闭'));
         await settleReads(tester);
         await tester.tap(find.byKey(const Key('edit-dialog-confirm-close')));
-        await settleReads(tester);
+        await _waitUntil(tester, () => fixture.detailsCompleted &&
+            find.byType(EditDialog).evaluate().isEmpty &&
+            find.text('临时访问申请').evaluate().isEmpty);
         expect(find.byType(EditDialog), findsNothing);
-        expect(find.text('临时访问申请'), findsOneWidget);
+        expect(find.text('临时访问申请'), findsNothing);
+      } else {
+        expect(fixture.detailsCompleted, isFalse);
+        await tester.tap(_helpButton('关闭'));
+        await _waitUntil(tester, () => fixture.detailsCompleted);
       }
       expect(fixture.posts, hasLength(1));
-      expect(fixture.detailsCompleted, isFalse);
-      await tester.tap(_helpButton('关闭'));
-      await settleReads(tester);
+      expect(fixture.detailsCompleted, isTrue);
       expect(fixture.needsReview, isTrue,
           reason: 'A dispatched write still needs review after an unknown result.');
       expect(find.text('批准已记录，可查看交付状态。'), findsNothing);

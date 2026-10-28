@@ -10,6 +10,7 @@ import 'package:guardian/ui/time_zone_field.dart';
 Future<void> _openPreparationForm(WidgetTester tester,
     {required Completer<Json?> closed,
     required ValueNotifier<bool> access,
+    Set<String> terminalConflictCodes = const {},
     required Future<Json?> Function(Json) onSubmit}) async {
   await tester.pumpWidget(MaterialApp(
       theme: consoleTheme(),
@@ -28,6 +29,7 @@ Future<void> _openPreparationForm(WidgetTester tester,
                                 initial: const {'name': '原始输入'},
                                 submit: '准备草稿',
                                 canCommit: false,
+                                terminalConflictCodes: terminalConflictCodes,
                                 accessChanges: access,
                                 hasAccess: () => access.value,
                                 onSubmit: onSubmit))));
@@ -43,6 +45,8 @@ Future<void> _openRecoveryForm(WidgetTester tester,
     required Future<Json?> Function(Json) onSubmit,
     Future<Json> Function(Json)? onRecoverUnknown,
     String recoverLabel = '查询原结果',
+    Set<String> terminalConflictCodes = const {},
+    VoidCallback? beforeFirstFrame,
     List<FieldSpec> fields = const [FieldSpec('name', '名称')],
     Json initial = const {'name': '原始名称'}}) async {
   await tester.pumpWidget(MaterialApp(
@@ -59,11 +63,13 @@ Future<void> _openRecoveryForm(WidgetTester tester,
                       hasAccess: () => access.value,
                       onRecoverUnknown: onRecoverUnknown,
                       recoverLabel: recoverLabel,
+                      terminalConflictCodes: terminalConflictCodes,
                       onSubmit: onSubmit));
                 },
                 child: const Text('打开恢复表单')))),
   ));
   await tester.tap(find.text('打开恢复表单'));
+  beforeFirstFrame?.call();
   await tester.pumpAndSettle();
 }
 
@@ -405,6 +411,190 @@ void main() {
       expect(tester.takeException(), isNull);
     } finally {
       await _disposeRecoveryForm(tester, access, [pending]);
+    }
+  });
+
+  testWidgets('configured terminal conflicts preserve the original draft and stop held retries',
+      (tester) async {
+    for (final afterUnknown in [false, true]) {
+      final requests = List.generate(2, (_) => Completer<Json?>());
+      final closed = Completer<Json?>();
+      final access = ValueNotifier(true);
+      final bodies = <Json>[];
+      VoidCallback? heldRetry;
+      try {
+        await _openRecoveryForm(tester, closed: closed, access: access,
+            terminalConflictCodes: const {'ACCESS_REQUEST_NOT_PENDING'},
+            onSubmit: (body) {
+          bodies.add(body);
+          return requests[bodies.length - 1].future;
+        });
+        await tester.enterText(find.byType(TextFormField), '终态原草稿');
+        final heldSave = _editCallback(tester, '保存');
+        heldSave();
+        heldSave();
+        expect(bodies, [{'name': '终态原草稿'}]);
+        if (afterUnknown) {
+          requests.first.completeError(const ApiFailure(503, 'SERVICE_UNAVAILABLE'));
+          await tester.pumpAndSettle();
+          expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled,
+              isFalse);
+          heldRetry = _editCallback(tester, '重试原提交');
+          heldRetry();
+          heldRetry();
+          expect(bodies, hasLength(2));
+          expect(identical(bodies.first, bodies.last), isTrue);
+        }
+        requests[afterUnknown ? 1 : 0].completeError(
+            const ApiFailure(409, 'ACCESS_REQUEST_NOT_PENDING'));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const Key('edit-dialog-terminal-conflict-notice')),
+            findsOneWidget);
+        expect(find.textContaining('停止重试不代表先前提交未执行'), findsOneWidget);
+        expect(find.byType(TextFormField), findsNothing);
+        expect(find.widgetWithText(FilledButton, '保存'), findsNothing);
+        expect(find.widgetWithText(FilledButton, '重试原提交'), findsNothing);
+        expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
+            widget.data == '名称：终态原草稿'), findsOneWidget);
+        heldSave();
+        heldRetry?.call();
+        expect(bodies, hasLength(afterUnknown ? 2 : 1));
+        _editCallback(tester, '关闭表单')();
+        heldSave();
+        heldRetry?.call();
+        await tester.pumpAndSettle();
+        expect(closed.isCompleted, isTrue);
+        expect(await closed.future, isNull,
+            reason: 'A generic stopped form must not manufacture a success result.');
+        expect(bodies, hasLength(afterUnknown ? 2 : 1));
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _disposeRecoveryForm(tester, access, requests);
+      }
+    }
+  });
+
+  testWidgets('terminal handling is opt-in and does not lock ordinary conflicts or preparation',
+      (tester) async {
+    for (final scenario in <({bool preparation, Set<String> codes, String failure})>[
+      (preparation: false, codes: {}, failure: 'ACCESS_REQUEST_NOT_PENDING'),
+      (preparation: false, codes: {'ACCESS_REQUEST_NOT_PENDING'},
+        failure: 'ANOTHER_STATE_CONFLICT'),
+      (preparation: true, codes: {'ACCESS_REQUEST_NOT_PENDING'},
+        failure: 'ACCESS_REQUEST_NOT_PENDING'),
+    ]) {
+      final closed = Completer<Json?>();
+      final access = ValueNotifier(true);
+      final bodies = <Json>[];
+      Future<Json?> submit(Json body) async {
+        bodies.add(body);
+        if (bodies.length == 1) throw ApiFailure(409, scenario.failure);
+        return body;
+      }
+      try {
+        if (scenario.preparation) {
+          await _openPreparationForm(tester, closed: closed, access: access,
+              terminalConflictCodes: scenario.codes, onSubmit: submit);
+        } else {
+          await _openRecoveryForm(tester, closed: closed, access: access,
+              terminalConflictCodes: scenario.codes, onSubmit: submit);
+        }
+        final saveLabel = scenario.preparation ? '准备草稿' : '保存';
+        await tester.enterText(find.byType(TextFormField), '首次草稿');
+        _editCallback(tester, saveLabel)();
+        await tester.pumpAndSettle();
+        expect(find.byType(FailureView), findsOneWidget);
+        expect(find.byKey(const Key('edit-dialog-terminal-conflict-notice')),
+            findsNothing);
+        expect(find.text('保留的草稿'), findsNothing);
+        expect(find.widgetWithText(FilledButton, '重试原提交'), findsNothing);
+        expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled,
+            isTrue);
+        expect(closed.isCompleted, isFalse);
+        await tester.enterText(find.byType(TextFormField), '修正后的草稿');
+        _editCallback(tester, saveLabel)();
+        await tester.pumpAndSettle();
+        expect(bodies, [{'name': '首次草稿'}, {'name': '修正后的草稿'}]);
+        expect(identical(bodies.first, bodies.last), isFalse);
+        expect(await closed.future, {'name': '修正后的草稿'});
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _disposeRecoveryForm(tester, access, []);
+      }
+    }
+  });
+
+  testWidgets('terminal policy is captured before build and configuration ABA retires a direct form',
+      (tester) async {
+    final originalCodes = <String>{'ACCESS_REQUEST_NOT_PENDING'};
+    final closed = Completer<Json?>();
+    final access = ValueNotifier(true);
+    var calls = 0;
+    try {
+      await _openRecoveryForm(tester, closed: closed, access: access,
+          terminalConflictCodes: originalCodes,
+          beforeFirstFrame: originalCodes.clear,
+          onSubmit: (_) async {
+        calls++;
+        throw const ApiFailure(409, 'ACCESS_REQUEST_NOT_PENDING');
+      });
+      expect(originalCodes, isEmpty);
+      final heldSave = _editCallback(tester, '保存');
+      heldSave();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('edit-dialog-terminal-conflict-notice')),
+          findsOneWidget,
+          reason: 'Route builders must use the policy captured at form entry.');
+      heldSave();
+      expect(calls, 1);
+      _editCallback(tester, '关闭表单')();
+      await tester.pumpAndSettle();
+      expect(await closed.future, isNull);
+    } finally {
+      await _disposeRecoveryForm(tester, access, []);
+    }
+
+    final liveCodes = <String>{'ACCESS_REQUEST_NOT_PENDING'};
+    final revision = ValueNotifier(0);
+    final pending = Completer<Json?>();
+    var directCalls = 0;
+    try {
+      await tester.pumpWidget(MaterialApp(theme: consoleTheme(),
+          home: Scaffold(body: ValueListenableBuilder<int>(
+              valueListenable: revision,
+              builder: (_, value, child) => EditDialog(
+                  title: '原配置表单',
+                  fields: const [FieldSpec('name', '名称')],
+                  initial: const {'name': '不得复活的私有草稿'}, submit: '保存',
+                  terminalConflictCodes: liveCodes,
+                  onSubmit: (_) { directCalls++; return pending.future; })))));
+      await tester.pumpAndSettle();
+      final originalState = tester.state(find.byType(EditDialog));
+      final heldSave = _editCallback(tester, '保存');
+      heldSave();
+      expect(directCalls, 1);
+      liveCodes.clear();
+      revision.value++;
+      await tester.pump();
+      liveCodes.add('ACCESS_REQUEST_NOT_PENDING');
+      revision.value++;
+      await tester.pump();
+      pending.completeError(const ApiFailure(409, 'ACCESS_REQUEST_NOT_PENDING'));
+      await tester.pumpAndSettle();
+      expect(tester.state(find.byType(EditDialog)), same(originalState));
+      heldSave();
+      expect(directCalls, 1);
+      expect(find.text('工作空间或权限已变化'), findsOneWidget);
+      expect(find.byType(TextFormField), findsNothing);
+      expect(find.byType(SelectableText), findsNothing);
+      expect(find.text('不得复活的私有草稿'), findsNothing);
+      expect(find.byKey(const Key('edit-dialog-terminal-conflict-notice')), findsNothing);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (!pending.isCompleted) pending.complete(null);
+      await tester.pumpAndSettle();
+      revision.dispose();
     }
   });
 

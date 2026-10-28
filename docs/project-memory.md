@@ -43,6 +43,8 @@
 
 [EditDialog](../apps/guardian/lib/ui/design.dart) 默认保留服务器写入的未知结果保护。只有明确不写服务器的校验／本地草稿准备才可使用 `canCommit=false`，错误后允许修改输入；不能将已经发出的写入切换成只读模式来解除保护。域名规则编辑的只读规范化与最终保存草稿分开，见[编辑器](../apps/guardian/lib/pages/editors.dart)。
 
+formDialog/EditDialog可按实例配置terminalConflictCodes（默认空），仅写入表单的指定409进入既有只读停止／草稿保留；入口及init各复制集合，didUpdate与原捕获setEquals，变化永久退役，普通409及本地准备保持原行为。通用关闭结果仍null；审批用独立ApiWriteDispatch决定退出后原详情单次核对，成功反馈另需非空表单结果＋已校验回执，避免raw移除后的晚toast。
+
 formDialog 同样显式透传 canCommit（默认true），false不能配置原结果查询hook；仅用于不持久化远端状态的本地准备。额度计划的[日期编辑](../apps/guardian/lib/pages/quota_plan_editor.dart)使用该入口，直接编辑已有日期并精确保留分钟／余秒；0合法、总计不超过24小时。每周复制按源的当前精确秒数更新保留值，手动更改分钟才替换为整分钟。完整计划保存冻结外层与两个额度Map；未知、终态停止与关闭确认由父编辑器管理，不由日期窗口解除。关闭确认捕获每次独立标识，收起再打开也不复活旧确认回调。
 
 [quota_plan_change.dart](../apps/guardian/lib/core/quota_plan_change.dart) 集中额度计划／日历解析、固定原正文与完整回执匹配，保留7天及全部日期整数秒，不接受日期归一化或浮点版本。QuotaPlanEditor 必需只读 onRecoverUnknown，未知后只查询，原保存回调不能触发查询或重放写入。[QuotaPlansPage](../apps/guardian/lib/pages/quota_plans_page.dart) 使用 UUID 与既有 creation-results/update-results 查询，更新保留原 If-Match，查询无写入幂等头；committed/current分开。详情、编辑、历史与API借用 ResourceActionLease，onCreateChanged/onOpenChanged 只返回列表核对信号，普通取消及只读不重读。

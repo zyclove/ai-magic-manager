@@ -82,6 +82,10 @@ TEACHER 不获得审批权限、策略修改或设备管理权限。教师仅提
 
 批准时固定 `issuedAt` 和 `absoluteNotAfter = issuedAt + grantedWindowSeconds × 1000`。截止时间从批准开始计算，重复请求、晚送达、断网和重新登录不会延长。
 
+审批只对409 ACCESS_REQUEST_NOT_PENDING配置实例级terminalConflictCodes，进入既有只读停止界面，保存原草稿并停用旧保存／重试；它表示当前状态不接受原操作，不能称为原结果过期或原未知写入未执行。默认及无关409、只读本地准备仍沿原校验／修正逻辑；412及幂等结果过期机制保持。集合在formDialog入口和EditDialog初始化捕获为不可变副本，配置变化永久退役原实例，不能通过可变集合或ABA恢复旧行为。
+
+批准／拒绝独立跟踪真实派发：表单退出后若已派发，则只结束原详情并由原列表租约核对一次；未派发取消保持详情。通用表单的关闭返回仍为null，不制造成功结果；反馈必须同时具有被表单接受的非空结果和已校验回执，raw移除表单后的晚有效回复也不能误报。独立覆盖窗口、源范围失效及原版本／键保护保持。
+
 ### 3.3 返回字段与 UI
 
 AccessRequest 包含 id、subjectId、deviceId、registrationId、policyId、baseVersionId、applicationId、ruleIds、requestedWindowSeconds、reason、state、requestExpiresAt、grantedWindowSeconds、issuedAt、absoluteNotAfter、reasonCode、executionState、version 和 createdAt。

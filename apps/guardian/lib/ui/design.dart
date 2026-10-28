@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show setEquals;
 import 'package:flutter/scheduler.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
@@ -307,6 +308,7 @@ Future<Json?> formDialog(BuildContext context,
     String? description,
     String submit = '保存',
     bool canCommit = true,
+    Set<String> terminalConflictCodes = const {},
     required Future<Json?> Function(Json) onSubmit,
     Future<Json> Function(Json)? onRecoverUnknown,
     String recoverLabel = '查询原结果',
@@ -314,6 +316,8 @@ Future<Json?> formDialog(BuildContext context,
     Listenable? accessChanges,
     bool Function()? hasAccess}) async {
   assert(onRecoverUnknown == null || canCommit);
+  final capturedTerminalConflicts =
+      Set<String>.unmodifiable(terminalConflictCodes);
   final parent = ModalRoute.of(context);
   final parentClosed = ValueNotifier<bool>(false);
   var live = true, allowed = true;
@@ -342,6 +346,7 @@ Future<Json?> formDialog(BuildContext context,
                 description: description,
                 submit: submit,
                 canCommit: canCommit,
+                terminalConflictCodes: capturedTerminalConflicts,
                 recoverLabel: recoverLabel,
                 accessChanges: Listenable.merge(
                     [parentClosed, if (accessChanges != null) accessChanges]),
@@ -386,6 +391,8 @@ class EditDialog extends StatefulWidget {
   /// persist remote state, such as read-only checks and local draft preparation.
   /// The caller must guarantee that false callbacks perform no remote writes.
   final bool canCommit;
+  /// Only named 409 conflicts whose original write can no longer be corrected.
+  final Set<String> terminalConflictCodes;
   const EditDialog(
       {super.key,
       required this.title,
@@ -399,6 +406,7 @@ class EditDialog extends StatefulWidget {
       this.reauth,
       this.accessChanges,
       this.hasAccess,
+      this.terminalConflictCodes = const {},
       this.canCommit = true}) : assert(onRecoverUnknown == null || canCommit);
   @override
   State<EditDialog> createState() => _EditDialogState();
@@ -419,6 +427,7 @@ class _EditDialogState extends State<EditDialog> {
   late final Future<Json?> Function(Json) originalSubmit;
   late final Future<Json> Function(Json)? recoverUnknown;
   late final String unknownRecoveryLabel;
+  late final Set<String> originalTerminalConflictCodes;
 
   void _observeAccess() {
     if (!_revoked && widget.hasAccess?.call() == false) _revoked = true;
@@ -432,9 +441,21 @@ class _EditDialogState extends State<EditDialog> {
   bool get versionConflict =>
       error is ApiFailure && (error as ApiFailure).status == 412;
 
-  bool get recoveryStopped =>
+  bool _isTerminalConflict(Object? failure) =>
       widget.canCommit &&
-      (versionConflict || isUnavailableOperationResult(error));
+      failure is ApiFailure &&
+      failure.status == 409 &&
+      originalTerminalConflictCodes.contains(failure.code);
+
+  bool _stopsRecovery(Object? failure) =>
+      widget.canCommit &&
+      failure is ApiFailure &&
+      (failure.status == 412 ||
+          isUnavailableOperationResult(failure) ||
+          _isTerminalConflict(failure));
+
+  bool get terminalConflict => _isTerminalConflict(error);
+  bool get recoveryStopped => _stopsRecovery(error);
 
   String get recoveryDraft => widget.fields.map((field) {
         final value = recoveryValues?[field.key]?.toString() ?? '';
@@ -501,6 +522,8 @@ class _EditDialogState extends State<EditDialog> {
     originalSubmit = widget.onSubmit;
     recoverUnknown = widget.onRecoverUnknown;
     unknownRecoveryLabel = widget.recoverLabel;
+    originalTerminalConflictCodes =
+        Set<String>.unmodifiable(widget.terminalConflictCodes);
     _observeAccess();
     widget.accessChanges?.addListener(_accessChanged);
     for (final f in widget.fields) {
@@ -526,6 +549,7 @@ class _EditDialogState extends State<EditDialog> {
     super.didUpdateWidget(oldWidget);
     // Never reinterpret an in-flight write as read-only within the same form.
     if (oldWidget.canCommit != widget.canCommit ||
+        !setEquals(originalTerminalConflictCodes, widget.terminalConflictCodes) ||
         (oldWidget.onRecoverUnknown == null) != (widget.onRecoverUnknown == null)) {
       _revoked = true;
     }
@@ -595,8 +619,7 @@ class _EditDialogState extends State<EditDialog> {
     } catch (e) {
       if (canCommit) {
         final attempted = pendingValues;
-        final stopped = e is ApiFailure &&
-            (e.status == 412 || isUnavailableOperationResult(e));
+        final stopped = _stopsRecovery(e);
         if (stopped && attempted != null) {
           recoveryValues = Map<String, dynamic>.unmodifiable(attempted);
         }
@@ -668,7 +691,12 @@ class _EditDialogState extends State<EditDialog> {
                                   Text(
                                       versionConflict
                                           ? '记录已更新，已停止再次提交。可选中并复制下方草稿；关闭后请刷新原页面，再重新打开表单核对最新内容。'
-                                          : '原操作结果已无法恢复，已停止再次提交。请关闭后核对当前记录；不要把结果不可恢复当作操作未执行。',
+                                          : terminalConflict
+                                              ? '当前状态已不再接受此操作，已停止再次提交。可复制下方草稿；关闭后请核对当前记录。停止重试不代表先前提交未执行。'
+                                              : '原操作结果已无法恢复，已停止再次提交。请关闭后核对当前记录；不要把结果不可恢复当作操作未执行。',
+                                      key: terminalConflict
+                                          ? const Key('edit-dialog-terminal-conflict-notice')
+                                          : null,
                                       style: const TextStyle(height: 1.6)),
                                   if (widget.fields.isNotEmpty) ...[
                                     const SizedBox(height: 12),
