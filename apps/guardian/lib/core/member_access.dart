@@ -1,6 +1,155 @@
 import 'api.dart';
 import 'labels.dart';
 
+final _memberKeyPattern = RegExp(r'[0-9a-f]{64}');
+// Match Java String.isBlank without trimming or normalizing the OIDC subject.
+final _memberBlankPattern = RegExp(
+    r'[\u0009-\u000d\u001c-\u0020\u1680\u2000-\u2006\u2008-\u200a\u2028\u2029\u205f\u3000]*');
+final _memberUuidPattern = RegExp(
+    r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}');
+const _memberAccessFields = {
+  'actorId', 'memberKey', 'role', 'subjectId', 'version', 'classIds'
+};
+const _memberUpdateFields = {'role', 'subjectId', 'classIds'};
+
+Never _invalidMemberAccess() =>
+    throw const ApiFailure(502, 'INVALID_MEMBER_ACCESS_RESPONSE');
+
+bool _memberMatches(RegExp pattern, Object? value) {
+  if (value is! String) return false;
+  final match = pattern.matchAsPrefix(value);
+  return match != null && match.end == value.length;
+}
+
+/// Captures the selected list row before any asynchronous access request.
+class MemberAccessTarget {
+  final String actorId;
+  final String memberKey;
+
+  const MemberAccessTarget._(this.actorId, this.memberKey);
+
+  factory MemberAccessTarget.fromRow(Json row) {
+    final actorId = row['actorId'];
+    final memberKey = row['cursor'];
+    if (actorId is! String || _memberMatches(_memberBlankPattern, actorId) ||
+        actorId.length > 255 ||
+        !_memberMatches(_memberKeyPattern, memberKey)) {
+      _invalidMemberAccess();
+    }
+    return MemberAccessTarget._(actorId, memberKey as String);
+  }
+}
+
+class _MemberAccessScope {
+  final String role;
+  final String? subjectId;
+  final List<String> classIds;
+
+  const _MemberAccessScope._(this.role, this.subjectId, this.classIds);
+
+  factory _MemberAccessScope.read({required String kind, required Object? role,
+      required Object? subjectId, required Object? classIds}) {
+    final roles = switch (kind) {
+      'FAMILY' => const {'OWNER', 'GUARDIAN', 'AUDITOR', 'CHILD'},
+      'ORGANIZATION' => const {'OWNER', 'ORG_ADMIN', 'TEACHER', 'AUDITOR', 'CHILD'},
+      _ => _invalidMemberAccess(),
+    };
+    if (role is! String || !roles.contains(role) ||
+        (subjectId != null && !_memberMatches(_memberUuidPattern, subjectId)) ||
+        classIds is! List || classIds.length > 50) {
+      _invalidMemberAccess();
+    }
+    final ids = <String>[];
+    for (final id in classIds) {
+      if (id is! String || !_memberMatches(_memberUuidPattern, id)) {
+        _invalidMemberAccess();
+      }
+      ids.add(id);
+    }
+    if (ids.toSet().length != ids.length) _invalidMemberAccess();
+    if (ids.isNotEmpty) {
+      if (role != 'TEACHER' || subjectId != null) _invalidMemberAccess();
+    } else if (memberNeedsSubject(role) ? subjectId == null : subjectId != null) {
+      _invalidMemberAccess();
+    }
+    ids.sort();
+    return _MemberAccessScope._(role, subjectId as String?,
+        List<String>.unmodifiable(ids));
+  }
+
+  bool sameAs(_MemberAccessScope other) {
+    if (role != other.role || subjectId != other.subjectId ||
+        classIds.length != other.classIds.length) return false;
+    for (var index = 0; index < classIds.length; index++) {
+      if (classIds[index] != other.classIds[index]) return false;
+    }
+    return true;
+  }
+}
+
+/// Validated current-contract access facts, independent of directory activity.
+class MemberAccessSnapshot {
+  final String _kind;
+  final MemberAccessTarget _target;
+  final _MemberAccessScope _scope;
+  final int version;
+
+  const MemberAccessSnapshot._(this._kind, this._target, this._scope, this.version);
+
+  String get actorId => _target.actorId;
+  String get memberKey => _target.memberKey;
+  String get role => _scope.role;
+  String? get subjectId => _scope.subjectId;
+  List<String> get classIds => _scope.classIds;
+
+  factory MemberAccessSnapshot.read(Object? raw, {required String kind,
+      required MemberAccessTarget target, MemberAccessSnapshot? previous}) {
+    if (raw is! Map || raw.length != _memberAccessFields.length ||
+        !_memberAccessFields.every(raw.containsKey) ||
+        raw['actorId'] != target.actorId || raw['memberKey'] != target.memberKey) {
+      _invalidMemberAccess();
+    }
+    final version = raw['version'];
+    if (version is! int || version < 0 || version > 9007199254740991) {
+      _invalidMemberAccess();
+    }
+    final scope = _MemberAccessScope.read(kind: kind, role: raw['role'],
+        subjectId: raw['subjectId'], classIds: raw['classIds']);
+    if (previous != null && (previous._kind != kind ||
+        previous.actorId != target.actorId || previous.memberKey != target.memberKey ||
+        version < previous.version ||
+        (version == previous.version && !scope.sameAs(previous._scope)))) {
+      _invalidMemberAccess();
+    }
+    return MemberAccessSnapshot._(kind, target, scope, version);
+  }
+
+  Json toJson() => Map<String, dynamic>.unmodifiable({
+    'actorId': actorId, 'memberKey': memberKey, 'role': role,
+    'subjectId': subjectId, 'version': version, 'classIds': classIds,
+  });
+
+  MemberAccessSnapshot verifyUpdate(Object? raw, {required Json body}) {
+    if (!body.containsKey('role') ||
+        !body.keys.every(_memberUpdateFields.contains)) {
+      _invalidMemberAccess();
+    }
+    final requested = _MemberAccessScope.read(kind: _kind, role: body['role'],
+        subjectId: body['subjectId'],
+        classIds: body.containsKey('classIds') ? body['classIds'] : const <String>[]);
+    if (role == 'OWNER' || requested.role == 'OWNER' ||
+        (role == 'CHILD') != (requested.role == 'CHILD')) {
+      _invalidMemberAccess();
+    }
+    final result = MemberAccessSnapshot.read(raw, kind: _kind, target: _target);
+    final expectedVersion = requested.sameAs(_scope) ? version : version + 1;
+    if (!result._scope.sameAs(requested) || result.version != expectedVersion) {
+      _invalidMemberAccess();
+    }
+    return result;
+  }
+}
+
 List<String> memberRoles(String kind, String operatorRole,
     {String? currentRole}) {
   if (!['OWNER', 'ORG_ADMIN'].contains(operatorRole) ||

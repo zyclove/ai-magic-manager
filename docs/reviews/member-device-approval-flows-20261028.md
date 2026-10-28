@@ -18,10 +18,12 @@
 
 - `1f4c3b6` 后补目录读取失权边界：当前GET明确拒绝或工作空间失效时永久锁存本窗口readDenied，清私有目录及可见草稿，只留泛化说明和关闭。dataCurrent拦住所有晚回；规则拒绝先核原gen，设备分页保持当前选择语义。网络／MFA／游标失败与POST拒绝仍按原语义，不误清未知正文或停止状态。
 
+- `05a4aa5` 后将成员访问事实集中为Target／Snapshot：原行actor/cursor先捕获，当前六字段严格解析且深冻结；actor保持OIDC原文，档案／班级只核形状不查归档活动性。二次GET同目标且不倒退／同版漂移；PATCH精确核对角色、档案、班级与no-op原版／真实变化+1。页面仅白名单保留profile，角色已不可编辑时不再打开无效表单；观察到版本变化才请求列表核对，同版本只读保留分页。回执不完整不提示成功。当前历史两层窗口已有归属保护，未为冗余代码另做重构。
+
 ## 静态核对与待运行范围
 
 已定点核对调用签名、租约／窗口归属、派发标记位置、接口路径和回归源；最终提交前核对差异空白与文件范围。没有运行 SDK、格式化器、分析、测试、构建、资源轮询或服务维护；运行验收为 **NOT_RUN**，静态审查不能证明整体稳定。
 
-资源和排期恢复后，仅先运行受影响的既有文件：`access_requests_page_test.dart`、`devices_page_test.dart`、`members_page_workflow_browser_test.dart`、`approval_help_flow_browser_test.dart`、`device_management_entry_test.dart`、`api_deadline_test.dart`，以及设备注册／管理／退出受影响边界；前五份新增或扩展列表保留、单次核对、过期筛选和覆盖窗口旅程，最后一份覆盖显式未带键观察及认证晚到失权。续改还涉及 `device_management_test.dart` 与 `device_management_dialog_test.dart`：前者保留默认重读并新增只读保留／pending失权边界，后者在既有子流程和控制器替换旅程中核对真实刷新策略与旧按钮隔离。访问申请创建另更新 `access_request_dialog_test.dart` 的时长边界、余秒／短时／空秒、原正文不可变和拒绝后恢复／停止断言；继续在既有设备／规则恢复旅程检查同步防重与旧选项失效，新增一条有界组合旅程覆盖通知置顶、pending POST、默认路由完成和卸载后旧入口无副作用。读取失权续改还在同一测试文件循环覆盖设备／规则目录×401/403、另一目录晚成功不复活、旧回调退役与关闭可用；普通设备失败加入401 REAUTH_REQUIRED，保留草稿和同游标重试；旧目标晚规则403保持新目标可用。上述均为回归源准备，仍为 NOT_RUN。不重复构建未变更组件；若共享 API 检查发现失败，再依具体影响扩展验证。
+资源和排期恢复后，仅先运行受影响的既有文件：`access_requests_page_test.dart`、`devices_page_test.dart`、`members_page_workflow_browser_test.dart`、`approval_help_flow_browser_test.dart`、`device_management_entry_test.dart`、`api_deadline_test.dart`，以及设备注册／管理／退出受影响边界；前五份新增或扩展列表保留、单次核对、过期筛选和覆盖窗口旅程，最后一份覆盖显式未带键观察及认证晚到失权。续改还涉及 `device_management_test.dart` 与 `device_management_dialog_test.dart`：前者保留默认重读并新增只读保留／pending失权边界，后者在既有子流程和控制器替换旅程中核对真实刷新策略与旧按钮隔离。访问申请创建另更新 `access_request_dialog_test.dart` 的时长边界、余秒／短时／空秒、原正文不可变和拒绝后恢复／停止断言；继续在既有设备／规则恢复旅程检查同步防重与旧选项失效，新增一条有界组合旅程覆盖通知置顶、pending POST、默认路由完成和卸载后旧入口无副作用。读取失权续改还在同一测试文件循环覆盖设备／规则目录×401/403、另一目录晚成功不复活、旧回调退役与关闭可用；普通设备失败加入401 REAUTH_REQUIRED，保留草稿和同游标重试；旧目标晚规则403保持新目标可用。成员续改在既有 `member_editor_test.dart` 加纯快照边界，并更新 `members_page_workflow_browser_test.dart` 为真实六字段fixture及7个有界目标／范围／版本响应场景；还原换行噪声，不改旧旅程主体。上述均为回归源准备，仍为 NOT_RUN。不重复构建未变更组件；若共享 API 检查发现失败，再依具体影响扩展验证。
 
 按原门槛等待可用内存及 C/D 盘空间、SDK 空闲窗口，不降低准入条件。临时文件、缓存、源码副本和历史大取证文件不在提交范围。

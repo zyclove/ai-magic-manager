@@ -281,6 +281,22 @@ class _MembersPageState extends State<MembersPage> {
     }
   }
 
+  Json memberPresentation(Json row, MemberAccessSnapshot access) {
+    final sameSubject = access.subjectId != null &&
+        access.subjectId == row['subjectId'];
+    final updatedAt = row['profileUpdatedAt'];
+    return Map<String, dynamic>.unmodifiable({
+      ...access.toJson(),
+      'displayName': row['displayName'] is String ? row['displayName'] : null,
+      'verifiedEmail': access.role != 'CHILD' && row['verifiedEmail'] is String
+          ? row['verifiedEmail'] : null,
+      'profileUpdatedAt': updatedAt is String || updatedAt is num ? updatedAt : null,
+      'subjectName': sameSubject && row['subjectName'] is String
+          ? row['subjectName'] : null,
+      'subjectArchived': sameSubject && row['subjectArchived'] == true,
+    });
+  }
+
   Future<bool> openMember(String root, Json row,
       {ResourceActionLease? listLease}) async {
     final scope = capture(root, listLease: listLease);
@@ -288,18 +304,15 @@ class _MembersPageState extends State<MembersPage> {
     try {
       if (!current(scope)) return false;
       final kind = s.tenant!['kind'] as String, operatorRole = s.role;
-      final path = '$root/members/${row['cursor']}/access';
-      final access = await scope.api.send('GET', path) as Json;
+      final target = MemberAccessTarget.fromRow(row);
+      final path = '$root/members/${target.memberKey}/access';
+      final raw = await scope.api.send('GET', path);
       if (!mounted || !current(scope)) return false;
-      final classIds = List<String>.unmodifiable(
-          List<String>.from(access['classIds'] as List? ?? const []));
-      final member = <String, dynamic>{...row, ...access, 'classIds': classIds};
-      if (access['subjectId'] != row['subjectId']) {
-        member['subjectName'] = null;
-        member['subjectArchived'] = false;
-      }
-      final allowed = memberRoles(kind, operatorRole,
-          currentRole: access['role']);
+      final access = MemberAccessSnapshot.read(raw, kind: kind, target: target);
+      needsReview = access.version != row['version'];
+      final classIds = access.classIds;
+      final member = memberPresentation(row, access);
+      final allowed = memberRoles(kind, operatorRole, currentRole: access.role);
       var edit = false;
       final removalKey = requestId();
       final changes = flowChanges(scope, listLease: listLease);
@@ -351,14 +364,14 @@ class _MembersPageState extends State<MembersPage> {
                 final api = dialogApi(dialog, scope);
                 if (!await confirmLeasedAction(dialog, '撤销成员访问',
                     '成员：${memberName(member)}\n账号：${member['actorId']}\n'
-                    '成员编号：${member['memberKey']}\n权限版本：${access['version']}\n\n'
+                    '成员编号：${member['memberKey']}\n权限版本：${access.version}\n\n'
                     '将撤销该成员的工作空间访问。相关未使用邀请、待确认配对、临时授权和预览会失效。',
                     accessChanges: changes, hasAccess: () => current(scope),
                     confirm: '确认撤销访问')) return;
                 if (!current(scope)) return;
                 needsReview = true;
                 await api.send('DELETE', path,
-                    version: access['version'] as int, key: removalKey);
+                    version: access.version, key: removalKey);
                 complete();
                 if (mounted && current(scope)) toast(context, '成员访问已撤销。');
               }, destructive: true, closeOnSuccess: false),
@@ -366,20 +379,22 @@ class _MembersPageState extends State<MembersPage> {
           ]);
       if (edit && current(scope)) {
         // Fetch again after leaving the detail dialog: never silently replace the version on submit.
-        final latest = await scope.api.send('GET', path) as Json;
+        final latestRaw = await scope.api.send('GET', path);
         if (!mounted || !current(scope)) return false;
+        final latest = MemberAccessSnapshot.read(latestRaw,
+            kind: kind, target: target, previous: access);
+        needsReview = needsReview || latest.version != access.version;
+        if (memberRoles(kind, operatorRole, currentRole: latest.role).isEmpty) {
+          toast(context, '该成员当前不支持权限调整，请核对最新成员资料。');
+          return true;
+        }
         final key = requestId();
         final result = await memberEditorDialog(context,
                   kind: kind,
                   operatorRole: operatorRole,
                   accessChanges: changes,
                   hasAccess: () => current(scope),
-                  member: {
-                    ...member,
-                    ...latest,
-                    'subjectName': null,
-                    'subjectArchived': false,
-                  },
+                  member: memberPresentation(row, latest),
                   directories: MemberScopeDirectories(
                       api: scope.api, root: root,
                       current: () => current(scope)),
@@ -387,17 +402,9 @@ class _MembersPageState extends State<MembersPage> {
                   onSubmit: (body, permitted) async {
                     needsReview = true;
                     final updated = await scope.api.send('PATCH', path,
-                        body: body,
-                        version: latest['version'] as int,
-                        key: key, isCurrent: permitted) as Json;
-                    final version = updated['version'];
-                    if (updated['actorId'] != latest['actorId'] ||
-                        updated['memberKey'] != latest['memberKey'] ||
-                        updated['role'] != body['role'] || version is! int ||
-                        version < (latest['version'] as int)) {
-                      throw const ApiFailure(502, 'INVALID_RESPONSE');
-                    }
-                    return updated;
+                        body: body, version: latest.version,
+                        key: key, isCurrent: permitted);
+                    return latest.verifyUpdate(updated, body: body).toJson();
                   },
                 );
         if (result != null) needsReview = true;

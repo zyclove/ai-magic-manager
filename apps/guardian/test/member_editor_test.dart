@@ -189,6 +189,124 @@ void main() {
         }),
         '2 个班级');
   });
+  group('member access snapshots', () {
+    const actor = ' oidc|School.Alice/汉字 ';
+    const key = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+    const subjectA = '00000000-0000-4000-8000-000000000001';
+    const subjectB = '00000000-0000-4000-8000-000000000002';
+    const classA = '10000000-0000-4000-8000-000000000001';
+    const classB = '10000000-0000-4000-8000-000000000002';
+    const classC = '10000000-0000-4000-8000-000000000003';
+    final target = MemberAccessTarget.fromRow({'actorId': actor, 'cursor': key});
+    final invalid = throwsA(isA<ApiFailure>()
+        .having((failure) => failure.status, 'status', 502)
+        .having((failure) => failure.code, 'code', 'INVALID_MEMBER_ACCESS_RESPONSE'));
+    Json access({String role = 'TEACHER', String? subjectId = subjectA,
+        List<String> classIds = const [], int version = 7}) => {
+      'actorId': actor, 'memberKey': key, 'role': role,
+      'subjectId': subjectId, 'version': version, 'classIds': classIds,
+    };
+    MemberAccessSnapshot read(Object? raw, {MemberAccessSnapshot? previous}) =>
+        MemberAccessSnapshot.read(raw, kind: 'ORGANIZATION', target: target,
+            previous: previous);
+
+    test('binds the exact non-UUID actor and deeply freezes access facts', () {
+      final classes = [classB, classA];
+      final raw = access(subjectId: null, classIds: classes);
+      final snapshot = read(raw);
+      classes.clear();
+      raw['role'] = 'AUDITOR';
+      expect(snapshot.actorId, actor);
+      expect(snapshot.memberKey, key);
+      expect(snapshot.role, 'TEACHER');
+      expect(snapshot.classIds, [classA, classB]);
+      expect(snapshot.toJson(), {
+        'actorId': actor, 'memberKey': key, 'role': 'TEACHER',
+        'subjectId': null, 'version': 7, 'classIds': [classA, classB],
+      });
+      expect(() => snapshot.classIds.add(classC), throwsUnsupportedError);
+      expect(() => snapshot.toJson()['role'] = 'AUDITOR', throwsUnsupportedError);
+      expect(() => (snapshot.toJson()['classIds'] as List).clear(),
+          throwsUnsupportedError);
+      expect(() => read({...access(), 'actorId': actor.trim()}), invalid);
+      expect(() => MemberAccessTarget.fromRow({'actorId': '  ', 'cursor': key}),
+          invalid);
+      expect(() => MemberAccessTarget.fromRow({'actorId': actor, 'cursor': 'short'}),
+          invalid);
+      expect(MemberAccessTarget.fromRow({'actorId': '\u00a0', 'cursor': key}).actorId,
+          '\u00a0', reason: 'Non-breaking space is not blank under Java isBlank.');
+      expect(() => MemberAccessTarget.fromRow({'actorId': '\u001c', 'cursor': key}),
+          invalid);
+    });
+
+    test('rejects malformed or incompatible current access responses', () {
+      final missingSubject = access()..remove('subjectId');
+      for (final raw in [
+        {...access(), 'memberKey': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'},
+        missingSubject,
+        {...access(), 'version': 7.5},
+        {...access(), 'version': 9007199254740992},
+        {...access(), 'profile': <String, dynamic>{}},
+        access(subjectId: null),
+        access(role: 'AUDITOR'),
+        access(subjectId: null, classIds: [classA, classA]),
+        access(subjectId: 'not-a-uuid'),
+      ]) {
+        expect(() => read(raw), invalid, reason: '$raw');
+      }
+      expect(() => MemberAccessSnapshot.read(access(), kind: 'FAMILY',
+          target: target), invalid);
+      expect(read(access(subjectId: null, classIds: [classA])).classIds, [classA],
+          reason: 'Access facts do not depend on active directory options.');
+    });
+
+    test('allows newer GET facts but rejects rollback and same-version drift', () {
+      final original = read(access());
+      expect(read(access(subjectId: subjectB, version: 10), previous: original)
+          .subjectId, subjectB);
+      expect(read(access(), previous: original).version, 7);
+      expect(() => read(access(version: 6), previous: original), invalid);
+      expect(() => read(access(subjectId: subjectB), previous: original), invalid);
+    });
+
+    test('checks PATCH scope and the exact resulting version', () {
+      final original = read(access());
+      final subjectBody = <String, dynamic>{'role': 'TEACHER', 'subjectId': subjectB};
+      expect(() => original.verifyUpdate(access(version: 8), body: subjectBody),
+          invalid);
+      expect(() => original.verifyUpdate(access(subjectId: subjectB, version: 9),
+          body: subjectBody), invalid);
+      expect(() => original.verifyUpdate(access(subjectId: subjectB),
+          body: subjectBody), invalid);
+      expect(() => original.verifyUpdate(access(subjectId: null,
+          classIds: [classA, classC], version: 8),
+          body: {'role': 'TEACHER', 'classIds': [classA, classB]}), invalid);
+      expect(() => original.verifyUpdate(access(role: 'CHILD', version: 8),
+          body: {'role': 'CHILD', 'subjectId': subjectA}), invalid);
+      expect(() => original.verifyUpdate(access(role: 'OWNER', subjectId: null,
+          version: 8), body: {'role': 'OWNER'}), invalid);
+      expect(original.verifyUpdate(access(subjectId: subjectB, version: 8),
+          body: subjectBody).subjectId, subjectB);
+    });
+
+    test('uses set semantics for class no-ops and defaults cleared scope', () {
+      final original = read(access(subjectId: null, classIds: [classB, classA]));
+      final body = <String, dynamic>{'role': 'TEACHER', 'classIds': [classA, classB]};
+      expect(original.verifyUpdate(access(subjectId: null,
+          classIds: [classB, classA]), body: body).version, 7);
+      expect(() => original.verifyUpdate(access(subjectId: null,
+          classIds: [classA, classB], version: 8), body: body), invalid);
+      expect(() => original.verifyUpdate(access(subjectId: null,
+          classIds: [classA, classB]),
+          body: {'role': 'TEACHER', 'classIds': [classA, classA]}), invalid);
+      final updated = original.verifyUpdate(access(role: 'AUDITOR',
+          subjectId: null, version: 8), body: {'role': 'AUDITOR'});
+      expect(updated.toJson(), {
+        'actorId': actor, 'memberKey': key, 'role': 'AUDITOR',
+        'subjectId': null, 'version': 8, 'classIds': <String>[],
+      });
+    });
+  });
   testWidgets('class-scoped member selects multiple classes without a subject',
       (tester) async {
     Json? sent;
