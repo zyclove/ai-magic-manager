@@ -20,3 +20,14 @@ Build 可复用 MavenCommand、FlutterCommand、DartCommand 覆盖项；文件�
 
 - `scripts/manager.ps1`：`dea47016ca93cdd5bd2ede34c7d80490f7ee1796fde85d9b92a63083db4a7c41`
 - `scripts/tests/test_manager_entry.py`：`60df6fad3dab6f6d23de051fbef94f34181e64206658dc3019a042608d930832`
+
+
+## 2026-10-28：字面工具发现
+
+基线：`d7b64592122a203db3596f1c6c94bcfe592e1741`。诊断与构建中的5处动态命令查询，使用 PowerShell 原生 WildcardPattern 转义查找值；原参数、计划、显示及实际执行命令不变，Flutter 文件路径仍走既有 LiteralPath 分支。依据 [Get-Command 官方参数说明](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/get-command?view=powershell-7.5)，Name 接受通配模式，不能将模式匹配出的其他工具当作用户所配置工具。
+
+受控发现夹具改为原生通配匹配语义，并新增1个聚合回归，覆盖带空格／方括号的配置路径、误匹配的裸名称、原值保留和缺项提示不回显私有配置。夹具仅证明受控发现契约，不替代真实 Get-Command 的文件、PATH、扩展名和平台行为。
+
+- 两份 PowerShell 脚本通过 Parser.ParseFile 静态语法解析，Python 测试源码通过 ast.parse；没有执行部署入口或工具命令。
+- 新聚合及受影响参数回归为 **NOT_RUN**。实际文件命令发现、构建、SDK及 Windows/Linux/macOS 部署验证为 **NOT_RUN**；需恢复验证窗口后确认，不能以受控夹具或解析通过推定完成。
+- 未读取运行凭据、启动服务、采样资源、推送或更新部署；既有历史摘要及结果不追认为本轮通过。

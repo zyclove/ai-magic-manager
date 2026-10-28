@@ -29,7 +29,7 @@ function Resolve-DeploymentFlutterInstallation {
     if ([IO.Path]::IsPathRooted($Command) -or $Command.Contains('/') -or $Command.Contains('\')) {
         $candidate = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Command)
     } else {
-        $entryCommand = Get-Command $Command -ErrorAction Stop | Select-Object -First 1
+        $entryCommand = Get-Command -Name ([Management.Automation.WildcardPattern]::Escape($Command)) -ErrorAction Stop | Select-Object -First 1
         if ($entryCommand.CommandType -notin @('Application', 'ExternalScript') -or
             [string]::IsNullOrWhiteSpace($entryCommand.Source)) {
             throw 'FlutterCommand must name an SDK bin entry or a file symbolic link to it.'
@@ -102,7 +102,7 @@ if ($ConsumerIdentity) {
 foreach ($name in $required) {
     if (-not (Test-Path -LiteralPath (Join-Path $source $name) -PathType Leaf)) { throw 'Source snapshot is missing a required project file.' }
 }
-if (-not (Get-Command $MavenCommand -ErrorAction SilentlyContinue)) { throw 'Configure Maven and Flutter executable paths before building.' }
+if (-not (Get-Command -Name ([Management.Automation.WildcardPattern]::Escape($MavenCommand)) -ErrorAction SilentlyContinue)) { throw 'Configure Maven and Flutter executable paths before building.' }
 $flutterInstallation = Resolve-DeploymentFlutterInstallation -Command $FlutterCommand
 $flutterPath = $flutterInstallation.FlutterPath
 # Use the same resolved installation for every invocation, even if its original
@@ -111,7 +111,7 @@ $FlutterCommand = $flutterPath
 if (-not $DartCommand) {
     $DartCommand = $flutterInstallation.DefaultDartCommand
 }
-if (-not (Get-Command $DartCommand -ErrorAction SilentlyContinue)) { throw 'Configure the Dart executable path for client verification.' }
+if (-not (Get-Command -Name ([Management.Automation.WildcardPattern]::Escape($DartCommand)) -ErrorAction SilentlyContinue)) { throw 'Configure the Dart executable path for client verification.' }
 $snapshot = Join-Path $context.Root ('source-' + [Guid]::NewGuid().ToString('N'))
 $logs = Join-Path $context.Root 'logs'
 $null = New-Item -ItemType Directory -Path $snapshot
@@ -179,7 +179,7 @@ if ($MavenRepository) { $mavenArgs += "-Dmaven.repo.local=$([IO.Path]::GetFullPa
 # The Spring HTTP fixture launches Dart directly, so resolve the SDK executable
 # rather than passing a Windows batch wrapper to Java ProcessBuilder. Resolve
 # package dependencies before Maven; a skipped cross-SDK test is not evidence.
-$dartExecutable = (Get-Command $DartCommand).Source
+$dartExecutable = (Get-Command -Name ([Management.Automation.WildcardPattern]::Escape($DartCommand))).Source
 if ($IsWindows -and [IO.Path]::GetExtension($dartExecutable) -in @('.bat', '.cmd')) {
     $dartExecutable = Join-Path (Split-Path $dartExecutable -Parent) 'cache/dart-sdk/bin/dart.exe'
 }

@@ -28,7 +28,13 @@ function global:Get-Command {
     param([string]$Name, [object]$CommandType, [string]$ErrorAction)
     $global:doctorLookups.Add(@{name=$Name; externalScriptAllowed=
         (([Management.Automation.CommandTypes]$CommandType -band [Management.Automation.CommandTypes]::ExternalScript) -ne 0)})
-    if ($fixture.available -contains $Name) { return [pscustomobject]@{Source=$Name} }
+    $pattern = [Management.Automation.WildcardPattern]::new($Name,
+        [Management.Automation.WildcardOptions]::IgnoreCase)
+    foreach ($availableCommand in $fixture.available) {
+        if ($pattern.IsMatch([string]$availableCommand)) {
+            [pscustomobject]@{Source=[string]$availableCommand}
+        }
+    }
 }
 $parameters = @{}
 foreach ($property in $fixture.parameters.PSObject.Properties) { $parameters[$property.Name]=$property.Value }
@@ -128,6 +134,61 @@ class ManagerEntryTest(unittest.TestCase):
         for private_command in [maven, dart, str(absent), "configured-flutter"]:
             self.assertNotIn(private_command, next_step)
         self.assertNotIn("init -Plan", next_step)
+
+    def test_doctor_treats_special_paths_and_wildcard_command_names_literally(self):
+        absent = Path(".cache") / ("doctor private [stable] tools-" + uuid.uuid4().hex)
+        self.assertFalse((ROOT / absent).exists())
+        commands = {
+            "mvn": str(ROOT / absent / "maven bin" / "mvn.ps1"),
+            "flutter": str(ROOT / absent / "flutter bin" / "flutter.ps1"),
+            "dart": str(ROOT / absent / "dart bin" / "dart.ps1"),
+        }
+        parameters = {
+            "MavenCommand": commands["mvn"],
+            "FlutterCommand": commands["flutter"],
+            "DartCommand": commands["dart"],
+        }
+        defaults = ["docker", "git", "java"]
+        for available, expected_missing in [
+            (list(commands.values()), []),
+            ([], ["mvn", "flutter", "dart"]),
+        ]:
+            with self.subTest(explicit_paths_available=bool(available)):
+                result = self.doctor_with_command_inventory(
+                    parameters, defaults + available,
+                )
+                inventory = result["inventory"]
+                self.assertEqual(inventory["missingTools"], expected_missing)
+                tools = {item["tool"]: item for item in inventory["tools"]}
+                for tool, command in commands.items():
+                    self.assertEqual(tools[tool]["command"], command)
+                    self.assertEqual(
+                        tools[tool]["available"], tool not in expected_missing,
+                    )
+                    self.assertNotIn(command, inventory["next"])
+                self.assertNotIn("doctor private", inventory["next"])
+                if expected_missing:
+                    self.assertIn("Resolve missing commands", inventory["next"])
+                    self.assertNotIn("init -Plan", inventory["next"])
+        for available_command, expected_missing in [
+            ("configured-flutter", ["flutter"]),
+            ("configured-*", []),
+        ]:
+            with self.subTest(available_command=available_command):
+                result = self.doctor_with_command_inventory(
+                    {"FlutterCommand": "configured-*"},
+                    [*defaults, "mvn", available_command],
+                )
+                inventory = result["inventory"]
+                self.assertEqual(inventory["missingTools"], expected_missing)
+                flutter = next(
+                    item for item in inventory["tools"] if item["tool"] == "flutter"
+                )
+                self.assertEqual(flutter["command"], "configured-*")
+                self.assertEqual(flutter["available"], not expected_missing)
+                self.assertNotIn("configured-", inventory["next"])
+                if expected_missing:
+                    self.assertIn("Resolve missing commands", inventory["next"])
 
     def test_each_action_has_the_expected_entry_and_forwarded_parameters(self):
         source = str(ROOT / "input source")

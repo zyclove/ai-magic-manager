@@ -54,7 +54,7 @@
 
 部署目录统一位于仓库 `.local/`。多个环境用不同目录、Compose 项目名与端口。显式 `Directory`、`SourceDirectory`、`MavenRepository`、`IdentityAdminDirectory`、`IdentityRuntimeDirectory` 的相对路径都按该入口所在仓库根目录解析，绝对路径保持其含义；`-Plan` 显示最终绝对路径，避免从其他工作目录执行时指向不同文件。
 
-`MavenCommand`、`FlutterCommand`、`DartCommand` 若填写带本系统目录分隔符的文件路径，也按同一仓库基准解析；只填 `mvn`、`flutter` 等命令名时继续从 PATH 查找。路径规范化只处理参数字符串，不检查配置内容、不执行工具；实际文件、权限及 SDK 目标仍由对应动作校验。
+`MavenCommand`、`FlutterCommand`、`DartCommand` 若填写带本系统目录分隔符的文件路径，也按同一仓库基准解析；只填 `mvn`、`flutter` 等命令名时继续从 PATH 查找。路径规范化只处理参数字符串，不检查配置内容、不执行工具；实际文件、权限及 SDK 目标仍由对应动作校验。 工具发现按所填命令名或路径的字面值查询，不把 `*`、`?` 或方括号当作挑选其他工具的模式；显示、转发与执行仍保留原值。含空格的路径按所用 shell 的通常规则加引号，不手工改写文件名。此修订已完成静态解析，真实命令发现与构建验证仍待执行，见[诊断阶段记录](reviews/doctor-toolsets-20261026.md)。
 
 `doctor -Toolset Build` 返回各工具的逻辑名称、实际查询命令、可找到状态及用途，显式工具路径与构建动作共用相同的仓库基址规则。Maven/Flutter/显式 Dart 的文件型脚本可以参与发现；这里不执行脚本或检查 SDK 内部内容。未显式指定 Dart 时沿用构建的 Flutter SDK 选择，不另要求系统 PATH 安装 Dart。诊断新档位的参数及受控发现回归尚未运行，见[阶段记录](reviews/doctor-toolsets-20261026.md)。
 

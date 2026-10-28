@@ -216,7 +216,7 @@ if ($Action -eq 'doctor') {
         [ordered]@{
             tool = $tool.name
             command = $tool.command
-            available = $null -ne (Get-Command $tool.command -CommandType $commandKinds -ErrorAction SilentlyContinue)
+            available = $null -ne (Get-Command -Name ([Management.Automation.WildcardPattern]::Escape([string]$tool.command)) -CommandType $commandKinds -ErrorAction SilentlyContinue)
             purpose = $tool.purpose
         }
     }
