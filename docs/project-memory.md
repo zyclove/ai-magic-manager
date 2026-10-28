@@ -101,6 +101,8 @@ ResourcePage 可由纯 `searchText` 提供领域格式化后的本地检索文�
 
 访问审批的 [AccessRequestsPage](../apps/guardian/lib/pages/access_requests_page.dart) 接收宿主唯一持有的 pendingFilter 与筛选事件，编排待处理/全部视图及行摘要，不再另存本地筛选；复用 ResourcePage 的读取、分页及错误恢复；管理角色默认待处理，其他角色默认全部。消费实际返回的名称，不追加目录请求；审计视图只用核心编号。详情／创建通过租约返回布尔核对信号；普通关闭不重读，已派发写入含未知结果需核对。交付及尝试历史绑定原父窗口、会话与借用 API，只退役自有 OwnedDialogRoute；AccessRequestDialog 的完成回调由宿主接管，覆盖通知不能被成功回调误关。列表筛选后的空批次不等于后续页无待办，原详情与决定流程继续独立授权。[approval_decision](../apps/guardian/lib/core/approval_decision.dart) 集中七种状态、当前申请快照和精确秒数正文转换；列表名称先脱离原行，再以完整引用匹配，不能覆盖最新核心事实。通用 FieldSpec 可选整数范围由既有表单就近校验，跨字段合计在提交前验证；继续使用原未知结果与幂等保护。
 
+审批本人取消／撤销批准复用confirmLeasedAction，绑定原详情父路由、changes/current，父popped/completed或权限退役会结束自有确认；确认后原current与版本检查保留，不能因有API门禁就留下失效确认。
+
 审批详情与两层历史的读取拒绝按后端层级退役：documents403说明申请不可读，结束该申请旅程并核对原列表；attempts403也可能缺单个文档，只结束尝试窗口并核对文档列表。真实401（非REAUTH_REQUIRED）／WORKSPACE_CHANGED退役申请，普通网络、近期认证与写拒绝不扩大失权。原列表sourceCurrent与requestCurrent分开，目标退役后仍可返回一次核对信号；原scope／路由变化的晚拒绝忽略，不变更会话代际或整页审批权限。
 
 [AccessRequestDialog](../apps/guardian/lib/ui/access_request_dialog.dart) 以分钟＋可选秒精确生成1～3600整数秒，秒空值按0，不发送控件分量；批准仍限制不超过原申请。创建Map和ruleIds列表冻结；未知重试跳过当前Form校验/解析，后续拒绝不清pending，408/非Api异常保留未知，isUnavailableOperationResult/412停止旧请求并只读保留。范围／配置失效时不借刷新目录解除未知锁。 复用DialogAccessBinding捕获原路由，didChangeDependencies中一次初载；新入口要求interactive，await续程只要求windowCurrent，覆盖不挡原完成。设备／应用／规则及加载／提交捕获原generation，loadOptions同步防重，应用切换推进代次；设备分页按返回时当前选择处理，不附加选择gen过滤。finish/deactivate永久退役；onComplete必需由创建方传所属OwnedDialogRoute.finish，组件不自行调用受保护Route.didComplete，测试与生产共用此契约。旧回调不能操作被覆盖、已关闭或卸载的窗口。目录GET当前范围明确401/403（非REAUTH_REQUIRED）或WORKSPACE_CHANGED时锁存readDenied，dataCurrent阻止成功／失败／finally晚回并清私有目录及可见草稿；窗口生命周期保留以允许关闭。规则拒绝先核原gen，设备分页不绑规则gen；POST catch与原pending/stopped独立，不从写拒绝推导读取失权。

@@ -36,6 +36,7 @@ import 'policy_details_entry.dart';
 import 'observation_page.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
+import '../ui/leased_dialog.dart';
 import '../ui/device_observation_status.dart';
 import '../ui/application_classification_dialog.dart';
 import '../ui/resource_page.dart';
@@ -1879,7 +1880,9 @@ class ConsoleActions {
             if (['TEACHER', 'CHILD'].contains(s.role) && request.state == 'PENDING')
               DetailAction('取消我的申请', (ctx) async {
                 final finish = captureDialogCompletion(ctx);
-                if (await confirmAction(ctx, '取消我的申请', '取消后管理员将无法批准此申请。')) {
+                if (await confirmLeasedAction(ctx, '取消我的申请',
+                    '取消后管理员将无法批准此申请。',
+                    accessChanges: changes, hasAccess: current)) {
                   if (!current()) {
                     throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                   }
@@ -1958,7 +1961,9 @@ class ConsoleActions {
             if (s.canWrite && request.state == 'APPROVED_PENDING_DELIVERY')
               DetailAction('撤销批准', (ctx) async {
                 final finish = captureDialogCompletion(ctx);
-                if (await confirmAction(ctx, '撤销批准', '撤销此访问窗口并记录审计。')) {
+                if (await confirmLeasedAction(ctx, '撤销批准',
+                    '撤销此访问窗口并记录审计。',
+                    accessChanges: changes, hasAccess: current)) {
                   if (!current()) {
                     throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                   }

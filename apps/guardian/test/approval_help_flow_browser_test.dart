@@ -168,7 +168,8 @@ class _ApprovalFixture {
       });
     }
     if (request.method == 'POST' &&
-        path.endsWith('/$_approvalId/${action == '撤销批准' ? 'revoke' : 'decisions'}')) {
+        path.endsWith('/$_approvalId/${action == '撤销批准' ? 'revoke' :
+            action == '取消我的申请' ? 'cancel' : 'decisions'}')) {
       posts.add(request);
       return pending.future;
     }
@@ -665,6 +666,65 @@ void main() {
     expect(fixture.listReads, 1);
     expect(fixture.documentReads, hasLength(2));
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('approval confirmations retire with a raw-removed parent and preserve a cover',
+      (tester) async {
+    for (final action in ['撤销批准', '取消我的申请']) {
+      final fixture = _ApprovalFixture(action);
+      if (action == '取消我的申请') fixture.session.role = 'CHILD';
+      await fixture.open(tester, openAction: false);
+      final generation = fixture.session.scopeGeneration;
+      final details = ModalRoute.of(
+          tester.element(find.text('临时访问申请')))! as OwnedDialogRoute<void>;
+      final oldClose = tester.widget<TextButton>(_helpButton('关闭')).onPressed!;
+      await tester.tap(find.widgetWithText(OutlinedButton, action));
+      final confirm = find.widgetWithText(FilledButton, '确认');
+      await _waitUntil(tester, () => confirm.evaluate().isNotEmpty);
+      final confirmation = ModalRoute.of(tester.element(confirm))!;
+      final oldConfirm = tester.widget<FilledButton>(confirm).onPressed!;
+      final oldCancel = tester.widget<TextButton>(
+          find.widgetWithText(TextButton, '取消')).onPressed!;
+      final cover = DialogRoute<void>(
+          context: fixture.host,
+          builder: (_) => const AlertDialog(title: Text('独立通知')));
+      final navigator = Navigator.of(fixture.host, rootNavigator: true);
+      unawaited(navigator.push<void>(cover));
+      await _waitUntil(tester,
+          () => cover.animation?.status == AnimationStatus.completed);
+      navigator.removeRoute(details);
+      await _waitUntil(tester, () => !confirmation.isActive &&
+          fixture.detailsCompleted &&
+          find.text('临时访问申请', skipOffstage: false).evaluate().isEmpty &&
+          find.widgetWithText(FilledButton, '确认', skipOffstage: false)
+              .evaluate().isEmpty);
+      void invokeSavedControls() {
+        oldConfirm();
+        oldCancel();
+        oldClose();
+      }
+
+      invokeSavedControls();
+      await _flushPending(tester);
+      expect(cover.isCurrent, isTrue);
+      expect(find.text('独立通知'), findsOneWidget);
+      expect(fixture.needsReview, isFalse);
+      expect(fixture.posts, isEmpty);
+      expect(fixture.documentReads, isEmpty);
+      expect(fixture.attemptReads, isEmpty);
+      expect(fixture.session.scopeGeneration, generation);
+      navigator.removeRoute(cover);
+      await _flushPending(tester);
+      invokeSavedControls();
+      await _flushPending(tester);
+      expect(find.text('打开申请'), findsOneWidget);
+      expect(find.text('临时访问申请', skipOffstage: false), findsNothing);
+      expect(find.widgetWithText(FilledButton, '确认', skipOffstage: false),
+          findsNothing);
+      expect(fixture.posts, isEmpty);
+      expect(fixture.session.scopeGeneration, generation);
+      expect(tester.takeException(), isNull);
+    }
   });
 
   for (final action in ['批准', '拒绝', '撤销批准']) {
