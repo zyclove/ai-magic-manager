@@ -344,7 +344,9 @@ DeviceManagementRecord namedDevice(String name) {
 
 Widget controlledHost(ValueNotifier<FakeDeviceManagementController?> selection,
         GlobalKey<NavigatorState> navigatorKey,
-        {Future<void> Function(DeviceManagementRecord)? onDiagnostic}) =>
+        {Future<void> Function(DeviceManagementRecord)? onDiagnostic,
+        VoidCallback? onClose,
+        VoidCallback? onReauth}) =>
     MaterialApp(
       navigatorKey: navigatorKey,
       theme: consoleTheme(),
@@ -357,7 +359,8 @@ Widget controlledHost(ValueNotifier<FakeDeviceManagementController?> selection,
                   key: const Key('controlled-device-window'),
                   controller: controller,
                   onDiagnostic: onDiagnostic,
-                  onClose: () {},
+                  onClose: onClose ?? () {},
+                  onReauth: onReauth,
                 ),
         ),
       ),
@@ -494,6 +497,9 @@ void main() {
     }
     expect(f.controller.value, isNotNull,
         reason: 'The UI must honor hasAccess rather than trust DTO clearing.');
+    await press(tester, 'device-management-close');
+    expect(f.closeCalls, 1,
+        reason: 'Losing access must still allow closing the device window.');
   });
 
   testWidgets('read denial hides old inventory and capability content',
@@ -546,6 +552,8 @@ void main() {
     expect(f.controller.revokeResultUnknown, isTrue);
     expect(find.byKey(const Key('device-management-check-result')),
         findsOneWidget);
+    await press(tester, 'device-management-close');
+    expect(f.closeCalls, 1);
   });
 
   testWidgets('accepted revoke awaiting a read stays in the check-only flow',
@@ -724,6 +732,114 @@ void main() {
   });
 
   testWidgets(
+      'queued controls stay retired across controller replacement and return',
+      (tester) async {
+    final original = FakeDeviceManagementController()
+      ..selected = DeviceManagementSection.applications
+      ..failure = const ApiFailure(401, 'REAUTH_REQUIRED');
+    final replacement = FakeDeviceManagementController()
+      ..selected = DeviceManagementSection.applications
+      ..value = namedDevice('另一台平板')
+      ..failure = const ApiFailure(401, 'REAUTH_REQUIRED');
+    final selection = ValueNotifier<FakeDeviceManagementController?>(original);
+    final navigatorKey = GlobalKey<NavigatorState>();
+    var closeCalls = 0, reauthCalls = 0, opened = 0;
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      selection.dispose();
+      for (final controller in [original, replacement]) {
+        if (controller.disposalCalls == 0) controller.dispose();
+      }
+    });
+    await tester.pumpWidget(controlledHost(selection, navigatorKey,
+        onDiagnostic: (_) async { opened++; },
+        onClose: () => closeCalls++,
+        onReauth: () => reauthCalls++));
+    await tester.pumpAndSettle();
+    final windowState = tester.state(find.byType(DeviceManagementDialog));
+    final search = find.byKey(const Key('device-app-search'));
+    final clear = find.byWidgetPredicate((widget) =>
+        widget is IconButton && widget.tooltip == '清除应用查找');
+    await tester.enterText(search, '学习');
+    await tester.pump();
+    final queuedSearchChanged = tester.widget<TextField>(search).onChanged!;
+    final queuedButtons = <VoidCallback>[
+      for (final key in [
+        'device-section-capabilities',
+        'device-management-refresh',
+        'device-management-revoke',
+        'device-management-reauth',
+        'device-management-diagnostic',
+      ])
+        tester.widget<ButtonStyleButton>(find.byKey(Key(key))).onPressed!,
+      tester.widget<IconButton>(find.byKey(
+          const Key('device-management-close'))).onPressed!,
+      tester.widget<IconButton>(clear).onPressed!,
+    ];
+
+    for (final current in [replacement, original]) {
+      selection.value = current;
+      await tester.pumpAndSettle();
+      expect(tester.state(find.byType(DeviceManagementDialog)),
+          same(windowState));
+      await tester.enterText(search, 'com.example.video');
+      await tester.pump();
+      for (final queued in queuedButtons) {
+        queued();
+      }
+      queuedSearchChanged('学习');
+      await tester.pumpAndSettle();
+      for (final controller in [original, replacement]) {
+        expect(controller.sections, isEmpty);
+        expect(controller.refreshCalls, 0,
+            reason: 'A retained refresh must not read either controller.');
+        expect(controller.revokeCalls, 0);
+        expect(controller.actionDispatches, 0);
+      }
+      expect(closeCalls, 0);
+      expect(reauthCalls, 0);
+      expect(opened, 0);
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(tester.widget<TextField>(search).controller!.text,
+          'com.example.video');
+      expect(find.text('视频应用'), findsOneWidget);
+      expect(find.text('学习应用'), findsNothing);
+      expect(tester.takeException(), isNull);
+    }
+
+    await tester.ensureVisible(clear);
+    await tester.tap(clear);
+    await tester.pump();
+    expect(tester.widget<TextField>(search).controller!.text, isEmpty);
+    expect(find.text('学习应用'), findsOneWidget);
+    await press(tester, 'device-section-capabilities');
+    await press(tester, 'device-section-applications');
+    expect(original.sections, [
+      DeviceManagementSection.capabilities,
+      DeviceManagementSection.applications,
+    ]);
+    await press(tester, 'device-management-diagnostic');
+    expect(opened, 1);
+    expect(original.actionDispatches, 1);
+    await press(tester, 'device-management-reauth');
+    expect(reauthCalls, 1);
+    await press(tester, 'device-management-refresh');
+    expect(original.refreshCalls, 1);
+    await press(tester, 'device-management-revoke');
+    expect(find.text('确认撤销云端访问'), findsOneWidget);
+    await tester.tap(find.text('取消'));
+    await tester.pumpAndSettle();
+    expect(original.revokeCalls, 1);
+    expect(original.confirmedMutations, 0);
+    await press(tester, 'device-management-close');
+    expect(closeCalls, 1);
+    expect(replacement.refreshCalls, 0);
+    expect(replacement.revokeCalls, 0);
+    expect(replacement.actionDispatches, 0);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
       'retained confirmation survives media changes after its host disposes the controller',
       (tester) async {
     tester.view.physicalSize = const Size(1024, 900);
@@ -810,11 +926,23 @@ void main() {
     final f = Fixture();
     await mount(tester, f);
     final close = find.byKey(const Key('device-management-close'));
+    final queuedClose = tester.widget<IconButton>(close).onPressed!;
+    final queuedRefresh = tester.widget<ButtonStyleButton>(find.byKey(
+        const Key('device-management-refresh'))).onPressed!;
+    final queuedRevoke = tester.widget<ButtonStyleButton>(find.byKey(
+        const Key('device-management-revoke'))).onPressed!;
     f.controller.busyValue = true;
     f.controller.writeBusyValue = true;
     f.controller.publish();
     await tester.pump();
     expect(tester.widget<IconButton>(close).onPressed, isNull);
+    queuedClose();
+    queuedRefresh();
+    queuedRevoke();
+    await tester.pump();
+    expect(f.closeCalls, 0);
+    expect(f.controller.refreshCalls, 0);
+    expect(f.controller.revokeCalls, 0);
     f.controller.writeBusyValue = false;
     f.controller.publish();
     await tester.pump();
@@ -829,12 +957,16 @@ void main() {
       'host retains controller ownership and detached signals do nothing',
       (tester) async {
     final f = Fixture();
+    f.controller.selected = DeviceManagementSection.applications;
     await mount(tester, f);
     expect(f.controller.initializationCalls, 1);
+    final queuedSearchChanged = tester.widget<TextField>(find.byKey(
+        const Key('device-app-search'))).onChanged!;
     await tester.pumpWidget(const SizedBox.shrink());
     expect(f.controller.disposalCalls, 0);
     final checked = f.controller.scopeChecks;
     f.changes.value++;
+    expect(() => queuedSearchChanged('学习'), returnsNormally);
     await tester.pump();
     expect(f.controller.scopeChecks, checked);
     expect(tester.takeException(), isNull);

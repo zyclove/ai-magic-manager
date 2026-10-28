@@ -48,6 +48,9 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
   _ConfirmationLifetime? confirmationLifetime;
   bool confirming = false, showingSubflow = false;
   bool closeRequested = false;
+  bool active = true;
+  int interactionEpoch = 0;
+  Object? subflowToken;
   DeviceManagementController get c => widget.controller;
   bool get checkingRevoke =>
       c.revokeResultUnknown || c.revokeAcceptedAwaitingRead;
@@ -63,15 +66,20 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
   @override
   void didUpdateWidget(covariant DeviceManagementDialog oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.accessChanges != widget.accessChanges) {
+    if (oldWidget.controller != c ||
+        oldWidget.accessChanges != widget.accessChanges) {
+      interactionEpoch++;
       invalidateConfirmation();
+      confirming = false;
+      showingSubflow = false;
+      subflowToken = null;
+      closeRequested = false;
+    }
+    if (oldWidget.accessChanges != widget.accessChanges) {
       oldWidget.accessChanges?.removeListener(scopeChanged);
       widget.accessChanges?.addListener(scopeChanged);
     }
     if (oldWidget.controller != c) {
-      invalidateConfirmation();
-      showingSubflow = false;
-      closeRequested = false;
       oldWidget.controller.removeListener(changed);
       search.clear();
       c.addListener(changed);
@@ -90,24 +98,69 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
     confirmationLifetime?.value = false;
   }
 
+  bool ownsInteraction(DeviceManagementController controller, int epoch) =>
+      mounted && active && interactionEpoch == epoch && identical(c, controller);
+
+  // Capture while building. Read/action locks apply at entry, never to their
+  // continuations after the controller itself becomes busy or opens a child.
+  VoidCallback guard(VoidCallback callback,
+      {bool allowBusy = false, bool allowDenied = false}) {
+    final controller = c, epoch = interactionEpoch;
+    final route = ModalRoute.of(context);
+    return () {
+      if (!ownsInteraction(controller, epoch) || closeRequested ||
+          (!allowDenied && !controller.hasAccess) ||
+          (!allowBusy && controller.busy) ||
+          (route != null && (!route.isActive || !route.isCurrent))) return;
+      callback();
+    };
+  }
+
+  @override
+  void deactivate() {
+    active = false;
+    interactionEpoch++;
+    invalidateConfirmation();
+    confirming = false;
+    showingSubflow = false;
+    subflowToken = null;
+    super.deactivate();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    active = true;
+    closeRequested = false;
+  }
+
   @override
   void dispose() {
+    active = false;
+    interactionEpoch++;
     invalidateConfirmation();
+    subflowToken = null;
     c.removeListener(changed);
     widget.accessChanges?.removeListener(scopeChanged);
     search.dispose();
     super.dispose();
   }
 
-  void close() {
+  void close(VoidCallback onClose) {
     if (!mounted || closeRequested || c.writeBusy) return;
     final route = ModalRoute.of(context);
     if (route == null || !route.isCurrent || !route.isActive) return;
     closeRequested = true;
-    widget.onClose();
+    interactionEpoch++;
+    invalidateConfirmation();
+    onClose();
   }
 
-  Future<void> revoke() => c.revoke(confirmCloudRevoke);
+  Future<void> revoke(DeviceManagementController controller, int epoch) async {
+    if (!ownsInteraction(controller, epoch) || !controller.canRevoke) return;
+    await controller.revoke(
+        (device) => confirmCloudRevoke(controller, epoch, device));
+  }
 
   void finishConfirmation(BuildContext routeContext, bool accepted) {
     if (!routeContext.mounted) return;
@@ -116,11 +169,10 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
     Navigator.of(routeContext).pop(accepted);
   }
 
-  Future<bool> confirmCloudRevoke(DeviceManagementRecord device) async {
-    if (!mounted || !c.hasAccess) return false;
-    // This dialog remains bound to the originating controller even if the host
-    // replaces its current controller while a confirmation is open.
-    final controller = c;
+  Future<bool> confirmCloudRevoke(DeviceManagementController controller,
+      int epoch, DeviceManagementRecord device) async {
+    if (!ownsInteraction(controller, epoch) || !controller.hasAccess) return false;
+    // The confirmation keeps the exact controller and interaction it opened in.
     final lifetime = _ConfirmationLifetime();
     confirmationLifetime = lifetime;
     setState(() => confirming = true);
@@ -132,8 +184,7 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
           animation: Listenable.merge([controller, lifetime]),
           builder: (_, __) {
             if (!lifetime.value ||
-                !mounted ||
-                !identical(c, controller) ||
+                !ownsInteraction(controller, epoch) ||
                 !controller.hasAccess) {
               return AlertDialog(
                 title: const Text('工作空间已变化'),
@@ -169,8 +220,7 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
                   onPressed: () => finishConfirmation(
                     inner,
                     lifetime.value &&
-                        mounted &&
-                        identical(c, controller) &&
+                        ownsInteraction(controller, epoch) &&
                         controller.hasAccess,
                   ),
                   child: const Text('确认撤销云端访问'),
@@ -182,26 +232,27 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
       );
       return accepted == true &&
           lifetime.value &&
-          mounted &&
-          identical(c, controller) &&
+          ownsInteraction(controller, epoch) &&
           controller.hasAccess;
     } finally {
-      if (identical(confirmationLifetime, lifetime)) {
-        confirmationLifetime = null;
-      }
+      final ownsFlag = identical(confirmationLifetime, lifetime) &&
+          ownsInteraction(controller, epoch);
+      if (identical(confirmationLifetime, lifetime)) confirmationLifetime = null;
       lifetime.dispose();
-      if (mounted) setState(() => confirming = false);
+      if (ownsFlag) setState(() => confirming = false);
     }
   }
 
   Widget sectionButton(DeviceManagementSection section, String key,
       String title, IconData icon) {
-    final selected = c.section == section;
+    final controller = c;
+    final selected = controller.section == section;
     return Semantics(
       selected: selected,
       child: OutlinedButton.icon(
         key: Key(key),
-        onPressed: c.busy ? null : () => c.selectSection(section),
+        onPressed: controller.busy ? null
+            : guard(() => controller.selectSection(section)),
         icon: Icon(icon, size: 18),
         label: Text(title),
         style: OutlinedButton.styleFrom(
@@ -231,13 +282,13 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
   Widget refreshButton() => checkingRevoke
       ? OutlinedButton.icon(
           key: const Key('device-management-check-result'),
-          onPressed: c.busy ? null : c.refresh,
+          onPressed: c.busy ? null : guard(c.refresh),
           icon: const Icon(Icons.fact_check_outlined, size: 18),
           label: const Text('核对结果'),
         )
       : TextButton.icon(
           key: const Key('device-management-refresh'),
-          onPressed: c.busy ? null : c.refresh,
+          onPressed: c.busy ? null : guard(c.refresh),
           icon: const Icon(Icons.refresh, size: 18),
           label: Text(c.error == null ? '刷新资料' : '重试读取'),
         );
@@ -308,7 +359,7 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
         if (widget.onReauth != null && failure?.status == 401)
           TextButton.icon(
             key: const Key('device-management-reauth'),
-            onPressed: c.busy || !c.hasAccess ? null : widget.onReauth,
+            onPressed: c.busy || !c.hasAccess ? null : guard(widget.onReauth!),
             icon: const Icon(Icons.verified_user_outlined, size: 18),
             label: const Text('重新安全验证'),
           ),
@@ -488,6 +539,7 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
   Widget applications() {
     final value = c.inventory;
     if (value == null) return const Notice('尚未取得应用清单，请完成读取后核对。');
+    final searchChanged = guard(() => setState(() {}), allowBusy: true);
     final query = search.text.trim().toLowerCase();
     final matches = value.applications
         .where((app) =>
@@ -509,7 +561,7 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
         TextField(
           key: const Key('device-app-search'),
           controller: search,
-          onChanged: (_) => setState(() {}),
+          onChanged: (_) => searchChanged(),
           autocorrect: false,
           enableSuggestions: false,
           decoration: InputDecoration(
@@ -520,7 +572,7 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
                 ? null
                 : IconButton(
                     tooltip: '清除应用查找',
-                    onPressed: () => setState(search.clear),
+                    onPressed: guard(() => setState(search.clear), allowBusy: true),
                     icon: const Icon(Icons.close),
                   ),
           ),
@@ -567,46 +619,54 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
   Widget actionButton(String key, String title, IconData icon,
       Future<void> Function(DeviceManagementRecord) action,
       {bool primary = false, bool refreshAfter = true}) {
-    final controller = c;
+    final controller = c, epoch = interactionEpoch;
     final enabled = !controller.busy && !checkingRevoke && controller.hasAccess;
     return primary
         ? FilledButton.icon(
             key: Key(key),
             onPressed: enabled
-                ? () => runAction(controller, action, refreshAfter: refreshAfter) : null,
+                ? guard(() => runAction(controller, epoch, action,
+                    refreshAfter: refreshAfter)) : null,
             icon: Icon(icon, size: 18),
             label: Text(title),
           )
         : OutlinedButton.icon(
             key: Key(key),
             onPressed: enabled
-                ? () => runAction(controller, action, refreshAfter: refreshAfter) : null,
+                ? guard(() => runAction(controller, epoch, action,
+                    refreshAfter: refreshAfter)) : null,
             icon: Icon(icon, size: 18),
             label: Text(title),
           );
   }
 
-  Future<void> runAction(DeviceManagementController controller,
+  Future<void> runAction(DeviceManagementController controller, int epoch,
       Future<void> Function(DeviceManagementRecord) action,
       {bool refreshAfter = true}) async {
-    if (!mounted || closeRequested || !identical(c, controller) ||
+    if (!ownsInteraction(controller, epoch) || closeRequested ||
         !controller.hasAccess) return;
-    final route = ModalRoute.of(context);
-    if (route != null && (!route.isActive || !route.isCurrent)) return;
     await controller.runAction((device) async {
-      if (!mounted || !identical(c, controller) || !controller.hasAccess) return;
-      setState(() => showingSubflow = true);
+      if (!ownsInteraction(controller, epoch) || !controller.hasAccess) return;
+      final token = Object();
+      setState(() {
+        subflowToken = token;
+        showingSubflow = true;
+      });
       try {
         await action(device);
       } finally {
-        if (mounted && identical(c, controller)) {
-          setState(() => showingSubflow = false);
+        if (ownsInteraction(controller, epoch) && identical(subflowToken, token)) {
+          setState(() {
+            subflowToken = null;
+            showingSubflow = false;
+          });
         }
       }
     }, refreshAfter: refreshAfter);
   }
 
   Widget actions(DeviceManagementRecord device) {
+    final controller = c, epoch = interactionEpoch;
     if (checkingRevoke) return const SizedBox.shrink();
     final activeWrite = c.canWrite && device.state == 'ACTIVE';
     final canExit = c.canWrite &&
@@ -669,7 +729,7 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
                   key: const Key('device-management-revoke'),
-                  onPressed: c.busy ? null : revoke,
+                  onPressed: c.busy ? null : guard(() => revoke(controller, epoch)),
                   icon: const Icon(Icons.link_off_outlined, size: 18),
                   label: const Text('紧急撤销云端访问'),
                   style: OutlinedButton.styleFrom(
@@ -758,6 +818,7 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
             .clamp(120.0, double.infinity)
             .toDouble();
     final compact = availableHeight < 480;
+    final onClose = widget.onClose;
     final name = c.hasAccess ? c.device?.displayName ?? '设备管理' : '设备管理';
     return PopScope(
       canPop: !c.writeBusy,
@@ -796,7 +857,9 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
                     IconButton(
                       key: const Key('device-management-close'),
                       tooltip: '关闭设备管理',
-                      onPressed: c.writeBusy ? null : close,
+                      onPressed: c.writeBusy ? null
+                          : guard(() => close(onClose),
+                              allowBusy: true, allowDenied: true),
                       icon: const Icon(Icons.close),
                     ),
                   ],
