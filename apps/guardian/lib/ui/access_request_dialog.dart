@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import 'design.dart';
+import 'dialog_access.dart';
 
 /// Select only server-returned targets and eligible rules; never accepts raw policy identifiers.
 class AccessRequestDialog extends StatefulWidget {
@@ -28,8 +29,21 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
   bool deviceFailed = false, deviceCursorExpired = false, optionFailed = false;
   Object? error;
   Json? pending;
-  bool stopped = false;
+  bool stopped = false, active = true, finished = false;
+  DialogAccessBinding? access;
+  bool initialized = false;
+  ModalRoute<dynamic>? get owner => access?.parent;
   int generation = 0;
+  bool get windowCurrent => mounted && active && !finished &&
+      access?.permitted() != false;
+  bool get interactive => windowCurrent &&
+      (owner == null || (owner!.isActive && owner!.isCurrent));
+  bool editing(int view) => interactive && !locked && !loadingOptions &&
+      generation == view;
+
+  VoidCallback viewAction(VoidCallback callback, int view) => () {
+    if (interactive && generation == view) callback();
+  };
   bool get locked => busy || pending != null || stopped;
 
   int? get requestedSeconds {
@@ -53,33 +67,60 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
       ].contains((error as ApiFailure).code);
 
   void finish([Json? result]) {
-    if (!mounted) return;
+    if (!windowCurrent) return;
+    finished = true;
+    generation++;
     final complete = widget.onComplete;
     if (complete != null) {
       complete(result);
     } else {
-      Navigator.pop(context, result);
+      final route = owner, navigator = owner?.navigator;
+      if (route == null || navigator == null || !route.isActive) return;
+      if (route.isCurrent) {
+        navigator.pop(result);
+      } else {
+        // Flutter 3.22 removeRoute does not complete the original popped future.
+        route.didComplete(result);
+        navigator.removeRoute(route);
+      }
+    }
+  }
+
+  void close() {
+    if (interactive && !busy) finish();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    access ??= DialogAccessBinding(context);
+    if (!initialized && interactive) {
+      initialized = true;
+      loadDevices();
     }
   }
 
   @override
-  void initState() {
-    super.initState();
-    loadDevices();
+  void deactivate() {
+    active = false;
+    generation++;
+    super.deactivate();
   }
 
   @override
   void dispose() {
+    active = false;
     generation++;
     scroll.dispose();
     minutes.dispose();
     seconds.dispose();
     reason.dispose();
+    access?.dispose();
     super.dispose();
   }
 
   Future<void> loadDevices() async {
-    if (!mounted || locked || loadingDevices) return;
+    if (!interactive || locked || loadingDevices) return;
     final restarting = deviceCursorExpired;
     final requestCursor = restarting ? null : deviceCursor;
     setState(() {
@@ -88,7 +129,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
     });
     try {
       final page = await widget.load('devices', requestCursor);
-      if (!mounted) return;
+      if (!windowCurrent) return;
       setState(() {
         final selectionReturned = restarting &&
             device != null &&
@@ -125,7 +166,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
         }
       });
     } catch (e) {
-      if (mounted) {
+      if (windowCurrent) {
         setState(() {
           error = e;
           deviceFailed = true;
@@ -135,13 +176,13 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
         });
       }
     } finally {
-      if (mounted) setState(() => loadingDevices = false);
+      if (windowCurrent) setState(() => loadingDevices = false);
     }
   }
 
   Future<void> loadOptions({bool reset = false}) async {
     final current = device;
-    if (current == null) return;
+    if (!interactive || locked || loadingOptions || current == null) return;
     final epoch = ++generation;
     setState(() {
       loadingOptions = true;
@@ -156,7 +197,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
     try {
       final page = await widget.load(
           'access-requests/options?deviceId=$current', optionCursor);
-      if (!mounted || epoch != generation) return;
+      if (!windowCurrent || epoch != generation) return;
       setState(() {
         for (final policy in page.items) {
           for (final app in policy['applications'] as List) {
@@ -177,21 +218,68 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
         optionFailed = false;
       });
     } catch (e) {
-      if (mounted && epoch == generation) {
+      if (windowCurrent && epoch == generation) {
         setState(() {
           error = e;
           optionFailed = true;
         });
       }
     } finally {
-      if (mounted && epoch == generation) {
+      if (windowCurrent && epoch == generation) {
         setState(() => loadingOptions = false);
       }
     }
   }
 
+  void selectDevice(String? value, int view) {
+    if (!editing(view) || value == device ||
+        (value != null && !devices.any((row) => row['id'] == value))) return;
+    setState(() {
+      device = value;
+      if (value == null) {
+        generation++;
+        option = null;
+        options.clear();
+        selectedRules.clear();
+        optionCursor = null;
+        optionFailed = false;
+      }
+    });
+    if (value != null) loadOptions(reset: true);
+  }
+
+  void selectOption(String? value, int view, String? selectedDevice) {
+    if (!editing(view) || device != selectedDevice || value == option ||
+        (value != null && !options.containsKey(value))) return;
+    setState(() {
+      generation++;
+      option = value;
+      selectedRules.clear();
+      final rules = selected?['rules'] as List? ?? [];
+      if (rules.length <= 20) {
+        selectedRules.addAll(rules.map((rule) => rule['id'] as String));
+      }
+    });
+  }
+
+  void selectRule(String id, bool? value, int view,
+      String? selectedDevice, String? selectedOption) {
+    if (!editing(view) || device != selectedDevice || option != selectedOption ||
+        selectedRules.contains(id) == (value == true) ||
+        (value == true && selectedRules.length >= 20)) return;
+    setState(() {
+      if (value == true) {
+        selectedRules.add(id);
+      } else {
+        selectedRules.remove(id);
+      }
+    });
+  }
+
   Future<void> send() async {
-    if (busy || stopped) return;
+    if (!interactive || busy || stopped || loadingOptions || loadingDevices || stale) {
+      return;
+    }
     final retryingUnknown = pending != null;
     if (!retryingUnknown && !form.currentState!.validate()) return;
     if (pending == null &&
@@ -220,7 +308,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
       final result = await widget.submit(body);
       finish(result);
     } catch (e) {
-      if (mounted) {
+      if (windowCurrent) {
         setState(() {
           error = e;
           if (e is ApiFailure &&
@@ -237,7 +325,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
           }
         });
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && scroll.hasClients) {
+          if (windowCurrent && scroll.hasClients) {
             scroll.animateTo(scroll.position.maxScrollExtent,
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeOut);
@@ -245,12 +333,16 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
         });
       }
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (windowCurrent) setState(() => busy = false);
     }
   }
 
   @override
-  Widget build(BuildContext context) => PopScope(
+  Widget build(BuildContext context) {
+    if (!windowCurrent) return const SizedBox.shrink();
+    final view = generation;
+    final selectedDevice = device, selectedOption = option;
+    return PopScope(
         canPop: !busy,
         child: AlertDialog(
           title: const Text('申请临时访问'),
@@ -283,10 +375,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                                 .toList(),
                             onChanged: locked || loadingOptions
                                 ? null
-                                : (v) {
-                                    setState(() => device = v);
-                                    loadOptions(reset: true);
-                                  },
+                                : (v) => selectDevice(v, view),
                             validator: (v) => v == null ? '请选择设备' : null,
                           ),
                           if (loadingDevices)
@@ -315,7 +404,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                             TextButton(
                                 onPressed: locked || loadingDevices
                                     ? null
-                                    : loadDevices,
+                                    : viewAction(loadDevices, view),
                                 child: Text(deviceCursorExpired
                                     ? '从首页重新加载设备'
                                     : deviceFailed
@@ -338,16 +427,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                                   .toList(),
                               onChanged: locked || loadingOptions
                                   ? null
-                                  : (v) => setState(() {
-                                        option = v;
-                                        selectedRules.clear();
-                                        final rules =
-                                            selected?['rules'] as List? ?? [];
-                                        if (rules.length <= 20) {
-                                          selectedRules.addAll(rules
-                                              .map((r) => r['id'] as String));
-                                        }
-                                      }),
+                                  : (v) => selectOption(v, view, selectedDevice),
                               validator: (v) => v == null ? '请选择应用与策略' : null,
                             ),
                             if (loadingOptions)
@@ -365,14 +445,14 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                                 TextButton(
                                     onPressed: locked || loadingOptions
                                         ? null
-                                        : () => loadOptions(),
+                                        : viewAction(() => loadOptions(), view),
                                     child: Text(
                                         optionFailed ? '重试加载规则' : '加载更多规则')),
                               if (!stale)
                                 TextButton(
                                     onPressed: locked || loadingOptions
                                         ? null
-                                        : () => loadOptions(reset: true),
+                                        : viewAction(() => loadOptions(reset: true), view),
                                     child: const Text('刷新可申请规则')),
                             ]),
                           ],
@@ -394,15 +474,8 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                                                   !selectedRules
                                                       .contains(r['id'])
                                           ? null
-                                          : (v) => setState(() {
-                                                if (v == true &&
-                                                    selectedRules.length < 20) {
-                                                  selectedRules.add(r['id']);
-                                                }
-                                                if (v != true) {
-                                                  selectedRules.remove(r['id']);
-                                                }
-                                              }),
+                                          : (v) => selectRule(r['id'] as String, v,
+                                              view, selectedDevice, selectedOption),
                                     ))),
                             const Text('未选择的规则和安全底线继续保留。',
                                 style: TextStyle(color: muted)),
@@ -467,7 +540,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                             TextButton(
                                 onPressed: locked || loadingOptions
                                     ? null
-                                    : () => loadOptions(reset: true),
+                                    : viewAction(() => loadOptions(reset: true), view),
                                 child: const Text('刷新可申请规则')),
                           if (pending != null)
                             Padding(
@@ -481,12 +554,12 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                   ))),
           actions: [
             TextButton(
-                onPressed: busy ? null : finish,
+                onPressed: busy ? null : close,
                 child: const Text('关闭')),
             FilledButton(
                 onPressed: busy || stopped || loadingOptions || loadingDevices || stale
                     ? null
-                    : send,
+                    : viewAction(send, view),
                 child: Text(busy
                     ? '提交中…'
                     : stopped
@@ -495,4 +568,5 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
           ],
         ),
       );
+  }
 }

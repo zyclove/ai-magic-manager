@@ -35,16 +35,20 @@ Future<PageResult> load(String path, String? cursor) async => path == 'devices'
     : PageResult([policy()], null);
 
 Future<void> open(WidgetTester tester, Future<Json> Function(Json) submit,
-    {Future<PageResult> Function(String, String?)? loader}) async {
+    {Future<PageResult> Function(String, String?)? loader,
+    ValueChanged<Json?>? onResult}) async {
   await tester.pumpWidget(MaterialApp(
       theme: consoleTheme(),
       home: Scaffold(
           body: Builder(
               builder: (context) => TextButton(
-                  onPressed: () => showDialog<Json>(
-                      context: context,
-                      builder: (_) => AccessRequestDialog(
-                          load: loader ?? load, submit: submit)),
+                  onPressed: () async {
+                    final result = await showDialog<Json>(
+                        context: context,
+                        builder: (_) => AccessRequestDialog(
+                            load: loader ?? load, submit: submit));
+                    onResult?.call(result);
+                  },
                   child: const Text('打开申请'))))));
   await tester.tap(find.text('打开申请'));
   await tester.pumpAndSettle();
@@ -74,6 +78,13 @@ DropdownButton<String> _deviceDropdown(WidgetTester tester, Finder field) =>
         of: field,
         matching: find
             .byWidgetPredicate((widget) => widget is DropdownButton<String>)));
+
+Future<void> _pumpUntil(WidgetTester tester, bool Function() done) async {
+  for (var attempt = 0; attempt < 40 && !done(); attempt++) {
+    await tester.pump(const Duration(milliseconds: 25));
+  }
+  expect(done(), isTrue, reason: 'The dialog did not finish within one second.');
+}
 
 void main() {
   testWidgets('requires device application rules and bounded duration',
@@ -289,6 +300,17 @@ void main() {
     await selectApp(tester);
     await tester.enterText(find.byKey(const Key('request-minutes')), '8');
     await tester.enterText(find.byKey(const Key('request-reason')), '不要丢失的理由');
+    final oldDevice = tester
+        .widget<DropdownButtonFormField<String>>(
+            find.byKey(const Key('request-device')))
+        .onChanged!;
+    final oldOption = tester
+        .widget<DropdownButtonFormField<String>>(
+            find.byKey(const ValueKey('option-$deviceId')))
+        .onChanged!;
+    final oldRule = tester
+        .widget<CheckboxListTile>(find.byType(CheckboxListTile).first)
+        .onChanged!;
     await tester.ensureVisible(find.text('加载更多设备'));
     await tester.tap(find.text('加载更多设备'));
     await tester.pumpAndSettle();
@@ -296,11 +318,13 @@ void main() {
         .widget<TextButton>(find.widgetWithText(TextButton, '刷新可申请规则'))
         .onPressed!;
     refreshRules();
+    refreshRules();
     await tester.pump();
     expect(ruleReads, 2);
     final restart = tester
         .widget<TextButton>(find.widgetWithText(TextButton, '从首页重新加载设备'))
         .onPressed!;
+    restart();
     restart();
     await tester.pumpAndSettle();
 
@@ -334,6 +358,170 @@ void main() {
             .widget<FilledButton>(find.widgetWithText(FilledButton, '提交申请'))
             .onPressed,
         isNull);
+    oldDevice(deviceId);
+    oldOption('policy-1/app-1');
+    oldRule(true);
+    refreshRules();
+    await tester.pump();
+    expect(deviceReads, 3);
+    expect(ruleReads, 2);
+    expect(tester.state<FormFieldState<String>>(deviceField).value, isNull);
+    await choose(tester, const Key('request-device'), '替代设备 · 33333333…');
+    final optionField = find.byKey(const ValueKey('option-$replacement'));
+    oldOption('policy-1/app-1');
+    await tester.pump();
+    expect(tester.state<FormFieldState<String>>(optionField).value, isNull);
+    expect(find.text('申请放宽的规则（2/20）'), findsNothing);
+    await choose(tester, const ValueKey('option-$replacement'), '课堂练习 · 课堂策略');
+    oldRule(false);
+    oldDevice(deviceId);
+    refreshRules();
+    await tester.pump();
+    expect(ruleReads, 3);
+    expect(tester.state<FormFieldState<String>>(deviceField).value, replacement);
+    expect(find.text('申请放宽的规则（2/20）'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'saved controls cannot change a covered or pending request and completion preserves the notification',
+      (tester) async {
+    const replacement = '33333333-3333-3333-3333-333333333333';
+    final pending = Completer<Json>();
+    final reads = <(String, String?)>[];
+    final writes = <Json>[];
+    final results = <Json?>[];
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (!pending.isCompleted) pending.complete(<String, dynamic>{});
+      await tester.pump();
+    });
+    await open(tester, (body) {
+      writes.add(body);
+      return pending.future;
+    }, onResult: results.add, loader: (path, cursor) async {
+      reads.add((path, cursor));
+      return path == 'devices'
+          ? PageResult([
+              {'id': deviceId, 'displayName': '教室平板', 'state': 'ACTIVE'},
+              {'id': replacement, 'displayName': '替代设备', 'state': 'ACTIVE'},
+            ], 'more-devices')
+          : PageResult([policy()], 'more-rules');
+    });
+    await selectDevice(tester);
+    await selectApp(tester);
+    await tester.enterText(find.byKey(const Key('request-minutes')), '6');
+    await tester.enterText(find.byKey(const Key('request-seconds')), '19');
+    await tester.enterText(find.byKey(const Key('request-reason')), '保留原申请');
+    final readSnapshot = List<(String, String?)>.of(reads);
+    final oldDevice = tester
+        .widget<DropdownButtonFormField<String>>(
+            find.byKey(const Key('request-device')))
+        .onChanged!;
+    final oldOption = tester
+        .widget<DropdownButtonFormField<String>>(
+            find.byKey(const ValueKey('option-$deviceId')))
+        .onChanged!;
+    final oldRule = tester
+        .widget<CheckboxListTile>(find.byType(CheckboxListTile).first)
+        .onChanged!;
+    VoidCallback button(String label) => tester
+        .widget<TextButton>(find.widgetWithText(TextButton, label))
+        .onPressed!;
+    final moreDevices = button('加载更多设备');
+    final moreRules = button('加载更多规则');
+    final refresh = button('刷新可申请规则');
+    final close = button('关闭');
+    final send = tester
+        .widget<FilledButton>(find.widgetWithText(FilledButton, '提交申请'))
+        .onPressed!;
+    final navigator =
+        Navigator.of(tester.element(find.byType(AccessRequestDialog)));
+    final request = find.byType(AccessRequestDialog, skipOffstage: false);
+
+    void invokeSavedControls() {
+      oldDevice(replacement);
+      oldOption(null);
+      oldRule(false);
+      moreDevices();
+      moreRules();
+      refresh();
+      send();
+      close();
+    }
+
+    void expectDraft() {
+      expect(
+          tester
+              .state<FormFieldState<String>>(find.byKey(
+                  const Key('request-device'),
+                  skipOffstage: false))
+              .value,
+          deviceId);
+      expect(
+          tester
+              .state<FormFieldState<String>>(find.byKey(
+                  const ValueKey('option-$deviceId'),
+                  skipOffstage: false))
+              .value,
+          'policy-1/app-1');
+      expect(
+          find.text('申请放宽的规则（2/20）', skipOffstage: false), findsOneWidget);
+      expect(reads, readSnapshot);
+      expect(results, isEmpty);
+    }
+
+    Future<DialogRoute<void>> cover() async {
+      final notice = DialogRoute<void>(
+          context: navigator.context,
+          builder: (_) => const AlertDialog(title: Text('独立通知')));
+      unawaited(navigator.push<void>(notice));
+      await _pumpUntil(tester,
+          () => notice.animation?.status == AnimationStatus.completed);
+      return notice;
+    }
+
+    final firstNotice = await cover();
+    invokeSavedControls();
+    await tester.pump();
+    expectDraft();
+    expect(writes, isEmpty);
+    expect(firstNotice.isCurrent, isTrue);
+    navigator.pop();
+    await tester.pumpAndSettle();
+
+    send();
+    invokeSavedControls();
+    await tester.pump();
+    expectDraft();
+    expect(writes, hasLength(1));
+    expect(writes.single['deviceId'], deviceId);
+    expect(writes.single['ruleIds'], ['lesson_0', 'window']);
+    expect(writes.single['requestedWindowSeconds'], 379);
+    expect(writes.single['reason'], '保留原申请');
+    expect(find.text('提交中…'), findsOneWidget);
+
+    final notice = await cover();
+    invokeSavedControls();
+    await tester.pump();
+    expectDraft();
+    expect(writes, hasLength(1));
+    final response = <String, dynamic>{'id': 'request-1', ...writes.single};
+    pending.complete(response);
+    await _pumpUntil(
+        tester, () => request.evaluate().isEmpty && results.length == 1);
+    expect(results.single, response);
+    expect(notice.isCurrent, isTrue);
+    expect(find.text('独立通知'), findsOneWidget);
+    invokeSavedControls();
+    await tester.pump();
+    expect(notice.isCurrent, isTrue);
+    await tester.pumpWidget(const SizedBox.shrink());
+    invokeSavedControls();
+    await tester.pump();
+    expect(reads, readSnapshot);
+    expect(writes, hasLength(1));
+    expect(results, [response]);
     expect(tester.takeException(), isNull);
   });
 
@@ -482,6 +670,13 @@ void main() {
     });
     await selectDevice(tester);
     await selectApp(tester);
+    final oldOption = tester
+        .widget<DropdownButtonFormField<String>>(
+            find.byKey(const ValueKey('option-$deviceId')))
+        .onChanged!;
+    final oldRule = tester
+        .widget<CheckboxListTile>(find.byType(CheckboxListTile).first)
+        .onChanged!;
     await submit(tester);
     expect(
         tester
@@ -491,8 +686,20 @@ void main() {
     await tester.ensureVisible(find.text('刷新可申请规则'));
     await tester.tap(find.text('刷新可申请规则'));
     await tester.pumpAndSettle();
+    oldOption('policy-1/app-1');
+    oldRule(true);
+    await tester.pump();
+    expect(
+        tester
+            .state<FormFieldState<String>>(
+                find.byKey(const ValueKey('option-$deviceId')))
+            .value,
+        isNull);
     expect(find.text('申请放宽的规则（2/20）'), findsNothing);
     await selectApp(tester);
+    oldRule(false);
+    await tester.pump();
+    expect(find.text('申请放宽的规则（2/20）'), findsOneWidget);
     expect(reads, 2);
     expect(writes, 1);
   });
